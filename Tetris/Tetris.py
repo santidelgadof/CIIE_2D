@@ -6,8 +6,8 @@ import time
 pygame.init()
 
 # Definir las variables globales
-WINDOW_WIDTH = 400  # Ancho de la ventana general
-WINDOW_HEIGHT = 600  # Alto de la ventana general
+WINDOW_WIDTH = 800  # Ancho de la ventana general
+WINDOW_HEIGHT = 800  # Alto de la ventana general
 BOARD_WIDTH = 200  # Ancho del tablero del juego
 BOARD_HEIGHT = 500  # Alto del tablero del juego
 BOARD_OFFSET_X = (WINDOW_WIDTH - BOARD_WIDTH) // 2  # Desplazamiento X para centrar el tablero

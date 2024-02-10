@@ -1,0 +1,7 @@
+CONTROLES:
+    Mover tetrominos -> Flechas derecha / izquierda
+    Girar tetrominos -> Barra espaciadora
+
+OBJETIVO:
+    Conseguir la mayor puntuación posible en un tiempo de 30 segundos.
+    Cada línea eliminada sumará un total de 100 puntos en la puntuación total.
