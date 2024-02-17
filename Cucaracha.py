@@ -3,6 +3,7 @@ import random
 import sys
 import numpy as np
 from moviepy.editor import VideoFileClip
+import os
 
 pygame.init()
 
@@ -86,7 +87,7 @@ def load_images():
     hole = pygame.transform.scale(pygame.image.load("agujero.png").convert_alpha(), (CELL_SIZE - 50, CELL_SIZE - 50))
     hole_slow = pygame.transform.scale(pygame.image.load("agujero_slow.png").convert_alpha(), (CELL_SIZE - 50, CELL_SIZE - 50))
     hole_speed = pygame.transform.scale(pygame.image.load("agujero_speed.png").convert_alpha(), (CELL_SIZE - 50, CELL_SIZE - 50))
-    insect = pygame.transform.scale(pygame.image.load("insecticida.png").convert_alpha(), (100, 100))
+    insect = pygame.transform.scale(pygame.image.load("insecticida.png").convert_alpha(), (80, 80))
     background_image = pygame.transform.scale(pygame.image.load("back.jpg").convert(), (WIDTH, HEIGHT))
     background_slow = pygame.transform.scale(pygame.image.load("back_slow.png").convert(), (WIDTH, HEIGHT))  # Fondo para modo lento
     background_speed = pygame.transform.scale(pygame.image.load("back_speed.png").convert(), (WIDTH, HEIGHT))
@@ -129,13 +130,13 @@ def update_speed_items():
   
 def spawn_speed_item():
     global speed_item, items_shown, spawn_timer, speed_spawn_time
-    if spawn_timer >= speed_spawn_time and items_shown == 0:
+    if spawn_timer >= speed_spawn_time and items_shown == 0 :
         speed_item = SpeedItem()
         random_hole = random.choice(agujeros.sprites())
         speed_item.rect.center = random_hole.rect.center
         spawn_timer = 0
         speed_item.active = True
-        speed_spawn_time = random.randint(1000, 8000)
+        speed_spawn_time = random.randint(2000, 9000)
         speed_item.spawn_time = pygame.time.get_ticks()
         speed_items.add(speed_item)
         items_shown += 1
@@ -208,16 +209,18 @@ def handle_events():
     return True
 
 def handle_slow_item_click(item):
-    global in_slow_motion_mode
+    global in_slow_motion_mode, in_speed_mode
     item.kill()  # Eliminar el item del grupo de sprites
     item.active = False  # Desactivar el item
     in_slow_motion_mode = True  # Entrar en slowmode
+    in_speed_mode = False
 
 def handle_speed_item_click(item):
-    global in_speed_mode
+    global in_speed_mode, in_slow_motion_mode
     item.kill()  # Eliminar el item del grupo de sprites
     item.active = False  # Desactivar el item
-    in_speed_mode = True  # Entrar en slowmode    
+    in_speed_mode = True  # Entrar en slowmode
+    in_slow_motion_mode = False    
 
 def handle_cucaracha_click(cucaracha):
     global score
@@ -226,8 +229,8 @@ def handle_cucaracha_click(cucaracha):
     cucaracha.kill()
     cell_center = (cucaracha.rect.centerx // CELL_SIZE * CELL_SIZE + CELL_SIZE // 2,
                    cucaracha.rect.centery // CELL_SIZE * CELL_SIZE + CELL_SIZE // 2)
-    window.blit(insect, (cell_center[0] - insect.get_width() // 2,
-                            cell_center[1] - insect.get_height() // 2))
+    window.blit(insect, (cell_center[0] - insect.get_width(), cell_center[1] - insect.get_height() // 2))
+
     pygame.display.flip()
     pygame.time.delay(300)
 
@@ -290,6 +293,14 @@ def handle_final_score_events():
                 return False
     return True
 
+def cargar_cursor(nombre_cursor, tamaño):
+    # Carga la imagen desde el directorio actual del programa
+    imagen = pygame.image.load(nombre_cursor)
+    # Escala la imagen al tamaño deseado
+    imagen = pygame.transform.scale(imagen, tamaño)
+    # Convierte la imagen en un formato compatible con el cursor
+    pygame.mouse.set_cursor((tamaño[0], tamaño[1]), (0, 0), *pygame.cursors.compile(pygame.cursors.sizer_x_strings))
+    return imagen
 
 # Main game loop
 def main():
@@ -300,7 +311,6 @@ def main():
     in_speed_mode = False
     time_in_slow_motion = 0 
     time_in_speed_mode = 0
-    
 
     while running:
         
@@ -308,7 +318,7 @@ def main():
         draw_holes()
         if not handle_events():
             break
-        
+       
         update_pink_items()
         update_cucarachas()
         update_speed_items()
