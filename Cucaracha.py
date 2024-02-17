@@ -31,6 +31,10 @@ class Cucaracha(pygame.sprite.Sprite):
                 if pygame.time.get_ticks() - self.spawn_time >= 1300:  
                     self.active = False
                     self.kill()  # Elimina el sprite del grupo
+            elif in_speed_mode:   
+                if pygame.time.get_ticks() - self.spawn_time >= 500:  
+                    self.active = False
+                    self.kill()  # Elimina el sprite del grupo
             else:
                 if pygame.time.get_ticks() - self.spawn_time >= 800:  
                     self.active = False
@@ -59,6 +63,19 @@ class PinkItem(pygame.sprite.Sprite):
                 self.active = False
                 self.kill()
 
+class SpeedItem(pygame.sprite.Sprite):
+    def __init__(self):
+        super().__init__()
+        self.image = pygame.transform.scale(pygame.image.load("speed_item.png").convert_alpha(), (80, 80))
+        self.rect = self.image.get_rect()
+        self.active = False
+        self.spawn_time = 0
+
+    def update(self):
+        if self.active:
+            if pygame.time.get_ticks() - self.spawn_time >= 1500:
+                self.active = False
+                self.kill()
 
 def initialize_pygame():
     pygame.init()
@@ -68,10 +85,12 @@ def load_images():
     # Las imágenes y sus tamaños pueden cambiar dependiendo de tu implementación específica
     hole = pygame.transform.scale(pygame.image.load("agujero.png").convert_alpha(), (CELL_SIZE - 50, CELL_SIZE - 50))
     hole_slow = pygame.transform.scale(pygame.image.load("agujero_slow.png").convert_alpha(), (CELL_SIZE - 50, CELL_SIZE - 50))
+    hole_speed = pygame.transform.scale(pygame.image.load("agujero_speed.png").convert_alpha(), (CELL_SIZE - 50, CELL_SIZE - 50))
     insect = pygame.transform.scale(pygame.image.load("insecticida.png").convert_alpha(), (100, 100))
     background_image = pygame.transform.scale(pygame.image.load("back.jpg").convert(), (WIDTH, HEIGHT))
     background_slow = pygame.transform.scale(pygame.image.load("back_slow.png").convert(), (WIDTH, HEIGHT))  # Fondo para modo lento
-    return hole, hole_slow, insect, background_image, background_slow
+    background_speed = pygame.transform.scale(pygame.image.load("back_speed.png").convert(), (WIDTH, HEIGHT))
+    return hole, hole_slow, insect, background_image, background_slow, hole_speed, background_speed
 
 
 # ITEMS
@@ -88,7 +107,7 @@ def spawn_pink_item():
         pink_item.rect.center = random_hole.rect.center
         spawn_timer = 0
         pink_item.active = True
-        item_spawn_time = random.randint(3000, 8000)
+        item_spawn_time = random.randint(1000, 8000)
         pink_item.spawn_time = pygame.time.get_ticks()
         pink_items.add(pink_item)
         items_mostrados += 1
@@ -102,8 +121,33 @@ def enter_slow_motion_mode():
         pygame.mixer.music.load("baile_slow.mp3")  
         pygame.mixer.music.play(-1) 
     a+=1    
-        
+
+def update_speed_items():
+    spawn_speed_item()
+    speed_items.update()
+    speed_items.draw(window)       
   
+def spawn_speed_item():
+    global speed_item, items_shown, spawn_timer, speed_spawn_time
+    if spawn_timer >= speed_spawn_time and items_shown == 0:
+        speed_item = SpeedItem()
+        random_hole = random.choice(agujeros.sprites())
+        speed_item.rect.center = random_hole.rect.center
+        spawn_timer = 0
+        speed_item.active = True
+        speed_spawn_time = random.randint(1000, 8000)
+        speed_item.spawn_time = pygame.time.get_ticks()
+        speed_items.add(speed_item)
+        items_shown += 1
+
+def enter_speed_mode():
+    global in_speed_mode, hole, b
+    in_speed_mode = True
+    hole = hole_speed
+    if b<1:
+        pygame.mixer.music.load("baile_speed.mp3")  
+        pygame.mixer.music.play(-1) 
+    b+=1   
 
 # Holes, MUSIC and BACKGROUND
 def create_holes():
@@ -125,17 +169,21 @@ def draw_background():
     global background 
     if in_slow_motion_mode:
         background = background_slow
+    elif in_speed_mode:
+        background = background_speed    
     else:
         background = background_image
 
     window.blit(background, (0, 0))
 
 def draw_holes():
-    global hole_slow
     
     if in_slow_motion_mode:
         for agujero in agujeros:
             window.blit(hole_slow, agujero.rect.topleft)
+    elif in_speed_mode:
+        for agujero in agujeros:
+            window.blit(hole_speed, agujero.rect.topleft)        
     else:
         for agujero in agujeros:
             window.blit(agujero.image, agujero.rect.topleft)
@@ -152,15 +200,24 @@ def handle_events():
                     handle_cucaracha_click(cucaracha)
             for pink_item in pink_items:
                 if pink_item.active and pink_item.rect.collidepoint(event.pos):
-                    handle_item_click(pink_item)
+                    handle_slow_item_click(pink_item)
+            for speed_item in speed_items:
+                if speed_item.active and speed_item.rect.collidepoint(event.pos):
+                    handle_speed_item_click(speed_item)        
 
     return True
 
-def handle_item_click(item):
+def handle_slow_item_click(item):
     global in_slow_motion_mode
     item.kill()  # Eliminar el item del grupo de sprites
     item.active = False  # Desactivar el item
     in_slow_motion_mode = True  # Entrar en slowmode
+
+def handle_speed_item_click(item):
+    global in_speed_mode
+    item.kill()  # Eliminar el item del grupo de sprites
+    item.active = False  # Desactivar el item
+    in_speed_mode = True  # Entrar en slowmode    
 
 def handle_cucaracha_click(cucaracha):
     global score
@@ -236,14 +293,17 @@ def handle_final_score_events():
 
 # Main game loop
 def main():
-    global running, score, in_slow_motion_mode, background_image, background
+    global running, score, in_slow_motion_mode, in_speed_mode, background_image, background 
     running = True
     score = 0
     in_slow_motion_mode = False
+    in_speed_mode = False
     time_in_slow_motion = 0 
+    time_in_speed_mode = 0
     
 
     while running:
+        
         draw_background()
         draw_holes()
         if not handle_events():
@@ -251,40 +311,50 @@ def main():
         
         update_pink_items()
         update_cucarachas()
+        update_speed_items()
         if in_slow_motion_mode:
             enter_slow_motion_mode()   
             time_in_slow_motion += clock.get_time() / 1000  # Convertir el tiempo en milisegundos a segundos
-
             # Si ha pasado más de 10 segundos, salir del modo lento
             if time_in_slow_motion > 12:
                 in_slow_motion_mode = False
                 pygame.mixer.music.load("baile.ogg")  # Restaurar la música normal
                 pygame.mixer.music.play(-1)  # Reproducir la música normal en bucle
-
+                
+        elif in_speed_mode:
+            enter_speed_mode()
+            time_in_speed_mode += clock.get_time() / 1000
+            if time_in_speed_mode > 10:  
+                in_speed_mode = False
+                pygame.mixer.music.load("baile.ogg")  # Restaurar la música normal
+                pygame.mixer.music.play(-1)  # Reproducir la música normal en bucle
+                
 
         if cucarachas_mostradas > 15:  # Salir del juego cuando se alcanzan 10 cucarachas
             running = False 
            
         draw_gif_animation()
         pygame.display.flip()
+    
         clock.tick(60)
     show_final_score_screen()
 
 if __name__ == "__main__":
-    global a    
+    global a, b    
     a=0
+    b=0
     WIDTH, HEIGHT = 800, 600
     CELL_SIZE = 200
     ROWS, COLS = HEIGHT // CELL_SIZE, WIDTH // CELL_SIZE
     window, clock = initialize_pygame()
-    hole, hole_slow, insect, background_image, background_slow= load_images()
+    hole, hole_slow, insect, background_image, background_slow, hole_speed, background_speed= load_images()
     agujeros = create_holes()
-    global in_slow_motion_mode
-    in_slow_motion_mode = False
 
     cucarachas = pygame.sprite.Group()
     pink_items = pygame.sprite.Group()
+    speed_items = pygame.sprite.Group()
 
+    #Gift
     gif_path = "baile.gif"
     gif_clip = VideoFileClip(gif_path)
     gif_frames = [np.rot90(np.array(frame) * 255) for frame in gif_clip.iter_frames()]
@@ -295,10 +365,14 @@ if __name__ == "__main__":
     gif_animation_speed = 0.18
 
     spawn_timer = 0
-    next_spawn_time = random.randint(1000, 5000)
+    next_spawn_time = random.randint(500, 5000)
     item_spawn_time = random.randint(1000, 8000)
+    speed_spawn_time = random.randint(1000, 6000)
+
     cucarachas_mostradas = 0
     items_mostrados = 0
+    items_shown = 0
+
     play_music()
     score = 0
     show_final_score = False
