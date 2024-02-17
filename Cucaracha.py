@@ -27,9 +27,14 @@ class Cucaracha(pygame.sprite.Sprite):
 
     def update(self):
         if self.active:
-            if pygame.time.get_ticks() - self.spawn_time >= 1000:  # Desaparece después de un segundo
-                self.active = False
-                self.kill()  # Elimina el sprite del grupo
+            if in_slow_motion_mode:
+                if pygame.time.get_ticks() - self.spawn_time >= 1300:  
+                    self.active = False
+                    self.kill()  # Elimina el sprite del grupo
+            else:
+                if pygame.time.get_ticks() - self.spawn_time >= 800:  
+                    self.active = False
+                    self.kill()  # Elimina el sprite del grupo
 
 class Agujero(pygame.sprite.Sprite):
     def __init__(self, x, y, hole_image):
@@ -40,147 +45,269 @@ class Agujero(pygame.sprite.Sprite):
     def update(self):
         pass
 
-# Crear matriz de agujeros
-agujeros = pygame.sprite.Group()
-hole_image = pygame.image.load("agujero.png").convert_alpha()  # Cargar la imagen del agujero
-hole_image = pygame.transform.scale(hole_image, (CELL_SIZE - 50, CELL_SIZE - 50))  # Ajustar tamaño del agujero
-for row in range(ROWS):
-    for col in range(COLS):
-        x = col * CELL_SIZE + CELL_SIZE // 2
-        y = row * CELL_SIZE + CELL_SIZE // 2
-        agujero = Agujero(x, y, hole_image)
-        agujeros.add(agujero)
+class PinkItem(pygame.sprite.Sprite):
+    def __init__(self):
+        super().__init__()
+        self.image = pygame.transform.scale(pygame.image.load("pink_item.png").convert_alpha(), (80, 80))
+        self.rect = self.image.get_rect()
+        self.active = False
+        self.spawn_time = 0
 
-# Grupo de cucarachas
-cucarachas = pygame.sprite.Group()
+    def update(self):
+        if self.active:
+            if pygame.time.get_ticks() - self.spawn_time >= 1000:
+                self.active = False
+                self.kill()
 
-# Cargar imagen del insecticida
-ins_image = pygame.image.load("insecticida.png").convert_alpha()
-ins_image = pygame.transform.scale(ins_image, (100, 100))  # Ajustar tamaño del insecticida
 
-# Cargar imagen de fondo
-background_image = pygame.image.load("back4.jpg").convert()
-background_image = pygame.transform.scale(background_image, (WIDTH, HEIGHT))
+def initialize_pygame():
+    pygame.init()
+    return pygame.display.set_mode((WIDTH, HEIGHT)), pygame.time.Clock()
 
-# Cargar el gif animado con moviepy
-gif_path = "baile.gif"
-gif_clip = VideoFileClip(gif_path)
+def load_images():
+    # Las imágenes y sus tamaños pueden cambiar dependiendo de tu implementación específica
+    hole = pygame.transform.scale(pygame.image.load("agujero.png").convert_alpha(), (CELL_SIZE - 50, CELL_SIZE - 50))
+    hole_slow = pygame.transform.scale(pygame.image.load("agujero_slow.png").convert_alpha(), (CELL_SIZE - 50, CELL_SIZE - 50))
+    insect = pygame.transform.scale(pygame.image.load("insecticida.png").convert_alpha(), (100, 100))
+    background_image = pygame.transform.scale(pygame.image.load("back.jpg").convert(), (WIDTH, HEIGHT))
+    background_slow = pygame.transform.scale(pygame.image.load("back_slow.png").convert(), (WIDTH, HEIGHT))  # Fondo para modo lento
+    return hole, hole_slow, insect, background_image, background_slow
 
-# Obtener el primer cuadro del gif y convertirlo a un array numpy
-gif_frames = [np.rot90(np.array(frame) * 255) for frame in gif_clip.iter_frames()]
 
-# Crear una lista de superficies de Pygame desde los arrays numpy
-gif_surfaces = [pygame.surfarray.make_surface(frame) for frame in gif_frames]
+# ITEMS
+def update_pink_items():
+    spawn_pink_item()
+    pink_items.update()  # Actualiza el estado de los PinkItem
+    pink_items.draw(window)  # Dibuja los PinkItem en la ventana
+    
+def spawn_pink_item():
+    global pink_item, items_mostrados, spawn_timer, item_spawn_time
+    if spawn_timer >= item_spawn_time and items_mostrados==0:
+        pink_item = PinkItem()
+        random_hole = random.choice(agujeros.sprites())
+        pink_item.rect.center = random_hole.rect.center
+        spawn_timer = 0
+        pink_item.active = True
+        item_spawn_time = random.randint(3000, 8000)
+        pink_item.spawn_time = pygame.time.get_ticks()
+        pink_items.add(pink_item)
+        items_mostrados += 1
 
-# Escalar cada cuadro del gif a un tamaño más pequeño
-gif_surfaces = [pygame.transform.scale(surface, (40, 40)) for surface in gif_surfaces]
+def enter_slow_motion_mode():
+    global in_slow_motion_mode, hole, a
 
-# Definir la posición inicial del gif en una esquina de la ventana
-gif_position = [760, 560]  # Cambiar el valor según la posición deseada
+    in_slow_motion_mode = True
+    hole = hole_slow  # Cambiar el agujero al modo lento
+    if a<1:
+        pygame.mixer.music.load("baile_slow.mp3")  
+        pygame.mixer.music.play(-1) 
+    a+=1    
+        
+  
 
-# Variables para controlar el tiempo y la animación
-spawn_timer = 0
-gif_frame_index = 0
-gif_animation_speed = 0.18
-next_spawn_time = random.randint(2000, 5000)  # Tiempo aleatorio hasta la próxima aparición de una cucaracha
+# Holes, MUSIC and BACKGROUND
+def create_holes():
+    agujeros = pygame.sprite.Group()
+    for row in range(ROWS):
+        for col in range(COLS):
+            x = col * CELL_SIZE + CELL_SIZE // 2
+            y = row * CELL_SIZE + CELL_SIZE // 2
+            agujero = Agujero(x, y, hole)
+            agujeros.add(agujero)
+    return agujeros
 
-# Música
-pygame.mixer.music.load("baile.ogg")
+def play_music():
+    pygame.mixer.music.load("baile.ogg")
+    pygame.mixer.music.play(-1)
+    pygame.mixer.music.set_volume(0.5)
 
-# Bucle principal del juego
-running = True
-clock = pygame.time.Clock()
+def draw_background():
+    global background 
+    if in_slow_motion_mode:
+        background = background_slow
+    else:
+        background = background_image
 
-# Reproducir música
-pygame.mixer.music.play(-1)  # El argumento -1 indica reproducción en bucle
+    window.blit(background, (0, 0))
 
-score = 0  # Contador de puntos
-cucarachas_mostradas = 0  # Contador de cucarachas mostradas
-show_final_score = False
+def draw_holes():
+    global hole_slow
+    
+    if in_slow_motion_mode:
+        for agujero in agujeros:
+            window.blit(hole_slow, agujero.rect.topleft)
+    else:
+        for agujero in agujeros:
+            window.blit(agujero.image, agujero.rect.topleft)
 
-while running and cucarachas_mostradas < 11:
-    window.blit(background_image, (0, 0))  # Dibujar fondo
 
-    # Dibujar agujeros
-    for agujero in agujeros:
-        window.blit(agujero.image, agujero.rect.topleft)
-
+# Handle 
+def handle_events():
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
-            running = False
+            return False
         elif event.type == pygame.MOUSEBUTTONDOWN:
-            # Verifica si el clic ocurrió dentro de la región de una cucaracha activa
             for cucaracha in cucarachas:
                 if cucaracha.active and cucaracha.rect.collidepoint(event.pos):
-                    score += 1  # Aumenta el contador de puntos
-                    cucaracha.active = False  # Desactiva la cucaracha
-                    cucaracha.kill()  # Elimina el sprite del grupo
-                    # Mostrar animación de insecticida
-                    cell_center = (cucaracha.rect.centerx // CELL_SIZE * CELL_SIZE + CELL_SIZE // 2,
-                                   cucaracha.rect.centery // CELL_SIZE * CELL_SIZE + CELL_SIZE // 2)
-                    window.blit(ins_image, (cell_center[0] - ins_image.get_width() // 2,
-                                                  cell_center[1] - ins_image.get_height() // 2))
-                    pygame.display.flip()
-                    pygame.time.delay(300)  # Retraso para mostrar la animación del insecticida
-                    break  # Sal del bucle una vez que se haya encontrado una cucaracha clickeada
+                    handle_cucaracha_click(cucaracha)
+            for pink_item in pink_items:
+                if pink_item.active and pink_item.rect.collidepoint(event.pos):
+                    handle_item_click(pink_item)
 
-    # Lógica del juego
+    return True
+
+def handle_item_click(item):
+    global in_slow_motion_mode
+    item.kill()  # Eliminar el item del grupo de sprites
+    item.active = False  # Desactivar el item
+    in_slow_motion_mode = True  # Entrar en slowmode
+
+def handle_cucaracha_click(cucaracha):
+    global score
+    score += 1
+    cucaracha.active = False
+    cucaracha.kill()
+    cell_center = (cucaracha.rect.centerx // CELL_SIZE * CELL_SIZE + CELL_SIZE // 2,
+                   cucaracha.rect.centery // CELL_SIZE * CELL_SIZE + CELL_SIZE // 2)
+    window.blit(insect, (cell_center[0] - insect.get_width() // 2,
+                            cell_center[1] - insect.get_height() // 2))
+    pygame.display.flip()
+    pygame.time.delay(300)
+
+# CUCARACHA  
+def update_cucarachas():
+    spawn_cucaracha()
+    cucarachas.update()
+    cucarachas.draw(window)
+
+def spawn_cucaracha():
+    global spawn_timer, cucarachas_mostradas, next_spawn_time
     spawn_timer += clock.get_time()
-    if spawn_timer >= next_spawn_time:
+    if spawn_timer >= next_spawn_time and cucarachas_mostradas < 16:
         spawn_timer = 0
-        next_spawn_time = random.randint(2000, 5000)  # Establecer el tiempo aleatorio hasta la próxima aparición de una cucaracha
-        random_hole = random.choice(agujeros.sprites())  # Elegir un agujero aleatorio para que aparezca la cucaracha
+        next_spawn_time = random.randint(2000, 5000)
+        random_hole = random.choice(agujeros.sprites())
         cucaracha = Cucaracha()
         cucaracha.rect.center = random_hole.rect.center
         cucaracha.active = True
-        cucaracha.spawn_time = pygame.time.get_ticks()  # Guardar el tiempo de aparición de la cucaracha
-        cucarachas.add(cucaracha)  # Añadir la cucaracha al grupo de cucarachas
-        cucarachas_mostradas += 1  # Incrementa el contador de cucarachas mostradas
+        cucaracha.spawn_time = pygame.time.get_ticks()
+        cucarachas.add(cucaracha)
+        cucarachas_mostradas += 1
 
-    # Actualizar y dibujar cucarachas
-    cucarachas.update()
-    cucarachas.draw(window)
-    
-    # Dibujar el gif animado
+def draw_gif_animation():
     window.blit(gif_surfaces[int(gif_frame_index)], gif_position)
-    gif_frame_index = (gif_frame_index + gif_animation_speed) % len(gif_surfaces) 
+    update_gif_frame_index()
 
-    pygame.display.flip()
-    clock.tick(60)
+def update_gif_frame_index():
+    global gif_frame_index
+    gif_frame_index = (gif_frame_index + gif_animation_speed) % len(gif_surfaces)
 
 
-running = False  # Esto asegura que el bucle principal se detenga después de que se muestre la puntuación final
-show_final_score = True
-background_image1 = pygame.image.load("back5.jpg").convert()
-background_image1 = pygame.transform.scale(background_image1, (WIDTH, HEIGHT))
+#FINAL SCORE
+def show_final_score_screen():
+    draw_final_score_screen()
+    while True:
+        if not handle_final_score_events():
+            break
 
-# Bucle para la pantalla de puntuación final
-while show_final_score:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            show_final_score = False  # Cierra la pantalla de puntuación final si se presiona el botón de cerrar
-        elif event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_ESCAPE:
-                show_final_score = False  # Cierra la pantalla de puntuación final si se presiona la tecla de escape
-
-    # Mostrar la puntuación final
-    window.blit(background_image, (0, 0))
-    font = pygame.font.Font(None, 36)
+def draw_final_score_screen():
+    global background 
+    background = background_image
+    pygame.mixer.music.load("end.wav")
+    pygame.mixer.music.play()
+    window.blit(background, (0, 0))
     final_score_text = font.render("Puntuación final: " + str(score), True, BLACK)
-    #Botón
-    button_width = 300
-    button_height = 50
-    button_color = (140, 83, 11)  
-    marco = (0, 0, 0)
     button_rect = pygame.Rect((WIDTH - button_width) // 2, (HEIGHT - button_height) // 2, button_width, button_height)
-    # Dibujar el botón
     pygame.draw.rect(window, marco, button_rect)
     pygame.draw.rect(window, button_color, button_rect.inflate(-4, -4))
     text_rect = final_score_text.get_rect(center=(WIDTH // 2, HEIGHT // 2))
-    # Dibujar el texto de la puntuación final
     window.blit(final_score_text, text_rect.topleft)
     pygame.display.flip()
 
+def handle_final_score_events():
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            return False
+        elif event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_ESCAPE:
+                return False
+    return True
 
-pygame.quit()
-sys.exit()
+
+# Main game loop
+def main():
+    global running, score, in_slow_motion_mode, background_image, background
+    running = True
+    score = 0
+    in_slow_motion_mode = False
+    time_in_slow_motion = 0 
+    
+
+    while running:
+        draw_background()
+        draw_holes()
+        if not handle_events():
+            break
+        
+        update_pink_items()
+        update_cucarachas()
+        if in_slow_motion_mode:
+            enter_slow_motion_mode()   
+            time_in_slow_motion += clock.get_time() / 1000  # Convertir el tiempo en milisegundos a segundos
+
+            # Si ha pasado más de 10 segundos, salir del modo lento
+            if time_in_slow_motion > 12:
+                in_slow_motion_mode = False
+                pygame.mixer.music.load("baile.ogg")  # Restaurar la música normal
+                pygame.mixer.music.play(-1)  # Reproducir la música normal en bucle
+
+
+        if cucarachas_mostradas > 15:  # Salir del juego cuando se alcanzan 10 cucarachas
+            running = False 
+           
+        draw_gif_animation()
+        pygame.display.flip()
+        clock.tick(60)
+    show_final_score_screen()
+
+if __name__ == "__main__":
+    global a    
+    a=0
+    WIDTH, HEIGHT = 800, 600
+    CELL_SIZE = 200
+    ROWS, COLS = HEIGHT // CELL_SIZE, WIDTH // CELL_SIZE
+    window, clock = initialize_pygame()
+    hole, hole_slow, insect, background_image, background_slow= load_images()
+    agujeros = create_holes()
+    global in_slow_motion_mode
+    in_slow_motion_mode = False
+
+    cucarachas = pygame.sprite.Group()
+    pink_items = pygame.sprite.Group()
+
+    gif_path = "baile.gif"
+    gif_clip = VideoFileClip(gif_path)
+    gif_frames = [np.rot90(np.array(frame) * 255) for frame in gif_clip.iter_frames()]
+    gif_surfaces = [pygame.surfarray.make_surface(frame) for frame in gif_frames]
+    gif_surfaces = [pygame.transform.scale(surface, (40, 40)) for surface in gif_surfaces]
+    gif_position = [760, 560]
+    gif_frame_index = 0
+    gif_animation_speed = 0.18
+
+    spawn_timer = 0
+    next_spawn_time = random.randint(1000, 5000)
+    item_spawn_time = random.randint(1000, 8000)
+    cucarachas_mostradas = 0
+    items_mostrados = 0
+    play_music()
+    score = 0
+    show_final_score = False
+    font = pygame.font.Font(None, 36)
+    button_width = 300
+    button_height = 50
+    button_color = (140, 83, 11)
+    marco = (0, 0, 0)
+    main()
+    
+    pygame.quit()
+    sys.exit()
