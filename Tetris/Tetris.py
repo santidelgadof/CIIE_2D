@@ -201,7 +201,7 @@ def main():
                     elif event.key == pygame.K_RIGHT:
                         # Mover peza á dereita
                         blocks[-1].move_right(board)
-                    elif event.key == pygame.K_SPACE:
+                    elif event.key == pygame.K_UP:
                         # Rotar peza 
                         blocks[-1].rotate(board)
                     elif event.key == pygame.K_DOWN:
