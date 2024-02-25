@@ -9,6 +9,20 @@ def inicializar_juego():
 def cargar_fondo():
     return pygame.image.load("Animacion.jpg").convert()
 
+def dibujar_rectangulo_redondeado(pantalla):
+    x = 200  # Posición x del rectángulo (ajusta según sea necesario)
+    y = 355  # Posición y del rectángulo (ajusta según sea necesario)
+    ancho = 400  # Ancho del rectángulo
+    alto = 200  # Alto del rectángulo
+    radio = 50  # Radio de las esquinas redondeadas
+    color = (218, 255, 252)  # Color del rectángulo (rojo en este caso)
+    pygame.draw.rect(pantalla, color, (x + radio, y, ancho - 2 * radio, alto))
+    pygame.draw.rect(pantalla, color, (x, y + radio, ancho, alto - 2 * radio))
+    pygame.draw.ellipse(pantalla, color, (x, y, 2 * radio, 2 * radio))
+    pygame.draw.ellipse(pantalla, color, (x + ancho - 2 * radio, y, 2 * radio, 2 * radio))
+    pygame.draw.ellipse(pantalla, color, (x, y + alto - 2 * radio, 2 * radio, 2 * radio))
+    pygame.draw.ellipse(pantalla, color, (x + ancho - 2 * radio, y + alto - 2 * radio, 2 * radio, 2 * radio))
+
 def main():
     pantalla, reloj = inicializar_juego()
     fondo = cargar_fondo()
@@ -42,6 +56,7 @@ def main():
         tiempo_transcurrido += reloj.get_time()
 
         if tiempo_transcurrido >= tiempo_aparicion_botones:
+            dibujar_rectangulo_redondeado(pantalla)  # Dibujar el rectángulo redondeado
             boton1.update()  # Actualizar el estado del botón
             boton2.update()  # Actualizar el estado del botón
             boton1.draw(pantalla)  # Dibujar el botón en la pantalla
