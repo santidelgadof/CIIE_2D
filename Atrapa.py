@@ -3,7 +3,10 @@ import random
 import sys
 import numpy as np
 from moviepy.editor import VideoFileClip
-import os
+from ClassCucaracha import Cucaracha
+from ClassAgujero import Agujero
+from ClassSlowItem import SlowItem
+from ClassSpeedItem import SpeedItem
 
 pygame.init()
 
@@ -17,66 +20,6 @@ pygame.display.set_caption("Atrapa Cucarachas")
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 
-class Cucaracha(pygame.sprite.Sprite):
-    def __init__(self):
-        super().__init__()
-        self.image = pygame.image.load("cucaracha.png").convert_alpha()  # Cargar la imagen 
-        self.image = pygame.transform.scale(self.image, (70, 70))  # Escalar la imagen 
-        self.rect = self.image.get_rect()
-        self.active = False
-        self.spawn_time = 0
-
-    def update(self):
-        if self.active:
-            if in_slow_motion_mode:
-                if pygame.time.get_ticks() - self.spawn_time >= 1300:  
-                    self.active = False
-                    self.kill()  # Elimina el sprite del grupo
-            elif in_speed_mode:   
-                if pygame.time.get_ticks() - self.spawn_time >= 500:  
-                    self.active = False
-                    self.kill()  # Elimina el sprite del grupo
-            else:
-                if pygame.time.get_ticks() - self.spawn_time >= 800:  
-                    self.active = False
-                    self.kill()  # Elimina el sprite del grupo
-
-class Agujero(pygame.sprite.Sprite):
-    def __init__(self, x, y, hole_image):
-        super().__init__()
-        self.image = hole_image
-        self.rect = self.image.get_rect(center=(x, y))
-
-    def update(self):
-        pass
-
-class PinkItem(pygame.sprite.Sprite):
-    def __init__(self):
-        super().__init__()
-        self.image = pygame.transform.scale(pygame.image.load("pink_item.png").convert_alpha(), (80, 80))
-        self.rect = self.image.get_rect()
-        self.active = False
-        self.spawn_time = 0
-
-    def update(self):
-        if self.active:
-            if pygame.time.get_ticks() - self.spawn_time >= 1000:
-                self.active = False
-                self.kill()
-
-class SpeedItem(pygame.sprite.Sprite):
-    def __init__(self):
-        super().__init__()
-        self.image = pygame.transform.scale(pygame.image.load("speed_item.png").convert_alpha(), (80, 80))
-        self.rect = self.image.get_rect()
-        self.active = False
-        self.spawn_time = 0
-
-    def update(self):
-        if self.active:
-            if pygame.time.get_ticks() - self.spawn_time >= 1500:
-                self.active = False
-                self.kill()
 
 def initialize_pygame():
     pygame.init()
@@ -95,22 +38,22 @@ def load_images():
 
 
 # ITEMS
-def update_pink_items():
-    spawn_pink_item()
-    pink_items.update()  # Actualiza el estado de los PinkItem
-    pink_items.draw(window)  # Dibuja los PinkItem en la ventana
+def update_slow_items():
+    spawn_slow_item()
+    slow_items.update()  # Actualiza el estado de los slowItem
+    slow_items.draw(window)  # Dibuja los slowItem en la ventana
     
-def spawn_pink_item():
-    global pink_item, items_mostrados, spawn_timer, item_spawn_time
+def spawn_slow_item():
+    global slow_item, items_mostrados, spawn_timer, item_spawn_time
     if spawn_timer >= item_spawn_time and items_mostrados==0:
-        pink_item = PinkItem()
+        slow_item = SlowItem()
         random_hole = random.choice(agujeros.sprites())
-        pink_item.rect.center = random_hole.rect.center
+        slow_item.rect.center = random_hole.rect.center
         spawn_timer = 0
-        pink_item.active = True
+        slow_item.active = True
         item_spawn_time = random.randint(1000, 8000)
-        pink_item.spawn_time = pygame.time.get_ticks()
-        pink_items.add(pink_item)
+        slow_item.spawn_time = pygame.time.get_ticks()
+        slow_items.add(slow_item)
         items_mostrados += 1
 
 def enter_slow_motion_mode():
@@ -190,7 +133,7 @@ def draw_holes():
             window.blit(agujero.image, agujero.rect.topleft)
 
 
-# Handle 
+# Handle clicks
 def handle_events():
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -199,9 +142,9 @@ def handle_events():
             for cucaracha in cucarachas:
                 if cucaracha.active and cucaracha.rect.collidepoint(event.pos):
                     handle_cucaracha_click(cucaracha)
-            for pink_item in pink_items:
-                if pink_item.active and pink_item.rect.collidepoint(event.pos):
-                    handle_slow_item_click(pink_item)
+            for slow_item in slow_items:
+                if slow_item.active and slow_item.rect.collidepoint(event.pos):
+                    handle_slow_item_click(slow_item)
             for speed_item in speed_items:
                 if speed_item.active and speed_item.rect.collidepoint(event.pos):
                     handle_speed_item_click(speed_item)        
@@ -237,7 +180,7 @@ def handle_cucaracha_click(cucaracha):
 # CUCARACHA  
 def update_cucarachas():
     spawn_cucaracha()
-    cucarachas.update()
+    cucarachas.update(in_slow_motion_mode, in_speed_mode)
     cucarachas.draw(window)
 
 def spawn_cucaracha():
@@ -319,9 +262,10 @@ def main():
         if not handle_events():
             break
        
-        update_pink_items()
+        update_slow_items()
         update_cucarachas()
         update_speed_items()
+        
         if in_slow_motion_mode:
             enter_slow_motion_mode()   
             time_in_slow_motion += clock.get_time() / 1000  # Convertir el tiempo en milisegundos a segundos
@@ -353,15 +297,20 @@ if __name__ == "__main__":
     global a, b    
     a=0
     b=0
-    WIDTH, HEIGHT = 800, 600
     CELL_SIZE = 200
     ROWS, COLS = HEIGHT // CELL_SIZE, WIDTH // CELL_SIZE
     window, clock = initialize_pygame()
     hole, hole_slow, insect, background_image, background_slow, hole_speed, background_speed= load_images()
     agujeros = create_holes()
+    items_shown = 0
+    score = 0
+    items_mostrados = 0 
+    cucarachas_mostradas = 0 
+    spawn_timer = 0
+    gif_frame_index = 0
 
     cucarachas = pygame.sprite.Group()
-    pink_items = pygame.sprite.Group()
+    slow_items = pygame.sprite.Group()
     speed_items = pygame.sprite.Group()
 
     #Gift
@@ -371,20 +320,12 @@ if __name__ == "__main__":
     gif_surfaces = [pygame.surfarray.make_surface(frame) for frame in gif_frames]
     gif_surfaces = [pygame.transform.scale(surface, (40, 40)) for surface in gif_surfaces]
     gif_position = [760, 560]
-    gif_frame_index = 0
     gif_animation_speed = 0.18
 
-    spawn_timer = 0
     next_spawn_time = random.randint(500, 5000)
     item_spawn_time = random.randint(1000, 8000)
     speed_spawn_time = random.randint(1000, 6000)
-
-    cucarachas_mostradas = 0
-    items_mostrados = 0
-    items_shown = 0
-
-    play_music()
-    score = 0
+   
     show_final_score = False
     font = pygame.font.Font(None, 36)
     button_width = 300
