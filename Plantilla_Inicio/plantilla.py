@@ -22,6 +22,7 @@ pygame.display.set_caption('Plantilla')
 fondo = pygame.image.load("repositorio\CIIE//Plantilla_Inicio//images//fondoArcades.jpeg").convert()
 fondo = pygame.transform.scale(fondo, (800,800))
 fuenteGP = "repositorio\CIIE//Plantilla_Inicio//fuentes//game_power.ttf"
+fuente8Bit = "repositorio\CIIE//Plantilla_Inicio//fuentes//8Bit.ttf"
 
 class Boton:
     def __init__(self, x, y, ancho, alto, texto, fuente, color_fondo, color_texto, tam_texto, accion):
@@ -37,6 +38,9 @@ class Boton:
         self.tam_texto = tam_texto
         self.accion = accion
 
+        self.selector = self.fuente.render(">", False, color_texto)
+        self.sel_pos = (self.rect.topleft[0] - 20, self.rect.topleft[1])
+
         self.hover = False
         self.pressed = False
         self.clicked = False
@@ -47,6 +51,7 @@ class Boton:
         mouse_pos = pygame.mouse.get_pos()
         if self.rect.collidepoint(mouse_pos):
             self.hover = True
+            pantalla.blit(self.selector, self.sel_pos)
             if pygame.mouse.get_pressed()[0]:
                 self.pressed = True
             else:
@@ -130,9 +135,6 @@ def BlitTransparente(superficie, color, size, coord):
     superficie_transparente.fill(color)
     superficie.blit(superficie_transparente, coord)
 
-
-
-
             
 
 def btnPlay():
@@ -143,7 +145,7 @@ def btnMenu():
 
 
 tetrisTxt = Text("Tetris", 60, AMARILLO, ANCHO//2-200 + 400//2, ALTO//3-200 + 300//5, True, fuenteGP)
-coinTxt = Text("Insert a coin", 20, AMARILLO, ANCHO//2-200 + 400-100, ALTO//3-200 + 300-50, True, fuenteGP)
+coinTxt = Text("Insert a coin", 20, AMARILLO, ANCHO//2-200 + 400-100, ALTO//3-200 + 300-50, True, fuente8Bit)
 
 
 botones = [
