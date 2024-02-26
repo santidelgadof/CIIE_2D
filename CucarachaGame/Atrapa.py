@@ -2,7 +2,7 @@ import pygame
 import random
 import sys
 import numpy as np
-from moviepy.editor import VideoFileClip
+#from moviepy.editor import VideoFileClip
 from ClassCucaracha import Cucaracha
 from ClassAgujero import Agujero
 from ClassSlowItem import SlowItem
@@ -197,13 +197,13 @@ def spawn_cucaracha():
         cucarachas.add(cucaracha)
         cucarachas_mostradas += 1
 
-def draw_gif_animation():
-    window.blit(gif_surfaces[int(gif_frame_index)], gif_position)
-    update_gif_frame_index()
+#def draw_gif_animation():
+ #   window.blit(gif_surfaces[int(gif_frame_index)], gif_position)
+  #  update_gif_frame_index()
 
 def update_gif_frame_index():
     global gif_frame_index
-    gif_frame_index = (gif_frame_index + gif_animation_speed) % len(gif_surfaces)
+   # gif_frame_index = (gif_frame_index + gif_animation_speed) % len(gif_surfaces)
 
 
 #FINAL SCORE
@@ -286,7 +286,7 @@ def main():
         if cucarachas_mostradas > 15:  # Salir del juego cuando se alcanzan 10 cucarachas
             running = False 
            
-        draw_gif_animation()
+        #draw_gif_animation()
         pygame.display.flip()
     
         clock.tick(60)
@@ -314,13 +314,13 @@ if __name__ == "__main__":
     speed_items = pygame.sprite.Group()
 
     #Gift
-    gif_path = "baile.gif"
-    gif_clip = VideoFileClip(gif_path)
-    gif_frames = [np.rot90(np.array(frame) * 255) for frame in gif_clip.iter_frames()]
-    gif_surfaces = [pygame.surfarray.make_surface(frame) for frame in gif_frames]
-    gif_surfaces = [pygame.transform.scale(surface, (40, 40)) for surface in gif_surfaces]
-    gif_position = [760, 560]
-    gif_animation_speed = 0.18
+    #gif_path = "baile.gif"
+    #gif_clip = VideoFileClip(gif_path)
+    #gif_frames = [np.rot90(np.array(frame) * 255) for frame in gif_clip.iter_frames()]
+    #gif_surfaces = [pygame.transform.scale(surface, (40, 40)) for surface in gif_surfaces]
+    #gif_surfaces = [pygame.surfarray.make_surface(frame) for frame in gif_frames]
+    #gif_position = [760, 560]
+    #gif_animation_speed = 0.18
 
     next_spawn_time = random.randint(500, 5000)
     item_spawn_time = random.randint(1000, 8000)
