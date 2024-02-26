@@ -3,6 +3,7 @@ import sys
 
 from Pantalla import gui as gui
 from ResourceManager import ResourceManager
+from GameState import State
 
 resource_manager = ResourceManager()
 
@@ -51,7 +52,7 @@ def main():
                 sys.exit()
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if boton1.top_rect.collidepoint(event.pos):
-                    return 1
+                    return State.TrashGameLVL1
                     # Agrega aquí la lógica para redirigir al jugador a la Ruta 1
                 elif boton2.top_rect.collidepoint(event.pos):
                     print("Ruta 2")
