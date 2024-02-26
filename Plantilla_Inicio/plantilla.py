@@ -145,7 +145,7 @@ def btnMenu():
 
 
 tetrisTxt = Text("Tetris", 60, AMARILLO, ANCHO//2-200 + 400//2, ALTO//3-200 + 300//5, True, fuenteGP)
-coinTxt = Text("Insert a coin", 20, AMARILLO, ANCHO//2-200 + 400-100, ALTO//3-200 + 300-50, True, fuente8Bit)
+coinTxt = Text("Insert a coin", 20, AMARILLO, ANCHO//2-200 + 400-100, ALTO//3-200 + 300-70, True, fuente8Bit)
 
 
 botones = [
