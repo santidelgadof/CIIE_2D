@@ -9,6 +9,11 @@ def inicializar_juego():
 def cargar_fondo():
     return pygame.image.load("Animacion.jpg").convert()
 
+def play_music():
+    pygame.mixer.music.load("pantalla_music.mp3")
+    pygame.mixer.music.play(-1)
+    pygame.mixer.music.set_volume(0.5)
+
 def dibujar_rectangulo_redondeado(pantalla):
     x = 200  # Posición x del rectángulo (ajusta según sea necesario)
     y = 355  # Posición y del rectángulo (ajusta según sea necesario)
@@ -28,6 +33,7 @@ def main():
     fondo = cargar_fondo()
     x, y = 0, 0
 
+    play_music()
     boton1 = Button(300, 375, "JUGAR")  # Crear instancia de Button
     boton2 = Button(300, 475, "CREDITOS")  # Crear instancia de Button
 
