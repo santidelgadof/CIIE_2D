@@ -1,6 +1,6 @@
 import random
 import pygame
-from TrashItem import TrashItem
+from TrashGame.TrashItem import TrashItem
 
 
 class Spawner:

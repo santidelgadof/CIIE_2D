@@ -1,5 +1,5 @@
 import pygame
-from Button import Button
+from TrashGame.Button import Button
 
 class FinalWindow:
     buttons = []

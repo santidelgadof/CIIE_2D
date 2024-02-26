@@ -1,6 +1,7 @@
 import pygame
-from Container import TrashType
+from TrashGame.Container import TrashType
 import os
+
 class TrashItem:
     classified = False
     container_x = None

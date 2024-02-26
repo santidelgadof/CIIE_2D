@@ -2,14 +2,14 @@ import random
 import pygame, sys
 from pygame import mixer
 from pygame.locals import *
-from Theme import Theme
-from Spawner import Spawner
-from ClassificationArea import ClassificationArea
-from TrashItem import TrashItem
-from Container import *
-from HealthBar import HealthBar
-from AbstractFunctions import *
-from FinalWindow import FinalWindow
+from TrashGame.Theme import Theme
+from TrashGame.Spawner import Spawner
+from TrashGame.ClassificationArea import ClassificationArea
+from TrashGame.TrashItem import TrashItem
+from TrashGame.Container import *
+from TrashGame.HealthBar import HealthBar
+from TrashGame.AbstractFunctions import *
+from TrashGame.FinalWindow import FinalWindow
 from ResourceManager import ResourceManager
 import os
 pygame.init()
@@ -25,7 +25,6 @@ pygame.display.set_caption('Trash Game!')
 
 ### GLOBALS ###
 theme = Theme()
-available_pngs = [f for f in os.listdir('assets/trash') if os.path.isfile(os.path.join('assets/trash', f))]
 
 container_images = ["assets/containers/OrganicContainer.png", 
               "assets/containers/PlasticContainer.png", 
@@ -37,7 +36,7 @@ def main(level): # Level is an int that stablishes the dificulty of the lvl
     try_again = True
     while(try_again):
         ### SetUp each level configuration ###
-        mixer.music.load("assets/music/MainMusic.ogg")
+        mixer.music.load("TrashGame/assets/music/MainMusic.ogg")
         mixer.music.set_volume(0.3)
         mixer.music.play(-1) 
         if level == 1:
@@ -154,7 +153,7 @@ def main(level): # Level is an int that stablishes the dificulty of the lvl
 
             ### RENDERING ###
             # Draw the background
-            background_image = pygame.image.load("assets/bg.jpeg")
+            background_image = resource_manager.trash_background.get()
             background_image = pygame.transform.scale(background_image, (800, 800))
             WINDOW.blit(background_image, (0, 0))
 
@@ -165,7 +164,7 @@ def main(level): # Level is an int that stablishes the dificulty of the lvl
                 paperContainer.draw(WINDOW)
                 glassContainer.draw(WINDOW)
             # Draw the bag
-            bag = pygame.image.load("assets/containers/Bag.png").convert_alpha()
+            bag = resource_manager.bag.get()
             scaled_bag = pygame.transform.scale(bag, (bag.get_width() // 2, bag.get_height() // 2))
             WINDOW.blit(scaled_bag, (280, 700))
             # Draw the TrashItems
@@ -189,4 +188,4 @@ def main(level): # Level is an int that stablishes the dificulty of the lvl
             pygame.display.update()
             fpsClock.tick(FPS)
 
-main(1)
+

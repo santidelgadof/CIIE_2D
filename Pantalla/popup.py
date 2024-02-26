@@ -1,13 +1,15 @@
 import pygame
 import sys
-from gui import Button
+
+from Pantalla import gui as gui
+from ResourceManager import ResourceManager
+
+resource_manager = ResourceManager()
 
 def inicializar_juego():
     pygame.init()
     return pygame.display.set_mode((800, 800)), pygame.time.Clock()
 
-def cargar_fondo():
-    return pygame.image.load("Animacion.jpg").convert()
 
 def dibujar_rectangulo_redondeado(pantalla):
     x = 200  # Posición x del rectángulo (ajusta según sea necesario)
@@ -23,13 +25,21 @@ def dibujar_rectangulo_redondeado(pantalla):
     pygame.draw.ellipse(pantalla, color, (x, y + alto - 2 * radio, 2 * radio, 2 * radio))
     pygame.draw.ellipse(pantalla, color, (x + ancho - 2 * radio, y + alto - 2 * radio, 2 * radio, 2 * radio))
 
+def generateWelcomeScreen(tiempo_transcurrido):
+    fondo = resource_manager.popup_animation.get()
+    boton1 = gui.Button(300, 375, "JUGAR")  # Crear instancia de Button
+    boton2 = gui.Button(300, 475, "CREDITOS")  # Crear instancia de Button
+    tiempo_aparicion_botones = 2000
+
+
 def main():
+    
     pantalla, reloj = inicializar_juego()
-    fondo = cargar_fondo()
+    fondo = resource_manager.popup_animation.get()
     x, y = 0, 0
 
-    boton1 = Button(300, 375, "JUGAR")  # Crear instancia de Button
-    boton2 = Button(300, 475, "CREDITOS")  # Crear instancia de Button
+    boton1 = gui.Button(300, 375, "JUGAR")  # Crear instancia de Button
+    boton2 = gui.Button(300, 475, "CREDITOS")  # Crear instancia de Button
 
     tiempo_transcurrido = 0
     tiempo_aparicion_botones = 2000  # Tiempo en milisegundos (2 segundos)
@@ -41,7 +51,7 @@ def main():
                 sys.exit()
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if boton1.top_rect.collidepoint(event.pos):
-                    print("Ruta 1")
+                    return 1
                     # Agrega aquí la lógica para redirigir al jugador a la Ruta 1
                 elif boton2.top_rect.collidepoint(event.pos):
                     print("Ruta 2")
