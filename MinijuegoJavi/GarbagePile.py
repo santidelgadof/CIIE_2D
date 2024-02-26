@@ -2,6 +2,9 @@ import pygame
 import random
 import sys
 import os
+from bloquePila import Bloque
+from bloqueClicable import ClicableObject
+from textClass import Text
 
 # Inicializar Pygame
 pygame.init()
@@ -61,8 +64,8 @@ PosPalabras = [
 
 def cargar_imagenes():
     imagenes = []
-    for nombre_archivo in os.listdir("repositorio\CIIE\MinijuegoJavi\images//bloques"):
-        ruta = os.path.join("repositorio\CIIE\MinijuegoJavi\images//bloques", nombre_archivo)
+    for nombre_archivo in os.listdir("repositorio//CIIE//MinijuegoJavi//images//bloques"):
+        ruta = os.path.join("repositorio//CIIE//MinijuegoJavi//images//bloques", nombre_archivo)
         if os.path.isfile(ruta):
             imagen = pygame.image.load(ruta).convert_alpha()
             imagen = pygame.transform.scale(imagen, (ANCHO_BLOQUE, ALTO_BLOQUE))
@@ -70,44 +73,10 @@ def cargar_imagenes():
     return imagenes
 
 def musica():
-    pygame.mixer.music.load("repositorio\CIIE\MinijuegoJavi\music\music2.ogg")
+    pygame.mixer.music.load("repositorio//CIIE//MinijuegoJavi//music//music2.ogg")
     pygame.mixer.music.play(-1)
     pygame.mixer.music.set_volume(0.5)
 
-# Crear clase para representar un bloque
-class Bloque(pygame.sprite.Sprite):
-    def __init__(self, x, y, tecla, palabra, imagen):
-        super().__init__()
-        self.image = imagen 
-        self.rect = self.image.get_rect()
-        self.rect.x = x
-        self.rect.y = y
-        self.tecla = tecla
-        self.palabra = palabra
-        self.correcto = False
-
-    def update(self):
-        pass
-
-    def dibujar_letra(self, superficie):
-        fuente = pygame.font.SysFont(None, 30)
-        texto = fuente.render(self.tecla, True, BLANCO)
-        posicion = (self.rect.x + ANCHO_BLOQUE // 2 - texto.get_width() // 2, self.rect.y + ALTO_BLOQUE//2 - texto.get_height()//2)
-
-        texto_rect = texto.get_rect()
-        texto_rect.center = (self.rect.centerx, self.rect.centery - ALTO_BLOQUE // 4)  
-        cuadrado_rect = pygame.Rect(texto_rect.left - 10, texto_rect.bottom, texto_rect.width + 20, texto_rect.height+20)
-        pygame.draw.rect(superficie, AZUL_SUELO, cuadrado_rect)
-       
-        superficie.blit(texto, posicion)
-
-class ClicableObject(pygame.sprite.Sprite):
-    def __init__(self, x, y, img):
-        super().__init__()
-        self.image = img
-        self.rect = self.image.get_rect()
-        self.rect.x = x
-        self.rect.y = y
 
 # Función para mostrar texto en pantalla
 def mostrar_texto(texto, fuente, superficie, x, y, color_fondo = NEGRO, color_letras = BLANCO, color_borde = AZUL_SUELO, centrado = False, fondo = True, borde = True,  tam_borde = 4):
@@ -138,7 +107,9 @@ def crearListaBloques(img, bloques, palabra, nBloques):
                         PosPalabras[nBloques-4][i][1],
                         letras[i],
                         palabra, 
-                        img)
+                        img,
+                        ANCHO_BLOQUE, ALTO_BLOQUE, 
+                        BLANCO, AZUL_SUELO)
     
         bloques.add(bloque)
         i=i+1
@@ -176,19 +147,19 @@ def BlitTransparente(superficie, color, size, coord):
 
 
 # Función principal del juego
-def main():
+def garbagePile():
     musica()
     pantalla = pygame.display.set_mode((ANCHO, ALTO))
     pygame.display.set_caption('Juego de Bloques')
 
     imagenes_bloques = cargar_imagenes()
-    fondo = pygame.image.load("repositorio\CIIE\MinijuegoJavi\images//fondoNuevo.jpg").convert()
+    fondo = pygame.image.load("repositorio//CIIE//MinijuegoJavi//images//fondoNuevo.jpg").convert()
     fondo = pygame.transform.scale(fondo, (800,800))
-    bombillaON = pygame.image.load("repositorio\CIIE\MinijuegoJavi\images//bombillaOn.png")
+    bombillaON = pygame.image.load("repositorio//CIIE//MinijuegoJavi//images//bombillaOn.png")
     bombillaON = pygame.transform.scale(bombillaON, (50,50))
-    bombillaOff = pygame.image.load("repositorio\CIIE\MinijuegoJavi\images//bombillaOff.png")
+    bombillaOff = pygame.image.load("repositorio//CIIE//MinijuegoJavi//images//bombillaOff.png")
     bombillaOff = pygame.transform.scale(bombillaOff, (50,50))
-    entreBasura = pygame.image.load("repositorio\CIIE\MinijuegoJavi\images//entreBasura.jpg")
+    entreBasura = pygame.image.load("repositorio//CIIE//MinijuegoJavi//images//entreBasura.jpg")
     entreBasura = pygame.transform.scale(entreBasura, (TAM_ENTREIMG, TAM_ENTREIMG))
 
     pantalla.blit(fondo, (0, 0))
@@ -292,8 +263,6 @@ def main():
         pantalla.blit(fondo, (0, 0))
 
         
-
-        
         # Actualizar y dibujar bloques
         if bombillaUsada:
             bombilla.image = bombillaOff
@@ -357,7 +326,7 @@ def main():
         reloj.tick()
 
 if __name__ == '__main__':
-    main()
+    garbagePile()
 
 
 """#idea para cambiar juego -> añadir boton de pista, de saltarte una palabra...
