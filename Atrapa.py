@@ -247,9 +247,8 @@ def cargar_cursor(nombre_cursor, tamaño):
 
 # Main game loop
 def main():
-    global running, score, in_slow_motion_mode, in_speed_mode, background_image, background 
+    global running, in_slow_motion_mode, in_speed_mode 
     running = True
-    score = 0
     in_slow_motion_mode = False
     in_speed_mode = False
     time_in_slow_motion = 0 
@@ -302,6 +301,7 @@ if __name__ == "__main__":
     window, clock = initialize_pygame()
     hole, hole_slow, insect, background_image, background_slow, hole_speed, background_speed= load_images()
     agujeros = create_holes()
+    
     items_shown = 0
     score = 0
     items_mostrados = 0 

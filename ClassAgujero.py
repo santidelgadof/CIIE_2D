@@ -1,6 +1,5 @@
 import pygame
 
-
 class Agujero(pygame.sprite.Sprite):
     def __init__(self, x, y, hole_image):
         super().__init__()
