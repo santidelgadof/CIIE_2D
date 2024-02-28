@@ -2,6 +2,7 @@ import pygame
 import sys
 from textClass import Text
 from buttonClass import Boton
+from popUpClass import PopUp
 
 # Inicializar Pygame
 pygame.init()
@@ -67,12 +68,19 @@ def btnMenu():
 tetrisTxt = Text("Tetris", 60, AMARILLO, ANCHO//2-200 + 400//2, ALTO//3-200 + 300//5, True, fuenteGP)
 coinTxt = Text("Insert a coin", 20, AMARILLO, ANCHO//2-200 + 400-100, ALTO//3-200 + 300-70, True, fuente8Bit)
 
+textos = [
+    Text("Tetris", 60, AMARILLO, ANCHO//2-200 + 400//2, ALTO//3-200 + 300//5, True, fuenteGP),
+    Text("Insert a coin", 20, AMARILLO, ANCHO//2-200 + 400-100, ALTO//3-200 + 300-70, True, fuente8Bit)
+]
+
+rotaciones = [0, 30]
 
 botones = [
  Boton(ANCHO//2-200 + 400//2, ALTO//3-200 + 300- 140, 100, 40, "PLAY", fuenteGP, TRANSPARENTE, AMARILLO, 40, "play"),
  Boton(ANCHO//2-200+ 400//2, ALTO//3-200+ 300- 70, 100, 40, "MENU", fuenteGP, TRANSPARENTE, AMARILLO, 40, "menu")
 ]
 
+ventana = PopUp(ANCHO//2-200, ALTO//3-200, 400, 300, 60, AZUL, 8, NEGRO, botones, textos, rotaciones)
 
 def main():
     # Bucle principal del juego
@@ -93,7 +101,8 @@ def main():
         pantalla.blit(fondo, (0,0))
 
         # Dibujar el rectángulo con bordes redondeados
-        pantallaJuegos(ANCHO//2-200, ALTO//3-200, 400, 300, 60, AZUL, 8, NEGRO, botones)
+        #pantallaJuegos(ANCHO//2-200, ALTO//3-200, 400, 300, 60, AZUL, 8, NEGRO, botones)
+        ventana.draw(pantalla)
 
         
 
