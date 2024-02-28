@@ -1,5 +1,10 @@
 import pygame
 
+def BlitTransparente(superficie, color, size, coord):
+    superficie_transparente = pygame.Surface(size, pygame.SRCALPHA)
+    superficie_transparente.fill(color)
+    superficie.blit(superficie_transparente, coord)
+
 class Bloque(pygame.sprite.Sprite):
     def __init__(self, x, y, tecla, palabra, imagen, ancho, alto, colorTxt, colorSup):
         super().__init__()
@@ -17,9 +22,6 @@ class Bloque(pygame.sprite.Sprite):
 
         self.color_texto = colorTxt
         self.color_superficie = colorSup
-
-    def update(self):
-        pass
 
     def dibujar_letra(self, superficie):
         fuente = pygame.font.SysFont(None, 30)

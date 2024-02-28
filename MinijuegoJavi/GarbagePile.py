@@ -198,7 +198,8 @@ def garbagePile():
     # Ciclo principal del juego
     while True:
         isKey = True
-        palabra = bloques[n].sprites()[0].palabra
+        if not fin:
+            palabra = bloques[n].sprites()[0].palabra
         # Manejo de eventos
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -206,55 +207,53 @@ def garbagePile():
                 sys.exit()
 
             if event.type == pygame.KEYDOWN:
-                try:
-                    chr(event.key)
-                except:
-                    #guess = ""
-                    isKey = False
-                    
+                if not fin:
+                    try:
+                        chr(event.key)
+                    except:
+                        isKey = False
 
-                if bloques and isKey:
+                    if bloques and isKey:
 
-                    if not next_letter: 
-                        guess = "" 
-                        tiempoLimite -= 5
+                        if not next_letter: 
+                            guess = "" 
+                            tiempoLimite -= 5
 
-                    palabra = bloques[n].sprites()[0].palabra
+                        palabra = bloques[n].sprites()[0].palabra
 
-                    guess += chr(event.key)
+                        guess += chr(event.key)
 
-                    if guess == palabra:
-                        aciertos += 1
-                        for sprites in bloques[n]:
-                            sprites.kill()
+                        if guess == palabra:
+                            aciertos += 1
+                            for sprites in bloques[n]:
+                                sprites.kill()     
+                            n+=1
+                            guess = ""
+                        elif guess in palabra:
                             
-                        n+=1
-                        guess = ""
-                    elif guess in palabra:
-                        
-                        while m < len(guess):
-                            if guess[m] == palabra[m]:
-                                next_letter = True
-                            else: 
-                                next_letter = False
-                            m+=1
-                        m = 0
-                                
-                    else: guess = ""
+                            while m < len(guess):
+                                if guess[m] == palabra[m]:
+                                    next_letter = True
+                                else: 
+                                    next_letter = False
+                                m+=1
+                            m = 0
+                                    
+                        else: guess = ""
             if event.type == pygame.MOUSEBUTTONDOWN:
-                if bloques[n]:
-                    if bombilla.rect.collidepoint(event.pos): #lógica de la ayuda
-                        if not bombillaUsada:
-                            #ejecutar ayuda
-                            letra_a_mostrar = palabra[len(guess)]
-                            for grupos in bloques[n]:
-                                if grupos.tecla == letra_a_mostrar:
-                                    # pintar sobre grupos.image??
-                                    hint = (bloques[n], TRANSPARENTE_VERDE, (120,120), (grupos.rect.x, grupos.rect.y))
-                                    hint_bool = True
-                                    BlitTransparente(pantalla, TRANSPARENTE_VERDE, (120,120), (grupos.rect.x,grupos.rect.y))
-                                    break
-                        bombillaUsada = True
+                if not fin:
+                    if bloques[n]:
+                        if bombilla.rect.collidepoint(event.pos): #lógica de la ayuda
+                            if not bombillaUsada:
+                                #ejecutar ayuda
+                                letra_a_mostrar = palabra[len(guess)]
+                                for grupos in bloques[n]:
+                                    if grupos.tecla == letra_a_mostrar:
+                                        hint = (bloques[n], TRANSPARENTE_VERDE, (120,120), (grupos.rect.x, grupos.rect.y))
+                                        hint_bool = True
+                                        BlitTransparente(pantalla, TRANSPARENTE_VERDE, (120,120), (grupos.rect.x,grupos.rect.y))
+                                        break
+                            bombillaUsada = True
 
 
         if aciertos == CANTIDAD_BLOQUES: fin = True
@@ -283,28 +282,34 @@ def garbagePile():
                         sprite.dibujar_letra(pantalla)
                     if hint_bool == True and group == hint[0]:
                             BlitTransparente(pantalla, hint[1], hint[2], hint[3])
-        
+            if next_letter:
+                BlitTransparente(pantalla, TRANSPARENTE_VERDE, (800, 30), (0, ALTO//2 + 350))
+            else:
+                BlitTransparente(pantalla, TRANSPARENTE_ROJJO, (800, 30), (0, ALTO//2 + 350))
+                guess = ""
 
+            #Resalta la letra que usas
+            
+            for letra in guess:
+                for grupos in bloques[n]:
+                    if grupos.tecla == letra:
+                        BlitTransparente(pantalla, TRANSPARENTE_VERDE, (120,120), (grupos.rect.x,grupos.rect.y))
+                        #if  not grupos.letra_escrita:
+                        #    grupos.letra_escrita = True
+                        break
+                    else:
+                        #for gruposs in bloques[n]:
+                        #    gruposs.letra_escrita = False
+                        #break
+                        pass
 
-        mostrar_texto(guess, pygame.font.Font(None, 30), pantalla, 0, ALTO//2+350, fondo= False, color_letras=NEGRO)
-        
-        if next_letter:
-            BlitTransparente(pantalla, TRANSPARENTE_VERDE, (800, 30), (0, ALTO//2 + 350))
-        else:
-            BlitTransparente(pantalla, TRANSPARENTE_ROJJO, (800, 30), (0, ALTO//2 + 350))
-            guess = ""
-        #Resalta la letra que usas, HACERLO DE OTRA FORMA O QUITARLO
-        for letra in guess:
-            for grupos in bloques[n]:
-                if grupos.tecla == letra:
-                    BlitTransparente(pantalla, TRANSPARENTE_VERDE, (120,120), (grupos.rect.x,grupos.rect.y))
-                    break
-
-        # Calcular tiempo transcurrido
-        if not fin:
             tiempo_transcurrido = pygame.time.get_ticks() - tiempo_inicio
             tiempo_restante = max(0, tiempoLimite - tiempo_transcurrido // 1000)
-
+                        
+            
+        mostrar_texto(guess, pygame.font.Font(None, 30), pantalla, 0, ALTO//2+350, fondo= False, color_letras=NEGRO)
+        
+            
         # Mostrar tiempo restante en pantalla
         mostrar_texto("Tiempo restante: " + str(tiempo_restante), pygame.font.Font(None, 36), pantalla, 10, 10)
         #Verificar si quedan bloques
