@@ -9,3 +9,4 @@ class Square(pygame.sprite.Sprite):
         self.rect.topleft = (x, y)
         self.number = number
         self.active = True
+        self.exit = False

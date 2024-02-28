@@ -1,6 +1,28 @@
 import pygame
 import sys
 from Square import Square
+from Plantilla_Inicio.popUpClass import PopUp
+from Plantilla_Inicio.textClass import Text
+from Plantilla_Inicio.buttonClass import Boton
+
+
+# JAVI
+BLANCO = (255, 255, 255)
+NEGRO = (0, 0, 0)
+AZUL = (12, 18, 58)
+AMARILLO = (249, 247, 98 )
+TRANSPARENTE = (0, 0, 0, 50)
+#AZUL_OSCURO = (71, 21, 136)
+
+# Definir dimensiones de la pantalla
+ANCHO = 800
+ALTO = 800
+
+fuenteGP = "/Users/clara/Documents/GitHub/CIIE/Arcade/Plantilla_Inicio/fuentes/game_power.ttf"
+fuente8Bit = "/Users/clara/Documents/GitHub/CIIE/Arcade/Plantilla_Inicio/fuentes/8Bit.ttf"
+
+# JAVI
+
 
 # Inicializar Pygame
 pygame.init()
@@ -160,10 +182,13 @@ def check_collisions():
         if (player_rect.colliderect(square.rect) and
                 square.rect.top - player_rect.center[1] <= distance_threshold and
                 not popup_shown[square] and square.active):
-            show_popup("Cuadrado {}".format(square.number))
+            exit = show_popup(square.number)
+            if exit:
+                return square.number
             popup_shown[square] = True
         elif not player_rect.colliderect(square.rect):
             popup_shown[square] = False
+    
 
 
 def draw_out_image(square):
@@ -193,14 +218,14 @@ def draw():
 
 
 
-def show_popup(text):
-    global popup_showing, player_rect, up_direction_state, down_direction_state, left_direction_state, right_direction_state  # Hacer referencia a las variables globales
+def show_popup(arcade_number):
+    global popup_showing, player_rect, up_direction_state, down_direction_state, left_direction_state, right_direction_state
 
     popup_showing = True
     up_direction_state = False
     down_direction_state = False
     left_direction_state = False
-    right_direction_state = False  # Desactivar todos los botones de dirección
+    right_direction_state = False
 
     # Reproducir sonido de ventana emergente abierta
     popup_sound_open.play()
@@ -208,39 +233,64 @@ def show_popup(text):
     # Almacenar la posición del jugador antes de mostrar la ventana
     player_position_before_popup = player_rect.topleft
 
-    popup_font = pygame.font.Font(None, 36)
-    popup_text = popup_font.render(text, True, WHITE)
-    popup_rect = popup_text.get_rect(center=(WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2))
+    # Definir el segundo texto común para todos los cuadrados
+    textos_minigame = [
+        Text("Minigame", 20, AMARILLO, ANCHO//2 + 120, ALTO//3 + 50, True, fuente8Bit)
+    ]
 
-    close_font = pygame.font.Font(None, 24)
-    close_text = close_font.render("X", True, WHITE)
-    close_rect = close_text.get_rect(topright=(popup_rect.right - 10, popup_rect.top + 10))
+    # Determinar el texto del primer cuadrado según el número del cuadrado
+    if arcade_number == 1:
+        textos = [
+            Text("Cucarachas", 60, AMARILLO, ANCHO//2 - 200 + 400//2, ALTO//3 - 200 + 300//5, True, fuenteGP)
+        ] + textos_minigame
+    elif arcade_number == 2:
+        textos = [
+            Text("Wordle", 60, AMARILLO, ANCHO//2 - 200 + 400//2, ALTO//3 - 200 + 300//5, True, fuenteGP)
+        ] + textos_minigame
+    elif arcade_number == 3:
+        textos = [
+            Text("Tetris", 60, AMARILLO, ANCHO//2 - 200 + 400//2, ALTO//3 - 200 + 300//5, True, fuenteGP)
+        ] + textos_minigame
+
+    rotaciones = [0, 30]
+
+    botones = [
+        Boton(ANCHO//2 - 200 + 400//2, ALTO//3 - 40, 100, 40, "JUGAR", fuenteGP, TRANSPARENTE, AMARILLO, 40, "JUGAR"),
+        Boton(ANCHO//2 - 200 + 400//2, ALTO//3 + 30, 100, 40, "VOLVER", fuenteGP, TRANSPARENTE, AMARILLO, 40, "VOLVER")
+    ]
+
+    # Crear una instancia de PopUp con el texto proporcionado
+    popup = PopUp(ANCHO//2-200, ALTO//3-200, 400, 300, 60, AZUL, 8, NEGRO, botones, textos, rotaciones)
 
     while popup_showing:
         for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                sys.exit()
-            elif event.type == pygame.MOUSEBUTTONDOWN:
-                if close_rect.collidepoint(event.pos):
-                    popup_showing = False  # Dejar de mostrar la ventana emergente
-                    # Reproducir sonido de ventana emergente cerrada
-                    popup_sound_close.play()
-                    # Restaurar la posición del jugador después de cerrar la ventana
-                    player_rect.topleft = player_position_before_popup
-                    return
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if popup.get_rect().collidepoint(event.pos):
+                    for boton in popup.botones:
+                        if boton.rect.collidepoint(event.pos):
+                            if boton.accion == "VOLVER":
+                                popup_showing = False
+                                # Reproducir sonido de ventana emergente cerrada
+                                popup_sound_close.play()
+                                # Restaurar la posición del jugador después de cerrar la ventana
+                                player_rect.topleft = player_position_before_popup
+                            elif boton.accion == "JUGAR":
+                                popup_showing = False
+                                square.exit = True
+                                return square.exit
 
         window.fill(BLACK)  # Limpiar la ventana con color negro
         window.blit(background_image, (0, 0))  # Dibujar la imagen de fondo
         for square in squares_group:
             window.blit(square.image, square.rect)
         window.blit(current_player_image, player_position_before_popup) 
-        window.blit(popup_text, popup_rect)
-        pygame.draw.rect(window, BLACK, close_rect)
-        window.blit(close_text, close_rect)
-        draw_out_image(square)  # Dibujar las imágenes "out.png"
+        draw_out_image(square)
+        popup.draw(window)  # Dibujar la ventana emergente
         pygame.display.flip()
         pygame.time.Clock().tick(60)
+
+
+
 
 
 def main(square_popup_flags):
@@ -249,17 +299,29 @@ def main(square_popup_flags):
     for i, square in enumerate(squares_group):
         square.active = square_popup_flags[i]
 
-    while True:
-        handle_events()
-        update_player_position()
-        check_collisions()
-        draw()
+    try:
+        while True:
+            handle_events()
+            update_player_position()
+            num = check_collisions()
+            draw()
 
-        # Controlar la velocidad de actualización
-        pygame.time.Clock().tick(60)
+            # Controlar la velocidad de actualización
+            pygame.time.Clock().tick(60)
 
-        # Incrementar el contador de fotogramas
-        frame_counter += 1
+            # Incrementar el contador de fotogramas
+            frame_counter += 1
+
+            for square in squares_group:
+                if square.exit:
+                    pygame.quit()  
+                    sys.exit()
+
+    except SystemExit:
+        return num
+
+
+
 
 if __name__ == "__main__":
     main()
