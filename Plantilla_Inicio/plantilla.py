@@ -73,27 +73,33 @@ botones = [
  Boton(ANCHO//2-200+ 400//2, ALTO//3-200+ 300- 70, 100, 40, "MENU", fuenteGP, TRANSPARENTE, AMARILLO, 40, "menu")
 ]
 
-# Bucle principal del juego
-while True:
-    # Manejo de eventos
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            pygame.quit()
-            sys.exit()
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            if event.button == 1:
-                for boton in botones:
-                    if boton.rect.collidepoint(event.pos):
-                        boton.click()
-                
 
-    # Limpiar la pantalla
-    pantalla.blit(fondo, (0,0))
+def main():
+    # Bucle principal del juego
+    while True:
+        # Manejo de eventos
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 1:
+                    for boton in botones:
+                        if boton.rect.collidepoint(event.pos):
+                            boton.click()
+                    
 
-    # Dibujar el rectángulo con bordes redondeados
-    pantallaJuegos(ANCHO//2-200, ALTO//3-200, 400, 300, 60, AZUL, 8, NEGRO, botones)
+        # Limpiar la pantalla
+        pantalla.blit(fondo, (0,0))
 
-    
+        # Dibujar el rectángulo con bordes redondeados
+        pantallaJuegos(ANCHO//2-200, ALTO//3-200, 400, 300, 60, AZUL, 8, NEGRO, botones)
 
-    # Actualizar la pantalla
-    pygame.display.flip()
+        
+
+        # Actualizar la pantalla
+        pygame.display.flip()
+
+
+if __name__ == '__main__':
+    main()
