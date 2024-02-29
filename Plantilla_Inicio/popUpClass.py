@@ -27,17 +27,17 @@ class PopUp:
         self.colorOut = colorBorde
 
         
-        self.x = x-tam_borde
-        self.y = y-tam_borde
-        self.ancho = ancho+tam_borde*2
-        self.alto = alto+tam_borde*2
+        self.bordeX = x-tam_borde
+        self.bordeY = y-tam_borde
+        self.bordeAncho = ancho+tam_borde*2
+        self.bordeAlto = alto+tam_borde*2
 
         self.botones = botones
         self.textos = textos
         self.rotaciones = rotaciones
 
     def draw(self, pantalla):
-        rectanguloRedondo(pantalla, self.x, self.y, self.ancho, self.alto, self.radio, self.colorOut)
+        rectanguloRedondo(pantalla, self.bordeX, self.bordeY, self.bordeAncho, self.bordeAlto, self.radio, self.colorOut)
         rectanguloRedondo(pantalla, self.x, self.y, self.ancho, self.alto, self.radio, self.colorIn)
         i = 0
         while i<len(self.textos):
