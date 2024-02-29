@@ -1,2 +1,0 @@
-# CIIE
-Videojuego reciclaje 
