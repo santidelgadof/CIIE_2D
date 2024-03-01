@@ -12,6 +12,16 @@ WINDOW_HEIGHT = 800
 WINDOW = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
 pygame.display.set_caption('Trash Game!')
 
+
+def fade_transition():
+    fade_surface = pygame.Surface((WINDOW_WIDTH, WINDOW_HEIGHT))
+    fade_surface.fill((0, 0, 0))
+    for alpha in range(0, 255, 10):
+        fade_surface.set_alpha(alpha)
+        WINDOW.blit(fade_surface, (0, 0))
+        pygame.display.update()
+        pygame.time.delay(60)
+
 def main():
     game_state = GameState()
     while(True):
@@ -24,7 +34,7 @@ def main():
             aux = PopUp.main()
             game_state.setState(aux)
         elif state == State.TrashGameLVL1:
-            # TODO: Add Galicia animation. This animation should last a predefined time and then die.
+            fade_transition()
             (aux, played_minigame) =TrashGame.main(1, game_state)
             game_state.addPlayedMinigame(played_minigame)
             game_state.setState(aux)
@@ -32,12 +42,14 @@ def main():
             # TODO: Add the returning minigame from TrashGame to GameState
         elif state == State.TrashGameLVL2:
             # TODO: Add Galicia animation. This animation should last a predefined time and then die.
+            fade_transition()
             (aux, played_minigame) =TrashGame.main(2, game_state)
             game_state.addPlayedMinigame(played_minigame)
             game_state.setState(aux)
             # TODO: Add the returning minigame from TrashGame to GameState
         elif state == State.TrashGameLVL3:
             # TODO: Add Galicia animation. This animation should last a predefined time and then die.
+            fade_transition()
             (aux, played_minigame) =TrashGame.main(3, game_state)
             game_state.addPlayedMinigame(played_minigame)
             game_state.setState(aux)
