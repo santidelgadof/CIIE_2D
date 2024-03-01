@@ -12,6 +12,8 @@ from TrashGame.AbstractFunctions import *
 from TrashGame.FinalWindow import FinalWindow
 from ResourceManager import ResourceManager
 from TrashGame.TechPart import TechPart
+from Arcade import arcades_room 
+import time
 
 import os
 pygame.init()
@@ -24,6 +26,7 @@ WINDOW_WIDTH = 800
 WINDOW_HEIGHT = 800
 WINDOW = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
 pygame.display.set_caption('Trash Game!')
+win_sound = pygame.mixer.Sound("TrashGame/assets/music/win_sound.mp3")
 
 ### GLOBALS ###
 theme = Theme()
@@ -34,8 +37,9 @@ container_images = ["assets/containers/OrganicContainer.png",
               "assets/containers/GlassContainer.png" ]
 resource_manager = ResourceManager()
 ### MAIN ###
-def main(level): # Level is an int that stablishes the dificulty of the lvl
+def main(level, game_state): # Level is an int that stablishes the dificulty of the lvl
     try_again = True
+    
     while(try_again):
         ### SetUp each level configuration ###
         mixer.music.load("TrashGame/assets/music/MainMusic.ogg")
@@ -99,6 +103,11 @@ def main(level): # Level is an int that stablishes the dificulty of the lvl
         finish = False
         won = False
         progress_bar_width = 0
+        minigame_played = None
+        win_sound_already_played = False
+        elapsed_time = 0
+
+        
 
         ### LOOP ###
         while looping:
@@ -128,20 +137,31 @@ def main(level): # Level is an int that stablishes the dificulty of the lvl
                             res = button.is_clicked(pos)
                             if res == "restart":
                                 looping = False
+                            else:
+                                return (res, minigame_played)
+
                                     
 
 
             
             ### Spawning and progress bar update ###
-            current_time = pygame.time.get_ticks()
+            
             if not finish:
+                current_time = pygame.time.get_ticks()
                 trash_items = spawner.update(trash_items, current_time)
-            elapsed_time = current_time - start_time
+            elapsed_time += 10
             if not finish:
-                progress_bar_width = min((elapsed_time / duration) * WINDOW_WIDTH, WINDOW_WIDTH)
+                if minigame_played == None and progress_bar_width <= 500 and progress_bar_width >= 400:
+                    minigame_played = arcades_room.main(game_state.alreadyPlayedMinigames)
+                    mixer.music.load("TrashGame/assets/music/MainMusic.ogg")
+                    mixer.music.set_volume(0.3)
+                    mixer.music.play(-1) 
+                    minigame_played = True
+                    
                 if progress_bar_width >= 800:
                     finish = True
                     won = True
+                progress_bar_width = min((elapsed_time / duration) * WINDOW_WIDTH, WINDOW_WIDTH)
             if not finish:
             ### Move the TrashItems ###
                 for trash_item in trash_items:
@@ -187,13 +207,18 @@ def main(level): # Level is an int that stablishes the dificulty of the lvl
                 finish = True
             if finish:
                 if finalWindow == None:
-                    finalWindow = FinalWindow(won)
+                    finalWindow = FinalWindow(won, level)
                 if won:
                     tp.move()
                     tp.draw(WINDOW)
                     if tp.dead:
+                        mixer.music.stop()
+                        if not win_sound_already_played:
+                            win_sound.play()
+                            win_sound_already_played = True
                         finalWindow.draw(WINDOW)
                 else:
+                    mixer.music.stop()
                     finalWindow.draw(WINDOW)
 
             ### UPDATE the WINDOW ###

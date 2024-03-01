@@ -25,15 +25,22 @@ def main():
             game_state.setState(aux)
         elif state == State.TrashGameLVL1:
             # TODO: Add Galicia animation. This animation should last a predefined time and then die.
-            TrashGame.main(1)
+            (aux, played_minigame) =TrashGame.main(1, game_state)
+            game_state.addPlayedMinigame(played_minigame)
+            game_state.setState(aux)
+
             # TODO: Add the returning minigame from TrashGame to GameState
         elif state == State.TrashGameLVL2:
             # TODO: Add Galicia animation. This animation should last a predefined time and then die.
-            TrashGame.main(2)
+            (aux, played_minigame) =TrashGame.main(2, game_state)
+            game_state.addPlayedMinigame(played_minigame)
+            game_state.setState(aux)
             # TODO: Add the returning minigame from TrashGame to GameState
         elif state == State.TrashGameLVL3:
             # TODO: Add Galicia animation. This animation should last a predefined time and then die.
-            TrashGame.main(3)
+            (aux, played_minigame) =TrashGame.main(3, game_state)
+            game_state.addPlayedMinigame(played_minigame)
+            game_state.setState(aux)
             # TODO: Add the returning minigame from TrashGame to GameState
         # The logic of the minigames must go inside TrashGame and TrashGame.main() should return the minigame the user chose.
         # TODO: Make a transition animation between the states. ( Black Circle Closing-Opening?)
