@@ -1,6 +1,6 @@
 import pygame
 import sys
-from Arcade import Arcade
+from arcade import Arcade
 from Plantilla_Inicio.popUpClass import PopUp
 from Plantilla_Inicio.textClass import Text
 from Plantilla_Inicio.buttonClass import Boton
