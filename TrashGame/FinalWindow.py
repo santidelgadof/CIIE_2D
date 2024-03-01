@@ -1,12 +1,20 @@
 import pygame
 from TrashGame.Button import Button
+from GameState import State
 
 class FinalWindow:
     buttons = []
-    def __init__(self, won) -> None:
+    def __init__(self, won, lvl) -> None:
         self.won = won
         if won:
-            self.buttons.append(Button(300, 600, 200, 75, "CONTINUAR", (255,0,0), (240,240,240)))
+            def action_function():
+                    if lvl == 1:
+                        return State.TrashGameLVL2
+                    if lvl == 2:
+                        return State.TrashGameLVL3
+                    if lvl == 3:
+                         return "continue4"
+            self.buttons.append(Button(300, 600, 200, 75, "CONTINUAR", (255,0,0), (240,240,240), action_function))
         else:
             def action_function():
                     return "restart"
@@ -40,7 +48,5 @@ class FinalWindow:
             rect = congrats.get_rect()
             rect.center = (400, 250)
             surface.blit(congrats, rect)
-            background_image = pygame.image.load("assets/sadFace.png").convert_alpha()
-            surface.blit(background_image, (275, 300))
             for button in self.buttons:
                 button.draw(surface)

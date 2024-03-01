@@ -1,6 +1,6 @@
-import arcades_room 
+from Arcade import arcades_room
 
-if __name__ == "__main__":
+def main():
     square_popup_flags = [True, True, False]
     valor_cuadrado = 0
     valor_cuadrado = arcades_room.main(square_popup_flags)

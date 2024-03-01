@@ -25,11 +25,14 @@ def main():
             game_state.setState(aux)
         elif state == State.TrashGameLVL1:
             # TODO: Add Galicia animation. This animation should last a predefined time and then die.
-            TrashGame.main(1)
+            aux =TrashGame.main(1)
+            game_state.setState(aux)
+
             # TODO: Add the returning minigame from TrashGame to GameState
         elif state == State.TrashGameLVL2:
             # TODO: Add Galicia animation. This animation should last a predefined time and then die.
-            TrashGame.main(2)
+            aux =TrashGame.main(2)
+            game_state.setState(aux)
             # TODO: Add the returning minigame from TrashGame to GameState
         elif state == State.TrashGameLVL3:
             # TODO: Add Galicia animation. This animation should last a predefined time and then die.

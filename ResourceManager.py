@@ -29,6 +29,16 @@ class ResourceManager:
 
         self.popup_animation = Resource("Pantalla/Animacion.jpg")
 
+        self.arcade_player_up_image1 = Resource('Arcade/assets/player/up1.png', True)
+        self.arcade_player_down_image1 = Resource('Arcade/assets/player/down1.png', True)
+        self.arcade_player_left_image1 = Resource('Arcade/assets/player/left1.png', True)
+        self.arcade_player_right_image1 = Resource('Arcade/assets/player/right1.png', True)
+
+        self.arcade_player_up_image2 = Resource('Arcade/assets/player/up2.png', True)
+        self.arcade_player_down_image2 = Resource('Arcade/assets/player/down2.png', True)
+        self.arcade_player_left_image2 = Resource('Arcade/assets/player/left2.png', True)
+        self.arcade_player_right_image2 = Resource('Arcade/assets/player/right2.png', True)
+
         
         
 
