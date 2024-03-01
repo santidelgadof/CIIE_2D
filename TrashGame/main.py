@@ -37,7 +37,7 @@ container_images = ["assets/containers/OrganicContainer.png",
               "assets/containers/GlassContainer.png" ]
 resource_manager = ResourceManager()
 ### MAIN ###
-def main(level): # Level is an int that stablishes the dificulty of the lvl
+def main(level, game_state): # Level is an int that stablishes the dificulty of the lvl
     try_again = True
     
     while(try_again):
@@ -103,9 +103,10 @@ def main(level): # Level is an int that stablishes the dificulty of the lvl
         finish = False
         won = False
         progress_bar_width = 0
-        minigame_played = False
+        minigame_played = None
         win_sound_already_played = False
         elapsed_time = 0
+
         
 
         ### LOOP ###
@@ -137,8 +138,7 @@ def main(level): # Level is an int that stablishes the dificulty of the lvl
                             if res == "restart":
                                 looping = False
                             else:
-                                
-                                return res
+                                return (res, minigame_played)
 
                                     
 
@@ -151,8 +151,8 @@ def main(level): # Level is an int that stablishes the dificulty of the lvl
                 trash_items = spawner.update(trash_items, current_time)
             elapsed_time += 10
             if not finish:
-                if not minigame_played and progress_bar_width <= 500 and progress_bar_width >= 400:
-                    x = arcades_room.main([True, True, False])
+                if minigame_played == None and progress_bar_width <= 500 and progress_bar_width >= 400:
+                    minigame_played = arcades_room.main(game_state.alreadyPlayedMinigames)
                     mixer.music.load("TrashGame/assets/music/MainMusic.ogg")
                     mixer.music.set_volume(0.3)
                     mixer.music.play(-1) 

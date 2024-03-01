@@ -262,27 +262,27 @@ def show_popup(arcade_number):
 
 
 def main(arcade_popup_flags):
+    print(arcade_popup_flags)
     global frame_counter
     pygame.mixer.music.load('Arcade/assets/music/happy.mp3')
     pygame.mixer.music.set_volume(0.4)
     pygame.mixer.music.play(-1)
 
     for i, arcade in enumerate(arcades_group):
-        arcade.active = arcade_popup_flags[i]
+        arcade.active = arcade_popup_flags[i - 1]
 
     
-        while True:
-            handle_events()
-            update_player_position()
-            num = check_collisions()
-            draw()
-
-            pygame.time.Clock().tick(60)
-            frame_counter += 1
-
-            for arcade in arcades_group:
-                if arcade.exit:
-                    return num
+    while True:
+        handle_events()
+        update_player_position()
+        num = check_collisions()
+        draw()
+        pygame.time.Clock().tick(60)
+        frame_counter += 1
+        for arcade in arcades_group:
+            if arcade.exit:
+                arcade_popup_flags[num - 1] = False
+                return arcade_popup_flags
                     
 
 

@@ -2,7 +2,7 @@ from enum import Enum
 # This class manages the state of the game
 class GameState:
     # Store already played minigames to lock them
-    alreadyPlayedMinigames = []
+    alreadyPlayedMinigames = [True, True, True]
     
     def __init__(self):
         self.state = State.InitialScreen
@@ -22,8 +22,4 @@ class State(Enum):
     TrashGameLVL2 = 3
     TrashGameLVL3 = 4
 
-# Enum of the possible minigames
-class Minigame(Enum):
-    CucarachaGame = 1
-    TetrisGame = 2
-    WordGame = 3
+
