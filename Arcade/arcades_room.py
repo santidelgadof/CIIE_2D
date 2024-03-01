@@ -187,7 +187,7 @@ def draw():
     # Muñeco
     window.blit(current_player_image, player_rect)
     
-    pygame.display.flip()  # Actualizar la pantalla
+     # Actualizar la pantalla
 
 
 
@@ -249,12 +249,7 @@ def show_popup(arcade_number):
                                 arcade.exit = True
                                 return arcade.exit
 
-        window.fill(BLACK) 
-        window.blit(background_image, (0, 0))
-        for arcade in arcades_group:
-            window.blit(arcade.image, arcade.rect)
-        window.blit(current_player_image, player_position_before_popup) 
-        draw_out_of_service(arcade)
+        draw()
         popup.draw(window) 
         pygame.display.flip()
         pygame.time.Clock().tick(60)
@@ -277,6 +272,7 @@ def main(arcade_popup_flags):
         update_player_position()
         num = check_collisions()
         draw()
+        pygame.display.flip() 
         pygame.time.Clock().tick(60)
         frame_counter += 1
         for arcade in arcades_group:
@@ -284,10 +280,3 @@ def main(arcade_popup_flags):
                 arcade_popup_flags[num - 1] = False
                 return arcade_popup_flags
                     
-
-
-        
-
-
-if __name__ == "__main__":
-    main()
