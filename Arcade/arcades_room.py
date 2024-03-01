@@ -1,9 +1,9 @@
 import pygame
 import sys
 from arcade import Arcade
-from Plantilla_Inicio.popUpClass import PopUp
-from Plantilla_Inicio.textClass import Text
-from Plantilla_Inicio.buttonClass import Boton
+from ArcadeMachinePopup.popUpClass import PopUp
+from ArcadeMachinePopup.textClass import Text
+from ArcadeMachinePopup.buttonClass import Boton
 
 
 # Inicializar Pygame
@@ -25,8 +25,8 @@ pygame.display.set_caption("Arcade's Room")
 
 
 # Cargar fuentes
-fuenteGP = "Plantilla_Inicio/fuentes/game_power.ttf"
-fuente8Bit = "Plantilla_Inicio/fuentes/8Bit.ttf"
+fuenteGP = "ArcadeMachinePopup/fuentes/game_power.ttf"
+fuente8Bit = "ArcadeMachinePopup/fuentes/8Bit.ttf"
 
 # Cargar música de fondo
 pygame.mixer.music.load('assets/music/happy.mp3')
