@@ -47,3 +47,6 @@ class PopUp:
         for boton in self.botones:
             boton.dibujar(pantalla)
             boton.update(pantalla)
+    
+    def get_rect(self):
+        return pygame.Rect(self.bordeX, self.bordeY, self.bordeAncho, self.bordeAlto)
