@@ -11,6 +11,8 @@ from TrashGame.HealthBar import HealthBar
 from TrashGame.AbstractFunctions import *
 from TrashGame.FinalWindow import FinalWindow
 from ResourceManager import ResourceManager
+from TrashGame.TechPart import TechPart
+
 import os
 pygame.init()
 
@@ -54,6 +56,7 @@ def main(level): # Level is an int that stablishes the dificulty of the lvl
             health_bar = HealthBar(5)
             current_lives = 5
             duration = 0.5 * 60 * 1000 
+            tp = TechPart(resource_manager.tech_piece,  (360, -200), velocity)
 
         if level == 2:
             spawn_interval = 2000  # Spawn a new TrashItem every 2 seconds (2000 milliseconds)
@@ -70,6 +73,7 @@ def main(level): # Level is an int that stablishes the dificulty of the lvl
             health_bar = HealthBar(5)
             current_lives = 5
             duration = 0.5 * 60 * 1000 
+            tp = TechPart(resource_manager.tech_piece,  (340, -200), velocity)
         if level == 3:
             spawn_interval = 1000  # Spawn a new TrashItem every 2 seconds (2000 milliseconds)
             distance_between_items = 120  # Desired distance between each trash item
@@ -85,6 +89,7 @@ def main(level): # Level is an int that stablishes the dificulty of the lvl
             health_bar = HealthBar(5)
             current_lives = 5
             duration = 0.5 * 60 * 1000 
+            tp = TechPart(resource_manager.tech_piece,  (300, -200), velocity)
             
         ### Lvl independent values ###
         looping = True
@@ -168,8 +173,9 @@ def main(level): # Level is an int that stablishes the dificulty of the lvl
             scaled_bag = pygame.transform.scale(bag, (bag.get_width() // 2, bag.get_height() // 2))
             WINDOW.blit(scaled_bag, (280, 700))
             # Draw the TrashItems
-            for trash_item in trash_items:
-                trash_item.draw(WINDOW)
+            if not finish:
+                for trash_item in trash_items:
+                    trash_item.draw(WINDOW)
             # Draw the belt
             drawBelt(WINDOW, theme, level, organicContainer, plasticContainer, paperContainer, glassContainer, firstClasificator, secondClasificator)
             # Draw the health bar
@@ -182,7 +188,13 @@ def main(level): # Level is an int that stablishes the dificulty of the lvl
             if finish:
                 if finalWindow == None:
                     finalWindow = FinalWindow(won)
-                finalWindow.draw(WINDOW)
+                if won:
+                    tp.move()
+                    tp.draw(WINDOW)
+                    if tp.dead:
+                        finalWindow.draw(WINDOW)
+                else:
+                    finalWindow.draw(WINDOW)
 
             ### UPDATE the WINDOW ###
             pygame.display.update()

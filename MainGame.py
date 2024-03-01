@@ -24,15 +24,15 @@ def main():
             aux = PopUp.main()
             game_state.setState(aux)
         elif state == State.TrashGameLVL1:
-            # TODO: Add Galicia animation.
+            # TODO: Add Galicia animation. This animation should last a predefined time and then die.
             TrashGame.main(1)
             # TODO: Add the returning minigame from TrashGame to GameState
         elif state == State.TrashGameLVL2:
-            # TODO: Add Galicia animation.
+            # TODO: Add Galicia animation. This animation should last a predefined time and then die.
             TrashGame.main(2)
             # TODO: Add the returning minigame from TrashGame to GameState
         elif state == State.TrashGameLVL3:
-            # TODO: Add Galicia animation.
+            # TODO: Add Galicia animation. This animation should last a predefined time and then die.
             TrashGame.main(3)
             # TODO: Add the returning minigame from TrashGame to GameState
         # The logic of the minigames must go inside TrashGame and TrashGame.main() should return the minigame the user chose.

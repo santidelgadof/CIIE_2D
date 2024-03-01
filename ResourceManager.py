@@ -25,7 +25,7 @@ class ResourceManager:
         # Rest of the media
         self.trash_background = Resource("TrashGame/assets/bg.jpeg")
         self.sad_face = Resource("TrashGame/assets/sadFace.png", True)
-        self.tech_piece = Resource("TrashGame/assets/tech.jpeg")
+        self.tech_piece = Resource("TrashGame/assets/tech.jpeg", True)
 
         self.popup_animation = Resource("Pantalla/Animacion.jpg")
 
