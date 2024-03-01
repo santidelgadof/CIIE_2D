@@ -1,8 +1,6 @@
 import pygame
 import random
 import sys
-import numpy as np
-from moviepy.editor import VideoFileClip
 from ClassCucaracha import Cucaracha
 from ClassAgujero import Agujero
 from ClassSlowItem import SlowItem
@@ -27,13 +25,13 @@ def initialize_pygame():
 
 def load_images():
     # Las imágenes y sus tamaños pueden cambiar dependiendo de tu implementación específica
-    hole = pygame.transform.scale(pygame.image.load("agujero.png").convert_alpha(), (CELL_SIZE - 50, CELL_SIZE - 50))
-    hole_slow = pygame.transform.scale(pygame.image.load("agujero_slow.png").convert_alpha(), (CELL_SIZE - 50, CELL_SIZE - 50))
-    hole_speed = pygame.transform.scale(pygame.image.load("agujero_speed.png").convert_alpha(), (CELL_SIZE - 50, CELL_SIZE - 50))
-    insect = pygame.transform.scale(pygame.image.load("insecticida.png").convert_alpha(), (80, 80))
-    background_image = pygame.transform.scale(pygame.image.load("back.jpg").convert(), (WIDTH, HEIGHT))
-    background_slow = pygame.transform.scale(pygame.image.load("back_slow.png").convert(), (WIDTH, HEIGHT))  # Fondo para modo lento
-    background_speed = pygame.transform.scale(pygame.image.load("back_speed.png").convert(), (WIDTH, HEIGHT))
+    hole = pygame.transform.scale(pygame.image.load("Assets/Agujero.png").convert_alpha(), (CELL_SIZE - 50, CELL_SIZE - 50))
+    hole_slow = pygame.transform.scale(pygame.image.load("Assets/Agujero_slow.png").convert_alpha(), (CELL_SIZE - 50, CELL_SIZE - 50))
+    hole_speed = pygame.transform.scale(pygame.image.load("Assets/Agujero_speed.png").convert_alpha(), (CELL_SIZE - 50, CELL_SIZE - 50))
+    insect = pygame.transform.scale(pygame.image.load("Assets/Insecticida.png").convert_alpha(), (80, 80))
+    background_image = pygame.transform.scale(pygame.image.load("Assets/back.jpg").convert(), (WIDTH, HEIGHT))
+    background_slow = pygame.transform.scale(pygame.image.load("Assets/back_slow.png").convert(), (WIDTH, HEIGHT))  # Fondo para modo lento
+    background_speed = pygame.transform.scale(pygame.image.load("Assets/back_speed.png").convert(), (WIDTH, HEIGHT))
     return hole, hole_slow, insect, background_image, background_slow, hole_speed, background_speed
 
 
@@ -62,7 +60,7 @@ def enter_slow_motion_mode():
     in_slow_motion_mode = True
     hole = hole_slow  # Cambiar el agujero al modo lento
     if a<1:
-        pygame.mixer.music.load("baile_slow.mp3")  
+        pygame.mixer.music.load("Music/baile_slow.mp3")  
         pygame.mixer.music.play(-1) 
     a+=1    
 
@@ -89,7 +87,7 @@ def enter_speed_mode():
     in_speed_mode = True
     hole = hole_speed
     if b<1:
-        pygame.mixer.music.load("baile_speed.mp3")  
+        pygame.mixer.music.load("Music/baile_speed.mp3")  
         pygame.mixer.music.play(-1) 
     b+=1   
 
@@ -105,7 +103,7 @@ def create_holes():
     return agujeros
 
 def play_music():
-    pygame.mixer.music.load("baile.ogg")
+    pygame.mixer.music.load("Music/baile.ogg")
     pygame.mixer.music.play(-1)
     pygame.mixer.music.set_volume(0.5)
 
@@ -197,15 +195,6 @@ def spawn_cucaracha():
         cucarachas.add(cucaracha)
         cucarachas_mostradas += 1
 
-def draw_gif_animation():
-    window.blit(gif_surfaces[int(gif_frame_index)], gif_position)
-    update_gif_frame_index()
-
-def update_gif_frame_index():
-    global gif_frame_index
-    gif_frame_index = (gif_frame_index + gif_animation_speed) % len(gif_surfaces)
-
-
 #FINAL SCORE
 def show_final_score_screen():
     draw_final_score_screen()
@@ -216,7 +205,7 @@ def show_final_score_screen():
 def draw_final_score_screen():
     global background 
     background = background_image
-    pygame.mixer.music.load("end.wav")
+    pygame.mixer.music.load("Music/end.wav")
     pygame.mixer.music.play()
     window.blit(background, (0, 0))
     final_score_text = font.render("Puntuación final: " + str(score), True, BLACK)
@@ -253,6 +242,7 @@ def main():
     in_speed_mode = False
     time_in_slow_motion = 0 
     time_in_speed_mode = 0
+    play_music()
 
     while running:
         
@@ -271,7 +261,7 @@ def main():
             # Si ha pasado más de 10 segundos, salir del modo lento
             if time_in_slow_motion > 12:
                 in_slow_motion_mode = False
-                pygame.mixer.music.load("baile.ogg")  # Restaurar la música normal
+                pygame.mixer.music.load("Music/baile.ogg")  # Restaurar la música normal
                 pygame.mixer.music.play(-1)  # Reproducir la música normal en bucle
                 
         elif in_speed_mode:
@@ -279,14 +269,14 @@ def main():
             time_in_speed_mode += clock.get_time() / 1000
             if time_in_speed_mode > 10:  
                 in_speed_mode = False
-                pygame.mixer.music.load("baile.ogg")  # Restaurar la música normal
+                pygame.mixer.music.load("Music/baile.ogg")  # Restaurar la música normal
                 pygame.mixer.music.play(-1)  # Reproducir la música normal en bucle
                 
 
-        if cucarachas_mostradas > 15:  # Salir del juego cuando se alcanzan 10 cucarachas
+        if cucarachas_mostradas > 10:  # Salir del juego cuando se alcanzan 10 cucarachas
             running = False 
            
-        draw_gif_animation()
+        #draw_gif_animation()
         pygame.display.flip()
     
         clock.tick(60)
@@ -312,15 +302,6 @@ if __name__ == "__main__":
     cucarachas = pygame.sprite.Group()
     slow_items = pygame.sprite.Group()
     speed_items = pygame.sprite.Group()
-
-    #Gift
-    gif_path = "baile.gif"
-    gif_clip = VideoFileClip(gif_path)
-    gif_frames = [np.rot90(np.array(frame) * 255) for frame in gif_clip.iter_frames()]
-    gif_surfaces = [pygame.surfarray.make_surface(frame) for frame in gif_frames]
-    gif_surfaces = [pygame.transform.scale(surface, (40, 40)) for surface in gif_surfaces]
-    gif_position = [760, 560]
-    gif_animation_speed = 0.18
 
     next_spawn_time = random.randint(500, 5000)
     item_spawn_time = random.randint(1000, 8000)

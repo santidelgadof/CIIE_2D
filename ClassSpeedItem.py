@@ -3,7 +3,7 @@ import pygame
 class SpeedItem(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
-        self.image = pygame.transform.scale(pygame.image.load("speed_item.png").convert_alpha(), (80, 80))
+        self.image = pygame.transform.scale(pygame.image.load("Assets/speed_item.png").convert_alpha(), (80, 80))
         self.rect = self.image.get_rect()
         self.active = False
         self.spawn_time = 0
