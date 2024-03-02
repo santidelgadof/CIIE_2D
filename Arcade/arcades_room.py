@@ -50,23 +50,21 @@ player_right_image2 = pygame.transform.scale(resource_manager.arcade_player_righ
 background_image = pygame.transform.scale(pygame.image.load('Arcade/assets/arcade_background.jpg'), (WINDOW_WIDTH, WINDOW_HEIGHT))
 
 
-# VARIABLES MÁQUINAS DE ARCADE
 arcades_positions = [
     (100, 150), 
     (350, 150),  
     (590, 150)   
 ]
 
-arcades_group = pygame.sprite.Group()
+arcades = []  # Usaremos una lista en lugar de un grupo
 for i, (center_x, center_y) in enumerate(arcades_positions):
-    arcade = Arcade(center_x, center_y, i + 1)
-    arcades_group.add(arcade)
-
+    arcade = Arcade(center_x, center_y, i)
+    arcades.append(arcade)
 
 # VARIABLES DEL MUÑECO
 player_rect = player_up_image1.get_rect() # Rectángulo que lo delimita
 player_speed = 5
-player_rect.center = (WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2)
+initial_player_position = (WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2)
 # Variables para almacenar las imágenes actuales del muleco y el estado de dirección
 current_player_image = player_up_image1
 up_direction_state = False
@@ -81,11 +79,20 @@ animation_speed = 10
 
 
 # VARIABLES DE LOS POPUPS
-popup_shown = {arcade: False for arcade in arcades_group} # Diccionario para controlar si el popup de un arcade ha sido mostrado
+popup_shown = {}
 popup_showing = False
 
 
 ### FUNCIONES ###
+
+def fade_transition():
+    fade_surface = pygame.Surface((WINDOW_WIDTH, WINDOW_HEIGHT))
+    fade_surface.fill((0, 0, 0))
+    for alpha in range(0, 255, 10):
+        fade_surface.set_alpha(alpha)
+        window.blit(fade_surface, (0, 0))
+        pygame.display.update()
+        pygame.time.delay(60)
 
 def handle_events():
     global left_direction_state, right_direction_state, up_direction_state, down_direction_state, current_player_image
@@ -144,7 +151,7 @@ def update_player_position():
         player_rect.top = top_limit
 
     # Verificar si hay colisión con algún cuadrado
-    for arcade in arcades_group:
+    for arcade in arcades:
         if player_rect.colliderect(arcade.rect):
             return
 
@@ -155,7 +162,7 @@ def update_player_position():
 
 
 def check_collisions():
-    for arcade in arcades_group:
+    for arcade in arcades:
         if (player_rect.colliderect(arcade.rect) and not popup_shown[arcade] and arcade.active):
             exit = show_popup(arcade.number)
             if exit:
@@ -179,7 +186,7 @@ def draw():
     window.blit(background_image, (0, 0)) 
     
     # Cartel de fuera de servicio
-    for arcade in arcades_group:
+    for arcade in arcades:
         window.blit(arcade.image, arcade.rect)
         if not arcade.active:
             draw_out_of_service(arcade)  
@@ -210,15 +217,15 @@ def show_popup(arcade_number):
     ]
 
     # Nombre de cada minijuego
-    if arcade_number == 1:
+    if arcade_number == 0:
         arcade_text = [
             Text("Cucarachas", 60, YELLOW, WINDOW_WIDTH//2 , WINDOW_HEIGHT//3 - 140, True, fuenteGP)
         ] + minigame_text
-    elif arcade_number == 2:
+    elif arcade_number == 1:
         arcade_text = [
             Text("Wordle", 60, YELLOW, WINDOW_WIDTH//2 , WINDOW_HEIGHT//3 - 140, True, fuenteGP)
         ] + minigame_text
-    elif arcade_number == 3:
+    elif arcade_number == 2:
         arcade_text = [
             Text("Tetris", 60, YELLOW, WINDOW_WIDTH//2 , WINDOW_HEIGHT//3 - 140, True, fuenteGP)
         ] + minigame_text
@@ -247,6 +254,7 @@ def show_popup(arcade_number):
                             elif boton.accion == "JUGAR":
                                 popup_showing = False
                                 arcade.exit = True
+                                fade_transition()
                                 return arcade.exit
 
         draw()
@@ -263,8 +271,12 @@ def main(arcade_popup_flags):
     pygame.mixer.music.set_volume(0.4)
     pygame.mixer.music.play(-1)
 
-    for i, arcade in enumerate(arcades_group):
-        arcade.active = arcade_popup_flags[i - 1]
+    player_rect.center = initial_player_position
+
+    for i, arcade in enumerate(arcades):
+        arcade.active = arcade_popup_flags[i]
+
+    popup_shown = {arcade: False for arcade in arcades}
 
     
     while True:
@@ -275,8 +287,10 @@ def main(arcade_popup_flags):
         pygame.display.flip() 
         pygame.time.Clock().tick(60)
         frame_counter += 1
-        for arcade in arcades_group:
-            if arcade.exit:
-                arcade_popup_flags[num - 1] = False
-                return arcade_popup_flags
+        
+        if num is not None:
+            arcade_popup_flags[num] = False
+            # AQUI SIGUEN SENDO TRES ELEMENTOS
+            return arcade_popup_flags
+                
                     
