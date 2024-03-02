@@ -291,6 +291,6 @@ def main(arcade_popup_flags):
         if num is not None:
             arcade_popup_flags[num] = False
             # AQUI SIGUEN SENDO TRES ELEMENTOS
-            return arcade_popup_flags
+            return arcade_popup_flags, num
                 
                     

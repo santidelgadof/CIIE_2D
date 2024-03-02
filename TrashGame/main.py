@@ -13,6 +13,7 @@ from TrashGame.FinalWindow import FinalWindow
 from ResourceManager import ResourceManager
 from TrashGame.TechPart import TechPart
 from Arcade import arcades_room 
+from Tetris import Tetris
 import time
 
 import os
@@ -152,11 +153,20 @@ def main(level, game_state): # Level is an int that stablishes the dificulty of 
             elapsed_time += 10
             if not finish:
                 if minigame_played == None and progress_bar_width <= 500 and progress_bar_width >= 400:
-                    minigame_played = arcades_room.main(game_state.alreadyPlayedMinigames)
+                    minigame_played, minigame_num = arcades_room.main(game_state.alreadyPlayedMinigames)
+
+                    if minigame_num == 0:
+                        print("cucarachas")
+                    elif minigame_num == 1:
+                        print("wordle")
+                    elif minigame_num == 2:
+                        tetris_points = Tetris.main()
+
+                    print(minigame_played)
                     mixer.music.load("TrashGame/assets/music/MainMusic.ogg")
                     mixer.music.set_volume(0.3)
                     mixer.music.play(-1) 
-                    minigame_played = True
+                    #minigame_played = True
                     
                 if progress_bar_width >= 800:
                     finish = True
