@@ -9,7 +9,7 @@ from CucarachaGame.ClassSpeedItem import SpeedItem
 pygame.init()
 
 # Configuración de la ventana
-WIDTH, HEIGHT = 800, 600
+WIDTH, HEIGHT = 800, 800
 CELL_SIZE = 200  # Tamaño de celda para la cuadrícula de agujeros
 ROWS, COLS = HEIGHT // CELL_SIZE, WIDTH // CELL_SIZE  # Número de filas y columnas para la cuadrícula
 window = pygame.display.set_mode((WIDTH, HEIGHT))
@@ -17,11 +17,42 @@ pygame.display.set_caption("Atrapa Cucarachas")
 
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
+global a, b    
+a=0
+b=0
+CELL_SIZE = 200
+ROWS, COLS = HEIGHT // CELL_SIZE, WIDTH // CELL_SIZE
+
+
+
+    
+items_shown = 0
+score = 0
+items_mostrados = 0 
+cucarachas_mostradas = 0 
+spawn_timer = 0
+gif_frame_index = 0
+
+cucarachas = pygame.sprite.Group()
+slow_items = pygame.sprite.Group()
+speed_items = pygame.sprite.Group()
+
+next_spawn_time = random.randint(500, 5000)
+item_spawn_time = random.randint(1000, 8000)
+speed_spawn_time = random.randint(1000, 6000)
+   
+show_final_score = False
+font = pygame.font.Font(None, 36)
+button_width = 300
+button_height = 50
+button_color = (140, 83, 11)
+marco = (0, 0, 0)
 
 
 def initialize_pygame():
     pygame.init()
     return pygame.display.set_mode((WIDTH, HEIGHT)), pygame.time.Clock()
+window, clock = initialize_pygame()
 
 def load_images():
     # Las imágenes y sus tamaños pueden cambiar dependiendo de tu implementación específica
@@ -32,8 +63,8 @@ def load_images():
     background_image = pygame.transform.scale(pygame.image.load("CucarachaGame/Assets/back.jpg").convert(), (WIDTH, HEIGHT))
     background_slow = pygame.transform.scale(pygame.image.load("CucarachaGame/Assets/back_slow.png").convert(), (WIDTH, HEIGHT))  # Fondo para modo lento
     background_speed = pygame.transform.scale(pygame.image.load("CucarachaGame/Assets/back_speed.png").convert(), (WIDTH, HEIGHT))
-    return hole, hole_slow, insect, background_image, background_slow, hole_speed, background_speed
-
+    return hole, hole_slow, hole_speed, insect, background_image, background_slow, background_speed
+hole, hole_slow, hole_speed, insect, background_image, background_slow, background_speed = load_images()
 
 # ITEMS
 def update_slow_items():
@@ -43,6 +74,8 @@ def update_slow_items():
     
 def spawn_slow_item():
     global slow_item, items_mostrados, spawn_timer, item_spawn_time
+    agujeros = create_holes()
+
     if spawn_timer >= item_spawn_time and items_mostrados==0:
         slow_item = SlowItem()
         random_hole = random.choice(agujeros.sprites())
@@ -56,7 +89,7 @@ def spawn_slow_item():
 
 def enter_slow_motion_mode():
     global in_slow_motion_mode, hole, a
-
+    
     in_slow_motion_mode = True
     hole = hole_slow  # Cambiar el agujero al modo lento
     if a<1:
@@ -70,6 +103,7 @@ def update_speed_items():
     speed_items.draw(window)       
   
 def spawn_speed_item():
+    agujeros = create_holes()
     global speed_item, items_shown, spawn_timer, speed_spawn_time
     if spawn_timer >= speed_spawn_time and items_shown == 0 :
         speed_item = SpeedItem()
@@ -109,6 +143,7 @@ def play_music():
 
 def draw_background():
     global background 
+
     if in_slow_motion_mode:
         background = background_slow
     elif in_speed_mode:
@@ -119,7 +154,8 @@ def draw_background():
     window.blit(background, (0, 0))
 
 def draw_holes():
-    
+    agujeros = create_holes()
+
     if in_slow_motion_mode:
         for agujero in agujeros:
             window.blit(hole_slow, agujero.rect.topleft)
@@ -182,6 +218,8 @@ def update_cucarachas():
     cucarachas.draw(window)
 
 def spawn_cucaracha():
+    agujeros = create_holes()
+
     global spawn_timer, cucarachas_mostradas, next_spawn_time
     spawn_timer += clock.get_time()
     if spawn_timer >= next_spawn_time and cucarachas_mostradas < 16:
@@ -196,6 +234,8 @@ def spawn_cucaracha():
         cucarachas_mostradas += 1
 
 #FINAL SCORE
+
+
 def show_final_score_screen():
     draw_final_score_screen()
     while True:
@@ -209,31 +249,41 @@ def draw_final_score_screen():
     pygame.mixer.music.play()
     window.blit(background, (0, 0))
     final_score_text = font.render("Puntuación final: " + str(score), True, BLACK)
-    button_rect = pygame.Rect((WIDTH - button_width) // 2, (HEIGHT - button_height) // 2, button_width, button_height)
-    pygame.draw.rect(window, marco, button_rect)
-    pygame.draw.rect(window, button_color, button_rect.inflate(-4, -4))
+    
+    # Dibuja el botón de salir
+    exit_button_rect = pygame.Rect((WIDTH - button_width) // 2, (HEIGHT - button_height) // 2 + 100, button_width, button_height)
+    pygame.draw.rect(window, marco, exit_button_rect)
+    pygame.draw.rect(window, button_color, exit_button_rect.inflate(-4, -4))
+    exit_text = font.render("Salir", True, BLACK)
+    exit_text_rect = exit_text.get_rect(center=exit_button_rect.center)
+    window.blit(exit_text, exit_text_rect.topleft)
+
+    # Dibuja el rectángulo marrón debajo del botón "Salir"
+    brown_rect = pygame.Rect((WIDTH - button_width) // 2, (HEIGHT - button_height) // 2 , button_width, button_height)
+    pygame.draw.rect(window, marco, brown_rect)
+    pygame.draw.rect(window, button_color, brown_rect.inflate(-4, -4))
+
+    # Dibuja el texto de la puntuación final
     text_rect = final_score_text.get_rect(center=(WIDTH // 2, HEIGHT // 2))
     window.blit(final_score_text, text_rect.topleft)
+    
     pygame.display.flip()
 
 def handle_final_score_events():
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
-            return False
+            pygame.quit()
+            sys.exit()
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
                 return False
+        elif event.type == pygame.MOUSEBUTTONDOWN:
+            # Verifica si se hizo clic en el botón de salida
+            exit_button_rect = pygame.Rect((WIDTH - button_width) // 2, (HEIGHT - button_height) // 2 + 100, button_width, button_height)
+            if exit_button_rect.collidepoint(event.pos):
+                pygame.quit()
+                sys.exit()
     return True
-
-def cargar_cursor(nombre_cursor, tamaño):
-    # Carga la imagen desde el directorio actual del programa
-    imagen = pygame.image.load(nombre_cursor)
-    # Escala la imagen al tamaño deseado
-    imagen = pygame.transform.scale(imagen, tamaño)
-    # Convierte la imagen en un formato compatible con el cursor
-    pygame.mouse.set_cursor((tamaño[0], tamaño[1]), (0, 0), *pygame.cursors.compile(pygame.cursors.sizer_x_strings))
-    return imagen
-
 # Main game loop
 def main():
     global running, in_slow_motion_mode, in_speed_mode 
@@ -242,6 +292,7 @@ def main():
     in_speed_mode = False
     time_in_slow_motion = 0 
     time_in_speed_mode = 0
+    
     play_music()
 
     while running:
@@ -281,38 +332,5 @@ def main():
         clock.tick(60)
     show_final_score_screen()
 
-if __name__ == "__main__":
-    global a, b    
-    a=0
-    b=0
-    CELL_SIZE = 200
-    ROWS, COLS = HEIGHT // CELL_SIZE, WIDTH // CELL_SIZE
-    window, clock = initialize_pygame()
-    hole, hole_slow, insect, background_image, background_slow, hole_speed, background_speed= load_images()
-    agujeros = create_holes()
-    
-    items_shown = 0
-    score = 0
-    items_mostrados = 0 
-    cucarachas_mostradas = 0 
-    spawn_timer = 0
-    gif_frame_index = 0
-
-    cucarachas = pygame.sprite.Group()
-    slow_items = pygame.sprite.Group()
-    speed_items = pygame.sprite.Group()
-
-    next_spawn_time = random.randint(500, 5000)
-    item_spawn_time = random.randint(1000, 8000)
-    speed_spawn_time = random.randint(1000, 6000)
-   
-    show_final_score = False
-    font = pygame.font.Font(None, 36)
-    button_width = 300
-    button_height = 50
-    button_color = (140, 83, 11)
-    marco = (0, 0, 0)
-    main()
-    
-    pygame.quit()
+if __name__ == "__main__":   
     sys.exit()
