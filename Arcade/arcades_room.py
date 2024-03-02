@@ -29,9 +29,6 @@ resource_manager = ResourceManager()
 fuenteGP = "Arcade/ArcadeMachinePopup/fuentes/game_power.ttf"
 fuente8Bit = "Arcade/ArcadeMachinePopup/fuentes/8Bit.ttf"
 
-# Cargar música de fondo
-
-
 # Cargar sonidos para ventana emergente
 popup_sound_open = pygame.mixer.Sound('Arcade/assets/music/open.mp3')
 popup_sound_close = pygame.mixer.Sound('Arcade/assets/music/close.mp3')

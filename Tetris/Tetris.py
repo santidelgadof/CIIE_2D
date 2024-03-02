@@ -5,6 +5,7 @@ from Tetris.block import Block
 from Tetris.TetrisPopUp.popUpClass import PopUp
 from Tetris.TetrisPopUp.textClass import Text
 from Tetris.TetrisPopUp.buttonClass import Boton
+from ResourceManager import ResourceManager
 
 pygame.init()
 
@@ -34,10 +35,12 @@ INITIAL_SPEED = 5
 INCREASE_INTERVAL = 5
 INCREASE_VAL = 1.125
 
+resource_manager = ResourceManager()
+
 fuenteGP = "Tetris/TetrisPopUp/fuentes/game_power.ttf"
 fuente8Bit = "Tetris/TetrisPopUp/fuentes/8Bit.ttf"
 
-background_image = pygame.image.load('Tetris/assets/background.jpeg')
+background_image = pygame.transform.scale(resource_manager.tetris_background.get(), (WINDOW_WIDTH, WINDOW_HEIGHT))
 
 clear_row_sound = pygame.mixer.Sound('Tetris/assets/music/line.wav')
 piece_drop_sound = pygame.mixer.Sound('Tetris/assets/music/drop.mp3')
