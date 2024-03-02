@@ -2,14 +2,17 @@ import pygame
 import random
 import time
 from block import Block
+from TetrisPopUp.popUpClass import PopUp
+from TetrisPopUp.textClass import Text
+from TetrisPopUp.buttonClass import Boton
 
 pygame.init()
 
-# Dimensións ventá 
+# Dimensiones de la ventana 
 WINDOW_WIDTH = 800  
 WINDOW_HEIGHT = 800  
 
-# Dimensións tableiro 
+# Dimensiones del tablero
 BOARD_WIDTH = 200 
 BOARD_HEIGHT = 500 
 
@@ -21,20 +24,32 @@ GRAY = (128, 128, 128)
 BLACK = (0, 0, 0)
 RED_LIGHT = (255, 128, 128)
 FONT_SIZE = 24
+YELLOW = (249, 247, 98)
+TRANSPARENT = (0, 0, 0, 50)
+BLUE = (12, 18, 58)
 
-# Cargar imagen de fondo  
+INITIAL_COUNTDOWN = 30
+
+INITIAL_SPEED = 5
+INCREASE_INTERVAL = 5
+INCREASE_VAL = 1.125
+
+fuenteGP = "TetrisPopUp/fuentes/game_power.ttf"
+fuente8Bit = "TetrisPopUp/fuentes/8Bit.ttf"
+
 background_image = pygame.image.load('assets/background.jpeg')
 
-# Música
-pygame.mixer.music.load('assets/music/tetris_song.ogg')
-pygame.mixer.music.play(-1)  
+pygame.mixer.music.load('assets/music/tetris_song.ogg')  
 
-# Efectos de sonido
 clear_row_sound = pygame.mixer.Sound('assets/music/line.wav')
 piece_drop_sound = pygame.mixer.Sound('assets/music/drop.mp3')
 win_sound = pygame.mixer.Sound('assets/music/win.mp3')
 lose_sound = pygame.mixer.Sound('assets/music/lose.mp3')
 
+
+def exit_game(score):
+    pygame.quit()
+    return score
 
 
 def main():
@@ -42,8 +57,10 @@ def main():
     pygame.display.set_caption("Tetris")
     clock = pygame.time.Clock()
     font = pygame.font.Font(None, FONT_SIZE)
-    score_font = pygame.font.Font(None, FONT_SIZE)
-    timer_font = pygame.font.Font(None, FONT_SIZE)
+    score_font = pygame.font.Font(fuente8Bit, FONT_SIZE)
+    timer_font = pygame.font.Font(fuente8Bit, FONT_SIZE)
+
+    pygame.mixer.music.play(-1)
 
     start_time = time.time()
 
@@ -51,37 +68,30 @@ def main():
     game_over_sound_played = False  
     ended = False
 
-    # Inicializar tableiro
     board = [[None] * (BOARD_WIDTH // BLOCK_SIZE) for _ in range(BOARD_HEIGHT // BLOCK_SIZE)]
 
-    # Lista de bloques activos
-    blocks = [Block()]
+    blocks = [Block()] # Active blocks
 
-    # Velocidade
-    speed = 5  # Velocidad inicial de caída das pezas
-    increase_interval = 5  # Intervalo de tempo no que aumenta a velocidade
+    speed = INITIAL_SPEED  
     last_increase_time = time.time()  
 
-    # Contadores
     score = 0
-    countdown_timer = 60
+    countdown_timer = INITIAL_COUNTDOWN
 
     running = True
     while running:
         screen.blit(background_image, (0, 0))  
 
-        # Área tableiro
         pygame.draw.rect(screen, WHITE, (BOARD_OFFSET_X, 0, BOARD_WIDTH, BOARD_HEIGHT))
 
-        # Límite tableiro
         pygame.draw.line(screen, BLACK, (BOARD_OFFSET_X, 0), (BOARD_OFFSET_X, BOARD_HEIGHT), 2)
         pygame.draw.line(screen, BLACK, (BOARD_OFFSET_X + BOARD_WIDTH, 0), (BOARD_OFFSET_X + BOARD_WIDTH, BOARD_HEIGHT), 2)
 
         current_time = time.time()
         elapsed_time = time.time() - start_time
 
-        if current_time >= increase_interval + last_increase_time:
-            speed *= 1.125  # Aumentar velocidade
+        if current_time >= INCREASE_INTERVAL + last_increase_time:
+            speed *= INCREASE_VAL  
             last_increase_time = current_time  
 
         clock.tick(speed)  
@@ -91,13 +101,11 @@ def main():
                 countdown_timer = max(countdown_timer - 1, 0)
                 start_time = time.time()  
 
-        # Mostrar tempo restante
         if not game_over or countdown_timer > 0: 
-            timer_text = timer_font.render(f"Tiempo: {countdown_timer}", True, BLACK)
+            timer_text = timer_font.render(f"Time: {countdown_timer}", True, BLACK)
             screen.blit(timer_text, (10, 10))
 
-        # Mostrar puntuación
-        score_text = score_font.render(f"Puntuación: {score}", True, BLACK)
+        score_text = score_font.render(f"Score: {score}", True, BLACK)
         screen.blit(score_text, (10, 30))
 
         
@@ -107,18 +115,28 @@ def main():
             elif event.type == pygame.KEYDOWN:
                 if not game_over:
                     if event.key == pygame.K_LEFT:
-                        # Mover peza á esquerda
+                        # Move left
                         blocks[-1].move_left(board)
                     elif event.key == pygame.K_RIGHT:
-                        # Mover peza á dereita
+                        # Move right
                         blocks[-1].move_right(board)
                     elif event.key == pygame.K_UP:
-                        # Rotar peza 
+                        # Rotate
                         blocks[-1].rotate(board)
                     elif event.key == pygame.K_DOWN:
-                        # Baixar peza
+                        # Lower down
                         while not blocks[-1].collide(board):
                             blocks[-1].move_down()
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                if game_over:
+                    mouse_x, mouse_y = pygame.mouse.get_pos()
+                    if final_score_popup.get_rect().collidepoint(mouse_x, mouse_y):
+                        for boton in final_score_popup.botones:
+                            if boton.rect.collidepoint(mouse_x, mouse_y):
+                                if boton.accion == "REINICIAR":
+                                    return main()
+                                elif boton.accion == "SALIR":
+                                    return exit_game(score)
 
         if not game_over:
             
@@ -127,15 +145,13 @@ def main():
             if current_block.falling:
                 current_block.move_down()
 
-            # Comprobar colisión
             if current_block.collide(board):
-                # Engadimos a peza actual ao tableiro
                 for i in range(len(current_block.shape)):
                     for j in range(len(current_block.shape[i])):
                         if current_block.shape[i][j]:
                             board[current_block.y // BLOCK_SIZE + i][(current_block.x - BOARD_OFFSET_X) // BLOCK_SIZE + j] = current_block.color
 
-                # Eliminar as filas que estén completas
+                # Delete complete rows and increase puntuation
                 rows_to_delete = set()
                 for i in range(len(board)):
                     if all(board[i]):
@@ -147,29 +163,25 @@ def main():
                     board.insert(0, [None] * (BOARD_WIDTH // BLOCK_SIZE))
                     clear_row_sound.play() 
 
-                # Lanzar unha nova peza cando non queden máis liñas por limpar
                 if not rows_to_delete:
                     blocks.append(Block())
                     piece_drop_sound.play()
 
-                # Parar o xogo se unha peza chega ao límite superior
                 if any(board[1]): 
                     game_over = True
 
-                # Parar o xogo se o tempo chega a 0
                 if countdown_timer == 0:
                     game_over = True
 
-        # Debuxar tableiro
+        # Draw board
         for i in range(len(board)):
             for j in range(len(board[i])):
                 if board[i][j]:
                     pygame.draw.rect(screen, board[i][j], (j * BLOCK_SIZE + BOARD_OFFSET_X, i * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE))
 
-        # Debuxar peza
         current_block.draw(screen)
 
-        # Cargar pantalla de GAME OVER ao rematar o xogo
+        # Load game over screen
         if game_over:
             pygame.mixer.music.stop()  
 
@@ -183,31 +195,38 @@ def main():
 
             game_over_surface = pygame.Surface((WINDOW_WIDTH, WINDOW_HEIGHT), pygame.SRCALPHA)
             if countdown_timer == 0 and not ended:
-                game_over_surface.fill((0, 255, 0, 128))  # Fondo verde
+                game_over_surface.fill((0, 255, 0, 128))  
             else:
-                game_over_surface.fill(RED_LIGHT + (128,))  # Fondo vermello 
+                game_over_surface.fill(RED_LIGHT + (128,))  
                 ended = True
             screen.blit(game_over_surface, (0, 0))
 
-            # Ventá emerxente coa mensaxe de GAME OVER e a Puntuación Final
-            game_over_surface = pygame.Surface((300, 100), pygame.SRCALPHA)
-            game_over_surface.fill(WHITE)  
-            game_over_rect = game_over_surface.get_rect(center=(WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2))
 
-            game_over_text = font.render("GAME OVER", True, BLACK)
-            game_over_text_rect = game_over_text.get_rect(center=(150, 30))
-            game_over_surface.blit(game_over_text, game_over_text_rect)
+            popup_width = 400  
+            popup_height = 300  
+            popup_x = (WINDOW_WIDTH - popup_width) // 2 
+            popup_y = (WINDOW_HEIGHT - popup_height) // 2 
 
-            final_score_text = font.render(f"Puntuación Final: {score}", True, BLACK)
-            final_score_text_rect = final_score_text.get_rect(center=(150, 70))
-            game_over_surface.blit(final_score_text, final_score_text_rect)
+            rotations = [0, 0]
 
-            screen.blit(game_over_surface, game_over_rect)
+            game_over_text = [
+                Text("Game Over", 60, YELLOW, popup_x + popup_width // 2, popup_y + popup_height // 3 - 20, True, fuenteGP),
+                Text(f"Score: {score}", 50, YELLOW, popup_x + popup_width // 2, popup_y + popup_height // 3 + 30, True, fuenteGP)
+            ]
 
-            countdown_timer = 0 # Paramos o tempo
+            buttons = [
+                Boton(popup_x + popup_width // 2, popup_y + popup_height // 3 + 110, 100, 40, "REINICIAR", fuenteGP, TRANSPARENT, YELLOW, 40, "REINICIAR"),
+                Boton(popup_x + popup_width // 2, popup_y + popup_height // 3 + 160, 100, 40, "SALIR", fuenteGP, TRANSPARENT, YELLOW, 40, "SALIR")
+            ]
+
+            final_score_popup = PopUp(popup_x, popup_y, popup_width, popup_height, 60, BLUE, 8, BLACK, buttons, game_over_text, rotations)
+
+            final_score_popup.draw(screen)
+
+            countdown_timer = 0 
 
         pygame.display.flip()
-        clock.tick(30)  # Velocidade de fotogramas 
+        clock.tick(30)  
     
 
     pygame.quit()
