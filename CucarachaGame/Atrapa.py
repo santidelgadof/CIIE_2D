@@ -8,10 +8,10 @@ from CucarachaGame.ClassSpeedItem import SpeedItem
 
 pygame.init()
 
-# Configuración de la ventana
+# Window settings
 WIDTH, HEIGHT = 800, 800
-CELL_SIZE = 200  # Tamaño de celda para la cuadrícula de agujeros
-ROWS, COLS = HEIGHT // CELL_SIZE, WIDTH // CELL_SIZE  # Número de filas y columnas para la cuadrícula
+CELL_SIZE = 200  # Cell size for hole grid
+ROWS, COLS = HEIGHT // CELL_SIZE, WIDTH // CELL_SIZE  # Number of rows and columns for the grid
 window = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Atrapa Cucarachas")
 
@@ -24,8 +24,6 @@ CELL_SIZE = 200
 ROWS, COLS = HEIGHT // CELL_SIZE, WIDTH // CELL_SIZE
 
 
-
-    
 items_shown = 0
 score = 0
 items_mostrados = 0 
@@ -55,7 +53,7 @@ def initialize_pygame():
 window, clock = initialize_pygame()
 
 def load_images():
-    # Las imágenes y sus tamaños pueden cambiar dependiendo de tu implementación específica
+    #Images and their sizes may change depending on your specific implementation
     hole = pygame.transform.scale(pygame.image.load("CucarachaGame/Assets/Agujero.png").convert_alpha(), (CELL_SIZE - 50, CELL_SIZE - 50))
     hole_slow = pygame.transform.scale(pygame.image.load("CucarachaGame/Assets/Agujero_slow.png").convert_alpha(), (CELL_SIZE - 50, CELL_SIZE - 50))
     hole_speed = pygame.transform.scale(pygame.image.load("CucarachaGame/Assets/Agujero_speed.png").convert_alpha(), (CELL_SIZE - 50, CELL_SIZE - 50))
@@ -69,8 +67,8 @@ hole, hole_slow, hole_speed, insect, background_image, background_slow, backgrou
 # ITEMS
 def update_slow_items():
     spawn_slow_item()
-    slow_items.update()  # Actualiza el estado de los slowItem
-    slow_items.draw(window)  # Dibuja los slowItem en la ventana
+    slow_items.update()  # Update the status of the slowItem
+    slow_items.draw(window)  # Draw the slowItem in the window
     
 def spawn_slow_item():
     global slow_item, items_mostrados, spawn_timer, item_spawn_time
@@ -91,7 +89,7 @@ def enter_slow_motion_mode():
     global in_slow_motion_mode, hole, a
     
     in_slow_motion_mode = True
-    hole = hole_slow  # Cambiar el agujero al modo lento
+    hole = hole_slow  # Change the hole to slow mode
     if a<1:
         pygame.mixer.music.load("CucarachaGame/Music/baile_slow.mp3")  
         pygame.mixer.music.play(-1) 
@@ -187,16 +185,16 @@ def handle_events():
 
 def handle_slow_item_click(item):
     global in_slow_motion_mode, in_speed_mode
-    item.kill()  # Eliminar el item del grupo de sprites
-    item.active = False  # Desactivar el item
-    in_slow_motion_mode = True  # Entrar en slowmode
+    item.kill()  # Delete item
+    item.active = False  # Deactivate the item
+    in_slow_motion_mode = True  # Enter slowmode
     in_speed_mode = False
 
 def handle_speed_item_click(item):
     global in_speed_mode, in_slow_motion_mode
-    item.kill()  # Eliminar el item del grupo de sprites
-    item.active = False  # Desactivar el item
-    in_speed_mode = True  # Entrar en slowmode
+    item.kill()  # Delete item
+    item.active = False  # Deactivate the item
+    in_speed_mode = True  # Enter en speedmode
     in_slow_motion_mode = False    
 
 def handle_cucaracha_click(cucaracha):
@@ -250,7 +248,7 @@ def draw_final_score_screen():
     window.blit(background, (0, 0))
     final_score_text = font.render("Puntuación final: " + str(score), True, BLACK)
     
-    # Dibuja el botón de salir
+    # draw exit button
     exit_button_rect = pygame.Rect((WIDTH - button_width) // 2, (HEIGHT - button_height) // 2 + 100, button_width, button_height)
     pygame.draw.rect(window, marco, exit_button_rect)
     pygame.draw.rect(window, button_color, exit_button_rect.inflate(-4, -4))
@@ -258,12 +256,13 @@ def draw_final_score_screen():
     exit_text_rect = exit_text.get_rect(center=exit_button_rect.center)
     window.blit(exit_text, exit_text_rect.topleft)
 
-    # Dibuja el rectángulo marrón debajo del botón "Salir"
+    
+    # Draw the brown rectangle
     brown_rect = pygame.Rect((WIDTH - button_width) // 2, (HEIGHT - button_height) // 2 , button_width, button_height)
     pygame.draw.rect(window, marco, brown_rect)
     pygame.draw.rect(window, button_color, brown_rect.inflate(-4, -4))
 
-    # Dibuja el texto de la puntuación final
+    # Draw final points
     text_rect = final_score_text.get_rect(center=(WIDTH // 2, HEIGHT // 2))
     window.blit(final_score_text, text_rect.topleft)
     
@@ -284,6 +283,7 @@ def handle_final_score_events():
                 pygame.quit()
                 sys.exit()
     return True
+
 # Main game loop
 def main():
     global running, in_slow_motion_mode, in_speed_mode 
@@ -307,26 +307,26 @@ def main():
         
         if in_slow_motion_mode:
             enter_slow_motion_mode()   
-            time_in_slow_motion += clock.get_time() / 1000  # Convertir el tiempo en milisegundos a segundos
-            # Si ha pasado más de 10 segundos, salir del modo lento
+            time_in_slow_motion += clock.get_time() / 1000  # Convert time in milliseconds to seconds
+            
+            # If more than 10 seconds have passed, exit slow mode
             if time_in_slow_motion > 12:
                 in_slow_motion_mode = False
-                pygame.mixer.music.load("CucarachaGame/Music/baile.ogg")  # Restaurar la música normal
-                pygame.mixer.music.play(-1)  # Reproducir la música normal en bucle
+                pygame.mixer.music.load("CucarachaGame/Music/baile.ogg")  
+                pygame.mixer.music.play(-1)  
                 
         elif in_speed_mode:
             enter_speed_mode()
             time_in_speed_mode += clock.get_time() / 1000
             if time_in_speed_mode > 10:  
                 in_speed_mode = False
-                pygame.mixer.music.load("CucarachaGame/Music/baile.ogg")  # Restaurar la música normal
-                pygame.mixer.music.play(-1)  # Reproducir la música normal en bucle
+                pygame.mixer.music.load("CucarachaGame/Music/baile.ogg") 
+                pygame.mixer.music.play(-1) 
                 
 
-        if cucarachas_mostradas > 10:  # Salir del juego cuando se alcanzan 10 cucarachas
+        if cucarachas_mostradas > 10:  # Exit the game when you reach 10 cockroaches
             running = False 
            
-        #draw_gif_animation()
         pygame.display.flip()
     
         clock.tick(60)
