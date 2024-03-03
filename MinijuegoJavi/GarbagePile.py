@@ -4,6 +4,9 @@ import sys
 import os
 from bloquePila import Bloque
 from bloqueClicable import ClicableObject
+from ArcadeMachinePopup.textClass import Text
+from ArcadeMachinePopup.buttonClass import Boton
+from ArcadeMachinePopup.popUpClass import PopUp
 
 # Inicializar Pygame
 pygame.init()
@@ -14,6 +17,8 @@ BLACK = (0, 0, 0)
 DARK_BLUE = (47, 55, 65)
 GREEN = (0, 255, 0, 100)  # Alfa 0 para transparencia
 RED = (255,0,0,100)
+YELLOW = (222, 196, 65)
+TRANSPARENT = (0, 0, 0, 50)
 
 # Definir dimensiones de la screen
 WIDTH = 800
@@ -60,6 +65,8 @@ Poswords = [
                 (WIDTH//2-int(WIDTH_BLOQUE*1.5), HEIGHT//2+HEIGHT_BLOQUE//2), (WIDTH//2-int(WIDTH_BLOQUE*1.5), HEIGHT//2-HEIGHT_BLOQUE//2)]
                 ]
 
+
+
 def load_img():
     images = []
     for folder in os.listdir("repositorio//CIIE//MinijuegoJavi//images//blocks"):
@@ -70,10 +77,12 @@ def load_img():
             images.append(img)
     return images
 
-def music():
-    pygame.mixer.music.load("repositorio//CIIE//MinijuegoJavi//music//music2.ogg")
-    pygame.mixer.music.play(-1)
-    pygame.mixer.music.set_volume(0.5)
+def music(stop = False):
+    if not stop:
+        pygame.mixer.music.load("repositorio//CIIE//MinijuegoJavi//music//music2.ogg")
+        pygame.mixer.music.play(-1)
+        pygame.mixer.music.set_volume(0.5)
+    else: pygame.mixer.music.stop()
 
 
 # Función para mostrar text en screen
@@ -113,6 +122,8 @@ def blockList(img, blocks, word, nBlocks):
         i=i+1
     return blocks
 
+def exit_game(score):
+    return score
 
 def createMountain():
     #elegir orden y words de los niveles de la montaña
@@ -150,9 +161,10 @@ def garbagePile():
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
     pygame.display.set_caption('Juego de Bloques')
 
-    images_blocks = load_img()
     bg = pygame.image.load("repositorio//CIIE//MinijuegoJavi//images//bg.jpg").convert()
     bg = pygame.transform.scale(bg, (800,800))
+    fuenteGP = "repositorio//CIIE//MinijuegoJavi//ArcadeMachinePopup//fuentes//game_power.ttf"
+    fuente8Bit = "repositorio//CIIE//MinijuegoJavi//ArcadeMachinePopup//fuentes//8Bit.ttf"
     lightBulbON = pygame.image.load("repositorio//CIIE//MinijuegoJavi//images//lightBulbOn.png")
     lightBulbON = pygame.transform.scale(lightBulbON, (50,50))
     lightBulbOff = pygame.image.load("repositorio//CIIE//MinijuegoJavi//images//lightBulbOff.png")
@@ -160,7 +172,12 @@ def garbagePile():
     floor = pygame.image.load("repositorio//CIIE//MinijuegoJavi//images//floor.jpg")
     floor = pygame.transform.scale(floor, (SIZE_FLOOR, SIZE_FLOOR))
 
+    images_blocks = load_img()
+    
+
     screen.blit(bg, (0, 0))
+
+    
 
     MountainArray = createMountain() #crea la lista de words
 
@@ -175,25 +192,32 @@ def garbagePile():
         i = i+1
 
     lightBulb = ClicableObject(WIDTH-50, HEIGHT-100, lightBulbON)
+
     # Crear reloj
     reloj = pygame.time.Clock()
 
     # Tiempo inicial
     limitTime = LIMIT_TIME
     startTime = pygame.time.get_ticks()
+
     successes = 0
     guess = ""
     n = 0
     m=0
+    score = 0
+
     next_letter = False
     end = False
-    
+    objectCreated = False
     lightBulbUsada = False
     hint_bool = False
+    running = True
+
     invertedBlocks = blocks[::-1]
     
+    
     # Ciclo principal del juego
-    while True:
+    while running:
         isKey = True
         if not end:
             word = blocks[n].sprites()[0].word
@@ -252,6 +276,16 @@ def garbagePile():
                                         break
                             lightBulbUsada = True
 
+                if end:
+                        mouse_x, mouse_y = pygame.mouse.get_pos()
+                        if window.get_rect().collidepoint(mouse_x, mouse_y):
+                            for boton in window.botones:
+                                if boton.rect.collidepoint(mouse_x, mouse_y):
+                                    if boton.accion == "Play again":
+                                        return garbagePile()
+                                    elif boton.accion == "Exit":
+                                        return exit_game(score)
+
 
         if successes == NBLOCKS: end = True
 
@@ -308,12 +342,32 @@ def garbagePile():
             
         # Mostrar tiempo restante en screen
         showText("Tiempo restante: " + str(remaining_time), pygame.font.Font(None, 36), screen, 10, 10)
-        #Verificar si quedan blocks
+        score = remaining_time
+
+        if end:
+            if not objectCreated:
+                objectCreated = True
+                texts = [
+                        Text("END", 60, BLACK, WIDTH//2, HEIGHT//3-140, True, fuenteGP), 
+                        Text(f"Score: {score}", 60, BLACK, WIDTH//2, HEIGHT//3-90, True, fuenteGP),
+                        Text("Insert a coin", 20, BLACK, WIDTH//2+100, HEIGHT//3+30, True, fuente8Bit)
+                        ]
+
+                rotations = [0, 0, 30]
+
+                buttons = [
+                    Boton(WIDTH//2-200 + 400//2, HEIGHT//3-180 + 300- 140, 100, 40, "TRY AGAIN", fuenteGP, TRANSPARENT, BLACK, 40, "Play again"),
+                    Boton(WIDTH//2-200+ 400//2, HEIGHT//3-200+ 300- 70, 100, 40, "EXIT", fuenteGP, TRANSPARENT, BLACK, 40, "Exit")
+                ]
+
+                window = PopUp(WIDTH//2-200, HEIGHT//3-200, 400, 300, 60, YELLOW, 8, BLACK, buttons, texts, rotations)
+            
+            window.draw(screen)
+
         if end and successes==NBLOCKS:
             showText("ENHORABUENA", pygame.font.Font(None, 36), screen, WIDTH/2, HEIGHT/2, centered=True)
             showText("Has conseguido limpiar la pila de basura en: " + str(LIMIT_TIME-remaining_time) + "s", pygame.font.Font(None, 36), screen,  WIDTH/2, HEIGHT/2 + 50, centered=True)
             
-
         # Verificar si se acabó el tiempo
         if remaining_time==0:
             showText("¡Se acabó el tiempo!", pygame.font.Font(None, 72), screen, WIDTH//2, HEIGHT//2, centered= True)
@@ -325,6 +379,9 @@ def garbagePile():
 
         # Controlar la velocidad de actualización
         reloj.tick()
+
+    pygame.quit()
+    return score
 
 if __name__ == '__main__':
     garbagePile()
