@@ -1,34 +1,34 @@
 import pygame
 
 class Text:
-    def __init__(self, text, tam, x, y, color_letras = (255, 255, 255), centrado = False, fuente = None, fondo = False, borde = False, color_fondo = (255, 255, 255), color_borde = (0,0,0), tam_borde = 4):
-        self.fuente = pygame.font.Font(fuente, tam)
-        self.render = self.fuente.render(text, True, color_letras)
-        self.centrado = centrado
+    def __init__(self, text, size, x, y, color_letter = (255, 255, 255), centered = False, font = None, bg = False, border = False, color_bg = (255, 255, 255), color_border = (0,0,0), size_border = 4):
+        self.font = pygame.font.Font(font, size)
+        self.render = self.font.render(text, True, color_letter)
+        self.centered = centered
     
         self.x = x
         self.y = y
 
-        self.fondo = fondo
-        self.colorFondo = color_fondo
+        self.bg = bg
+        self.colorBg = color_bg
 
-        self.borde = borde
-        self.colorBorde = color_borde
-        self.tam_borde = tam_borde
+        self.border = border
+        self.colorBorder = color_border
+        self.size_border = size_border
 
-    def dibujar(self, pantalla):
+    def draw(self, pantalla):
 
-        rectangulo_texto = self.render.get_rect() 
-        if self.centrado:
-            rectangulo_texto.topleft = (self.x-rectangulo_texto.width//2, self.y-rectangulo_texto.height//2)
+        rect_text = self.render.get_rect() 
+        if self.centered:
+            rect_text.topleft = (self.x-rect_text.width//2, self.y-rect_text.height//2)
         else:
-            rectangulo_texto.topleft = (self.x, self.y)
+            rect_text.topleft = (self.x, self.y)
 
-        if self.fondo:
-            rectangulo = pygame.Rect(rectangulo_texto.topleft[0], rectangulo_texto.topleft[1], rectangulo_texto.width, rectangulo_texto.height)
+        if self.bg:
+            rect = pygame.Rect(rect_text.topleft[0], rect_text.topleft[1], rect_text.width, rect_text.height)
 
-            if self.borde:
-                pygame.draw.rect(pantalla, self.color_borde, (rectangulo[0]-self.tam_borde, rectangulo[1]-self.tam_borde, rectangulo[2]+self.tam_borde*2, rectangulo[3]+self.tam_borde*2))
-            pygame.draw.rect(pantalla, self.colorFondo, rectangulo)
+            if self.border:
+                pygame.draw.rect(pantalla, self.color_border, (rect[0]-self.size_border, rect[1]-self.size_border, rect[2]+self.size_border*2, rect[3]+self.size_border*2))
+            pygame.draw.rect(pantalla, self.colorBg, rect)
     
-        pantalla.blit(self.render, rectangulo_texto)
+        pantalla.blit(self.render, rect_text)

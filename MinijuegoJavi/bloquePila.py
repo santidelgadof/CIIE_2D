@@ -1,37 +1,37 @@
 import pygame
 
-def BlitTransparente(superficie, color, size, coord):
-    superficie_transparente = pygame.Surface(size, pygame.SRCALPHA)
-    superficie_transparente.fill(color)
-    superficie.blit(superficie_transparente, coord)
+def BlitTransparente(screen, color, size, coord):
+    trans_screen = pygame.Surface(size, pygame.SRCALPHA)
+    trans_screen.fill(color)
+    screen.blit(trans_screen, coord)
 
 class Bloque(pygame.sprite.Sprite):
-    def __init__(self, x, y, tecla, palabra, imagen, ancho, alto, colorTxt, colorSup):
+    def __init__(self, x, y, key, word, img, w, h, colorTxt, colorScreen):
         super().__init__()
-        self.image = imagen 
+        self.image = img 
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
 
-        self.ancho_bloque = ancho
-        self.alto_bloque = alto
+        self.w_block = w
+        self.h_block = h
 
-        self.tecla = tecla
-        self.palabra = palabra
-        self.correcto = False
+        self.key = key
+        self.word = word
+        self.correct = False
 
-        self.color_texto = colorTxt
-        self.color_superficie = colorSup
+        self.color_txt = colorTxt
+        self.color_screen = colorScreen
 
-    def dibujar_letra(self, superficie):
-        fuente = pygame.font.SysFont(None, 30)
-        texto = fuente.render(self.tecla, True, self.color_texto)
-        posicion = (self.rect.x + self.ancho_bloque // 2 - texto.get_width() // 2, self.rect.y + self.alto_bloque//2 - texto.get_height()//2)
+    def draw_letter(self, screen):
+        font = pygame.font.SysFont(None, 30)
+        text = font.render(self.key, True, self.color_txt)
+        pos = (self.rect.x + self.w_block // 2 - text.get_width() // 2, self.rect.y + self.h_block//2 - text.get_height()//2)
 
-        texto_rect = texto.get_rect()
-        texto_rect.center = (self.rect.centerx, self.rect.centery - self.alto_bloque // 4)  
-        cuadrado_rect = pygame.Rect(texto_rect.left - 10, texto_rect.bottom, texto_rect.width + 20, texto_rect.height+20)
-        pygame.draw.rect(superficie, self.color_superficie, cuadrado_rect)
+        text_rect = text.get_rect()
+        text_rect.center = (self.rect.centerx, self.rect.centery - self.h_block // 4)  
+        sqr_rect = pygame.Rect(text_rect.left - 10, text_rect.bottom, text_rect.width + 20, text_rect.height+20)
+        pygame.draw.rect(screen, self.color_screen, sqr_rect)
        
-        superficie.blit(texto, posicion)
+        screen.blit(text, pos)
 
