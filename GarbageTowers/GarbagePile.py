@@ -4,9 +4,9 @@ import sys
 import os
 from GarbageTowers.bloquePila import Bloque
 from GarbageTowers.bloqueClicable import ClicableObject
-from Arcade.ArcadeMachinePopup.textClass import Text
-from Arcade.ArcadeMachinePopup.buttonClass import Boton
-from Arcade.ArcadeMachinePopup.popUpClass import PopUp
+from ArcadeMachinePopup.textClass import Text
+from ArcadeMachinePopup.buttonClass import Boton
+from ArcadeMachinePopup.popUpClass import PopUp
 
 # Inicializar Pygame
 pygame.init()
@@ -70,7 +70,7 @@ Poswords = [
 def load_img():
     images = []
     for folder in os.listdir("GarbageTowers/images/blocks"):
-        path = os.path.join("repositorio//CIIE//MinijuegoJavi//images//blocks", folder)
+        path = os.path.join("GarbageTowers/images/blocks", folder)
         if os.path.isfile(path):
             img = pygame.image.load(path).convert_alpha()
             img = pygame.transform.scale(img, (WIDTH_BLOQUE, HEIGHT_BLOQUE))
@@ -79,7 +79,7 @@ def load_img():
 
 def music(stop = False):
     if not stop:
-        pygame.mixer.music.load("repositorio//CIIE//MinijuegoJavi//music//music2.ogg")
+        pygame.mixer.music.load("GarbageTowers/music/music2.ogg")
         pygame.mixer.music.play(-1)
         pygame.mixer.music.set_volume(0.5)
     else: pygame.mixer.music.stop()
@@ -156,28 +156,25 @@ def transBlit(screen, color, size, coord):
 
 
 # Función principal del juego
-def garbagePile():
+def main():
     music()
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
     pygame.display.set_caption('Juego de Bloques')
 
-    bg = pygame.image.load("repositorio//CIIE//MinijuegoJavi//images//bg.jpg").convert()
+    bg = pygame.image.load("GarbageTowers/images/bg.jpg").convert()
     bg = pygame.transform.scale(bg, (800,800))
-    fuenteGP = "repositorio//CIIE//MinijuegoJavi//ArcadeMachinePopup//fuentes//game_power.ttf"
-    fuente8Bit = "repositorio//CIIE//MinijuegoJavi//ArcadeMachinePopup//fuentes//8Bit.ttf"
-    lightBulbON = pygame.image.load("repositorio//CIIE//MinijuegoJavi//images//lightBulbOn.png")
+    fuenteGP = "ArcadeMachinePopup/fuentes/game_power.ttf"
+    fuente8Bit = "ArcadeMachinePopup/fuentes/8Bit.ttf"
+    lightBulbON = pygame.image.load("GarbageTowers/images/lightBulbOn.png")
     lightBulbON = pygame.transform.scale(lightBulbON, (50,50))
-    lightBulbOff = pygame.image.load("repositorio//CIIE//MinijuegoJavi//images//lightBulbOff.png")
+    lightBulbOff = pygame.image.load("GarbageTowers/images/lightBulbOff.png")
     lightBulbOff = pygame.transform.scale(lightBulbOff, (50,50))
-    floor = pygame.image.load("repositorio//CIIE//MinijuegoJavi//images//floor.jpg")
+    floor = pygame.image.load("GarbageTowers/images\floor.jpg")
     floor = pygame.transform.scale(floor, (SIZE_FLOOR, SIZE_FLOOR))
 
     images_blocks = load_img()
     
-
     screen.blit(bg, (0, 0))
-
-    
 
     MountainArray = createMountain() #crea la lista de words
 
@@ -283,7 +280,7 @@ def garbagePile():
                                 if boton.rect.collidepoint(mouse_x, mouse_y):
                                     if boton.accion == "Play again":
                                         music(True)
-                                        return garbagePile()
+                                        return main()
                                     elif boton.accion == "Exit":
                                         music(True)
                                         return exit_game(score)
@@ -386,7 +383,7 @@ def garbagePile():
     return score
 
 if __name__ == '__main__':
-    garbagePile()
+    main()
 
 
 """#idea para cambiar juego -> añadir boton de pista, de saltarte una word...
