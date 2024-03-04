@@ -2,11 +2,11 @@ import pygame
 import random
 import sys
 import os
-from bloquePila import Bloque
-from bloqueClicable import ClicableObject
-from ArcadeMachinePopup.textClass import Text
-from ArcadeMachinePopup.buttonClass import Boton
-from ArcadeMachinePopup.popUpClass import PopUp
+from GarbageTowers.bloquePila import Bloque
+from GarbageTowers.bloqueClicable import ClicableObject
+from Arcade.ArcadeMachinePopup.textClass import Text
+from Arcade.ArcadeMachinePopup.buttonClass import Boton
+from Arcade.ArcadeMachinePopup.popUpClass import PopUp
 
 # Inicializar Pygame
 pygame.init()
@@ -69,7 +69,7 @@ Poswords = [
 
 def load_img():
     images = []
-    for folder in os.listdir("repositorio//CIIE//MinijuegoJavi//images//blocks"):
+    for folder in os.listdir("GarbageTowers/images/blocks"):
         path = os.path.join("repositorio//CIIE//MinijuegoJavi//images//blocks", folder)
         if os.path.isfile(path):
             img = pygame.image.load(path).convert_alpha()
