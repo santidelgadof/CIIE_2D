@@ -169,7 +169,7 @@ def main():
     lightBulbON = pygame.transform.scale(lightBulbON, (50,50))
     lightBulbOff = pygame.image.load("GarbageTowers/images/lightBulbOff.png")
     lightBulbOff = pygame.transform.scale(lightBulbOff, (50,50))
-    floor = pygame.image.load("GarbageTowers/images\floor.jpg")
+    floor = pygame.image.load("GarbageTowers/images/floor.jpg")
     floor = pygame.transform.scale(floor, (SIZE_FLOOR, SIZE_FLOOR))
 
     images_blocks = load_img()
@@ -278,10 +278,10 @@ def main():
                         if window.get_rect().collidepoint(mouse_x, mouse_y):
                             for boton in window.botones:
                                 if boton.rect.collidepoint(mouse_x, mouse_y):
-                                    if boton.accion == "Play again":
+                                    if boton.accion == "REINICIAR":
                                         music(True)
                                         return main()
-                                    elif boton.accion == "Exit":
+                                    elif boton.accion == "SALIR":
                                         music(True)
                                         return exit_game(score)
 
@@ -336,40 +336,44 @@ def main():
             remaining_time = max(0, limitTime - time_passed // 1000)
                         
             
-        showText(guess, pygame.font.Font(None, 30), screen, 0, HEIGHT//2+350, bg= False, letter_color=BLACK)
+        showText(guess, pygame.font.Font(fuente8Bit, 30), screen, 0, HEIGHT//2+350, bg= False, letter_color=BLACK)
         
             
         # Mostrar tiempo restante en screen
-        showText("Tiempo restante: " + str(remaining_time), pygame.font.Font(None, 36), screen, 10, 10)
+        showText("Tiempo restante: " + str(remaining_time), pygame.font.Font(fuente8Bit, 30), screen, 10, 10)
         score = remaining_time
 
         if end:
             if not objectCreated:
                 objectCreated = True
-                texts = [
-                        Text("END", 60, BLACK, WIDTH//2, HEIGHT//3-140, True, fuenteGP), 
-                        Text(f"Score: {score}", 60, BLACK, WIDTH//2, HEIGHT//3-90, True, fuenteGP),
-                        Text("Insert a coin", 20, BLACK, WIDTH//2+100, HEIGHT//3+30, True, fuente8Bit)
-                        ]
 
-                rotations = [0, 0, 30]
+                popup_width = 400  
+                popup_height = 300  
+                popup_x = (WIDTH - popup_width) // 2 
+                popup_y = (HEIGHT - popup_height) // 2 
 
-                buttons = [
-                    Boton(WIDTH//2-200 + 400//2, HEIGHT//3-180 + 300- 140, 100, 40, "TRY AGAIN", fuenteGP, TRANSPARENT, BLACK, 40, "Play again"),
-                    Boton(WIDTH//2-200+ 400//2, HEIGHT//3-200+ 300- 70, 100, 40, "EXIT", fuenteGP, TRANSPARENT, BLACK, 40, "Exit")
+                rotations = [0, 0]
+
+                game_over_text = [
+                    Text("Game Over", 60, BLACK, popup_x + popup_width // 2, popup_y + popup_height // 3 - 20, True, fuenteGP),
+                    Text(f"Score: {score}", 50, BLACK, popup_x + popup_width // 2, popup_y + popup_height // 3 + 30, True, fuenteGP)
                 ]
 
-                window = PopUp(WIDTH//2-200, HEIGHT//3-200, 400, 300, 60, YELLOW, 8, BLACK, buttons, texts, rotations)
+                buttons = [
+                    Boton(popup_x + popup_width // 2, popup_y + popup_height // 3 + 110, 100, 40, "REINICIAR", fuenteGP, TRANSPARENT, BLACK, 40, "REINICIAR"),
+                    Boton(popup_x + popup_width // 2, popup_y + popup_height // 3 + 160, 100, 40, "SALIR", fuenteGP, TRANSPARENT, BLACK, 40, "SALIR")
+                ]
+
+                window = PopUp(popup_x, popup_y, popup_width, popup_height, 60, YELLOW, 8, BLACK, buttons, game_over_text, rotations)
             
             window.draw(screen)
 
         if end and successes==NBLOCKS:
-            showText("ENHORABUENA", pygame.font.Font(None, 36), screen, WIDTH/2, HEIGHT/2, centered=True)
-            showText("Has conseguido limpiar la pila de basura en: " + str(LIMIT_TIME-remaining_time) + "s", pygame.font.Font(None, 36), screen,  WIDTH/2, HEIGHT/2 + 50, centered=True)
+            showText("Has conseguido limpiar la pila de basura en: " + str(LIMIT_TIME-remaining_time) + "s", pygame.font.Font(fuente8Bit, 26), screen,  WIDTH/2, HEIGHT/2 + 200, centered=True)
             
         # Verificar si se acabó el tiempo
         if remaining_time==0:
-            showText("¡Se acabó el tiempo!", pygame.font.Font(None, 72), screen, WIDTH//2, HEIGHT//2, centered= True)
+            showText("¡Se acabó el tiempo!", pygame.font.Font(fuente8Bit, 36), screen, WIDTH//2, HEIGHT//2 + 200, centered= True)
             end = True
             
 

@@ -1,9 +1,9 @@
 import pygame
 import sys
 from Arcade.arcade import Arcade
-from Arcade.ArcadeMachinePopup.popUpClass import PopUp
-from Arcade.ArcadeMachinePopup.textClass import Text
-from Arcade.ArcadeMachinePopup.buttonClass import Boton
+from ArcadeMachinePopup.popUpClass import PopUp
+from ArcadeMachinePopup.textClass import Text
+from ArcadeMachinePopup.buttonClass import Boton
 from ResourceManager import ResourceManager
 
 
@@ -26,8 +26,8 @@ pygame.display.set_caption("Arcade's Room")
 
 resource_manager = ResourceManager()
 # Cargar fuentes
-fuenteGP = "Arcade/ArcadeMachinePopup/fuentes/game_power.ttf"
-fuente8Bit = "Arcade/ArcadeMachinePopup/fuentes/8Bit.ttf"
+fuenteGP = "ArcadeMachinePopup/fuentes/game_power.ttf"
+fuente8Bit = "ArcadeMachinePopup/fuentes/8Bit.ttf"
 
 # Cargar sonidos para ventana emergente
 popup_sound_open = pygame.mixer.Sound('Arcade/assets/music/open.mp3')

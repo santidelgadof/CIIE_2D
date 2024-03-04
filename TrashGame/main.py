@@ -15,6 +15,7 @@ from TrashGame.TechPart import TechPart
 from Arcade import arcades_room 
 from Tetris import Tetris
 from CucarachaGame import Atrapa
+from GarbageTowers import GarbagePile
 import time
 
 import os
@@ -159,7 +160,7 @@ def main(level, game_state): # Level is an int that stablishes the dificulty of 
                     if minigame_num == 0:
                         cucaracha_points = Atrapa.main()
                     elif minigame_num == 1:
-                        print("wordle")
+                        garbage_points = GarbagePile.main()
                     elif minigame_num == 2:
                         tetris_points = Tetris.main()
 
