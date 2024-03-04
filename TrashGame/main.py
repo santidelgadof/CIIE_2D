@@ -14,6 +14,7 @@ from ResourceManager import ResourceManager
 from TrashGame.TechPart import TechPart
 from Arcade import arcades_room 
 from Tetris import Tetris
+from CucarachaGame import Atrapa
 import time
 
 import os
@@ -60,7 +61,7 @@ def main(level, game_state): # Level is an int that stablishes the dificulty of 
             trash_default_items = resource_manager.trash_items
             health_bar = HealthBar(5)
             current_lives = 5
-            duration = 0.5 * 60 * 1000 
+            duration = 0.5 * 5 * 1000 
             tp = TechPart(resource_manager.tech_piece,  (360, -200), velocity)
 
         if level == 2:
@@ -77,7 +78,7 @@ def main(level, game_state): # Level is an int that stablishes the dificulty of 
             finalWindow = None
             health_bar = HealthBar(5)
             current_lives = 5
-            duration = 0.5 * 60 * 1000 
+            duration = 0.5 * 5 * 1000 
             tp = TechPart(resource_manager.tech_piece,  (340, -200), velocity)
         if level == 3:
             spawn_interval = 1000  # Spawn a new TrashItem every 2 seconds (2000 milliseconds)
@@ -93,7 +94,7 @@ def main(level, game_state): # Level is an int that stablishes the dificulty of 
             finalWindow = None
             health_bar = HealthBar(5)
             current_lives = 5
-            duration = 0.5 * 60 * 1000 
+            duration = 0.5 * 5 * 1000 
             tp = TechPart(resource_manager.tech_piece,  (300, -200), velocity)
             
         ### Lvl independent values ###
@@ -156,7 +157,7 @@ def main(level, game_state): # Level is an int that stablishes the dificulty of 
                     minigame_played, minigame_num = arcades_room.main(game_state.alreadyPlayedMinigames)
 
                     if minigame_num == 0:
-                        print("cucarachas")
+                        cucaracha_points = Atrapa.main()
                     elif minigame_num == 1:
                         print("wordle")
                     elif minigame_num == 2:

@@ -3,7 +3,7 @@ import pygame
 class Cucaracha(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
-        self.image = pygame.image.load("cucaracha.png").convert_alpha()  # Cargar y convertir la imagen 
+        self.image = pygame.image.load("CucarachaGame/Assets/cucaracha.png").convert_alpha()  # Cargar y convertir la imagen 
         self.image = pygame.transform.scale(self.image, (70, 70))  # Escalar la imagen 
         self.rect = self.image.get_rect()
         self.active = False
