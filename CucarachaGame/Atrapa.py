@@ -5,6 +5,7 @@ from CucarachaGame.ClassCucaracha import Cucaracha
 from CucarachaGame.ClassAgujero import Agujero
 from CucarachaGame.ClassSlowItem import SlowItem
 from CucarachaGame.ClassSpeedItem import SpeedItem
+from ResourceManager import ResourceManager
 
 pygame.init()
 
@@ -35,9 +36,10 @@ cucarachas = pygame.sprite.Group()
 slow_items = pygame.sprite.Group()
 speed_items = pygame.sprite.Group()
 
+
 next_spawn_time = random.randint(500, 5000)
-item_spawn_time = random.randint(1000, 8000)
-speed_spawn_time = random.randint(1000, 6000)
+item_spawn_time = random.randint(1500, 5000)
+speed_spawn_time = random.randint(1000, 5000)
    
 show_final_score = False
 font = pygame.font.Font(None, 36)
@@ -51,18 +53,7 @@ def initialize_pygame():
     pygame.init()
     return pygame.display.set_mode((WIDTH, HEIGHT)), pygame.time.Clock()
 window, clock = initialize_pygame()
-
-def load_images():
-    #Images and their sizes may change depending on your specific implementation
-    hole = pygame.transform.scale(pygame.image.load("CucarachaGame/Assets/Agujero.png").convert_alpha(), (CELL_SIZE - 50, CELL_SIZE - 50))
-    hole_slow = pygame.transform.scale(pygame.image.load("CucarachaGame/Assets/Agujero_slow.png").convert_alpha(), (CELL_SIZE - 50, CELL_SIZE - 50))
-    hole_speed = pygame.transform.scale(pygame.image.load("CucarachaGame/Assets/Agujero_speed.png").convert_alpha(), (CELL_SIZE - 50, CELL_SIZE - 50))
-    insect = pygame.transform.scale(pygame.image.load("CucarachaGame/Assets/Insecticida.png").convert_alpha(), (80, 80))
-    background_image = pygame.transform.scale(pygame.image.load("CucarachaGame/Assets/back.jpg").convert(), (WIDTH, HEIGHT))
-    background_slow = pygame.transform.scale(pygame.image.load("CucarachaGame/Assets/back_slow.png").convert(), (WIDTH, HEIGHT))  # Fondo para modo lento
-    background_speed = pygame.transform.scale(pygame.image.load("CucarachaGame/Assets/back_speed.png").convert(), (WIDTH, HEIGHT))
-    return hole, hole_slow, hole_speed, insect, background_image, background_slow, background_speed
-hole, hole_slow, hole_speed, insect, background_image, background_slow, background_speed = load_images()
+resource_manager = ResourceManager()
 
 # ITEMS
 def update_slow_items():
@@ -71,7 +62,7 @@ def update_slow_items():
     slow_items.draw(window)  # Draw the slowItem in the window
     
 def spawn_slow_item():
-    global slow_item, items_mostrados, spawn_timer, item_spawn_time
+    global items_mostrados, spawn_timer, item_spawn_time
     agujeros = create_holes()
 
     if spawn_timer >= item_spawn_time and items_mostrados==0:
@@ -80,7 +71,6 @@ def spawn_slow_item():
         slow_item.rect.center = random_hole.rect.center
         spawn_timer = 0
         slow_item.active = True
-        item_spawn_time = random.randint(1000, 8000)
         slow_item.spawn_time = pygame.time.get_ticks()
         slow_items.add(slow_item)
         items_mostrados += 1
@@ -89,9 +79,8 @@ def enter_slow_motion_mode():
     global in_slow_motion_mode, hole, a
     
     in_slow_motion_mode = True
-    hole = hole_slow  # Change the hole to slow mode
     if a<1:
-        pygame.mixer.music.load("CucarachaGame/Music/baile_slow.mp3")  
+        pygame.mixer.music.load("CucarachaGame/Music/baile_slow.ogg")  
         pygame.mixer.music.play(-1) 
     a+=1    
 
@@ -102,24 +91,22 @@ def update_speed_items():
   
 def spawn_speed_item():
     agujeros = create_holes()
-    global speed_item, items_shown, spawn_timer, speed_spawn_time
+    global items_shown, spawn_timer, speed_spawn_time
     if spawn_timer >= speed_spawn_time and items_shown == 0 :
         speed_item = SpeedItem()
         random_hole = random.choice(agujeros.sprites())
         speed_item.rect.center = random_hole.rect.center
         spawn_timer = 0
         speed_item.active = True
-        speed_spawn_time = random.randint(2000, 9000)
         speed_item.spawn_time = pygame.time.get_ticks()
         speed_items.add(speed_item)
         items_shown += 1
 
 def enter_speed_mode():
-    global in_speed_mode, hole, b
+    global in_speed_mode, b
     in_speed_mode = True
-    hole = hole_speed
     if b<1:
-        pygame.mixer.music.load("CucarachaGame/Music/baile_speed.mp3")  
+        pygame.mixer.music.load("CucarachaGame/Music/baile_speed.ogg")  
         pygame.mixer.music.play(-1) 
     b+=1   
 
@@ -130,6 +117,14 @@ def create_holes():
         for col in range(COLS):
             x = col * CELL_SIZE + CELL_SIZE // 2
             y = row * CELL_SIZE + CELL_SIZE // 2
+
+            if in_slow_motion_mode:
+                hole = pygame.transform.scale(resource_manager.hole_slow.get(), (CELL_SIZE - 50, CELL_SIZE - 50))
+            elif in_speed_mode:
+                hole =  pygame.transform.scale(resource_manager.hole_speed.get(), (CELL_SIZE - 50, CELL_SIZE - 50))
+            else:
+                hole = pygame.transform.scale(resource_manager.hole.get(), (CELL_SIZE - 50, CELL_SIZE - 50))
+
             agujero = Agujero(x, y, hole)
             agujeros.add(agujero)
     return agujeros
@@ -143,25 +138,17 @@ def draw_background():
     global background 
 
     if in_slow_motion_mode:
-        background = background_slow
+        background =  pygame.transform.scale(resource_manager.background_slow.get(), (WIDTH, WIDTH))
     elif in_speed_mode:
-        background = background_speed    
-    else:
-        background = background_image
+        background =  pygame.transform.scale(resource_manager.background_speed.get(), (WIDTH, WIDTH))
+    else: 
+        background =  pygame.transform.scale(resource_manager.background_image.get(), (WIDTH, WIDTH))
 
     window.blit(background, (0, 0))
 
 def draw_holes():
     agujeros = create_holes()
-
-    if in_slow_motion_mode:
-        for agujero in agujeros:
-            window.blit(hole_slow, agujero.rect.topleft)
-    elif in_speed_mode:
-        for agujero in agujeros:
-            window.blit(hole_speed, agujero.rect.topleft)        
-    else:
-        for agujero in agujeros:
+    for agujero in agujeros:
             window.blit(agujero.image, agujero.rect.topleft)
 
 
@@ -200,6 +187,7 @@ def handle_speed_item_click(item):
 def handle_cucaracha_click(cucaracha):
     global score
     score += 1
+    insect = pygame.transform.scale(resource_manager.insect.get(), (80, 80))
     cucaracha.active = False
     cucaracha.kill()
     cell_center = (cucaracha.rect.centerx // CELL_SIZE * CELL_SIZE + CELL_SIZE // 2,
@@ -232,8 +220,6 @@ def spawn_cucaracha():
         cucarachas_mostradas += 1
 
 #FINAL SCORE
-
-
 def show_final_score_screen():
     draw_final_score_screen()
     while True:
@@ -242,7 +228,7 @@ def show_final_score_screen():
 
 def draw_final_score_screen():
     global background 
-    background = background_image
+    background =  pygame.transform.scale(resource_manager.background_image.get(), (WIDTH, WIDTH))
     pygame.mixer.music.load("CucarachaGame/Music/end.wav")
     pygame.mixer.music.play()
     window.blit(background, (0, 0))
@@ -255,6 +241,14 @@ def draw_final_score_screen():
     exit_text = font.render("Salir", True, BLACK)
     exit_text_rect = exit_text.get_rect(center=exit_button_rect.center)
     window.blit(exit_text, exit_text_rect.topleft)
+
+    # draw restart button
+    res_button_rect = pygame.Rect((WIDTH - button_width) // 2, (HEIGHT - button_height) // 2 + 200, button_width, button_height)
+    pygame.draw.rect(window, marco, res_button_rect)
+    pygame.draw.rect(window, button_color, res_button_rect.inflate(-4, -4))
+    res_text = font.render("Restart", True, BLACK)
+    res_text_rect = res_text.get_rect(center=res_button_rect.center)
+    window.blit(res_text, res_text_rect.topleft)
 
     
     # Draw the brown rectangle
@@ -277,11 +271,17 @@ def handle_final_score_events():
             if event.key == pygame.K_ESCAPE:
                 return False
         elif event.type == pygame.MOUSEBUTTONDOWN:
-            # Verifica si se hizo clic en el botón de salida
+            # Button exit
             exit_button_rect = pygame.Rect((WIDTH - button_width) // 2, (HEIGHT - button_height) // 2 + 100, button_width, button_height)
             if exit_button_rect.collidepoint(event.pos):
                 pygame.quit()
                 sys.exit()
+        elif event.type == pygame.MOUSEBUTTONDOWN:
+            # Button Res
+            res_button_rect = pygame.Rect((WIDTH - button_width) // 2, (HEIGHT - button_height) // 2 + 200, button_width, button_height)
+            if res_button_rect.collidepoint(event.pos):
+                return main()
+
     return True
 
 # Main game loop
@@ -292,6 +292,16 @@ def main():
     in_speed_mode = False
     time_in_slow_motion = 0 
     time_in_speed_mode = 0
+    
+    #Restart
+    items_shown = 0
+    score = 0
+    items_mostrados = 0 
+    cucarachas_mostradas = 0 
+    spawn_timer = 0
+    gif_frame_index = 0
+    a=0
+    b=0
     
     play_music()
 
@@ -313,16 +323,14 @@ def main():
             if time_in_slow_motion > 12:
                 in_slow_motion_mode = False
                 pygame.mixer.music.load("CucarachaGame/Music/baile.ogg")  
-                pygame.mixer.music.play(-1)  
-                
+                pygame.mixer.music.play(-1)          
         elif in_speed_mode:
             enter_speed_mode()
             time_in_speed_mode += clock.get_time() / 1000
-            if time_in_speed_mode > 10:  
+            if time_in_speed_mode > 11:  
                 in_speed_mode = False
                 pygame.mixer.music.load("CucarachaGame/Music/baile.ogg") 
-                pygame.mixer.music.play(-1) 
-                
+                pygame.mixer.music.play(-1)    
 
         if cucarachas_mostradas > 10:  # Exit the game when you reach 10 cockroaches
             running = False 

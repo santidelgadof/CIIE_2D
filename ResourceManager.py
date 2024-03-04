@@ -29,6 +29,18 @@ class ResourceManager:
 
         self.popup_animation = Resource("Pantalla/Animacion.jpg")
 
+        #Atrapa_Game
+        self.hole = Resource("CucarachaGame/Assets/Agujero.png", True)
+        self.hole_slow = Resource("CucarachaGame/Assets/Agujero_slow.png", True)
+        self.hole_speed = Resource("CucarachaGame/Assets/Agujero_speed.png", True)
+        self.insect = Resource("CucarachaGame/Assets/Insecticida.png", True)
+        self.background_image = Resource("CucarachaGame/Assets/back.jpg", True)
+        self.background_slow = Resource("CucarachaGame/Assets/back_slow.png", True)
+        self.background_speed = Resource("CucarachaGame/Assets/back_speed.png", True)
+        self.cucaracha = Resource("CucarachaGame/Assets/cucaracha.png", True)
+        self.speed = Resource("CucarachaGame/Assets/speed_item.png", True)
+        self.slow = Resource("CucarachaGame/Assets/slow_item.png", True)
+
         
         
 
