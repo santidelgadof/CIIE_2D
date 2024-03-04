@@ -282,8 +282,10 @@ def garbagePile():
                             for boton in window.botones:
                                 if boton.rect.collidepoint(mouse_x, mouse_y):
                                     if boton.accion == "Play again":
+                                        music(True)
                                         return garbagePile()
                                     elif boton.accion == "Exit":
+                                        music(True)
                                         return exit_game(score)
 
 
