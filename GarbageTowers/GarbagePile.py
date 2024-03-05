@@ -7,6 +7,7 @@ from GarbageTowers.bloqueClicable import ClicableObject
 from ArcadeMachinePopup.textClass import Text
 from ArcadeMachinePopup.buttonClass import Boton
 from ArcadeMachinePopup.popUpClass import PopUp
+from ResourceManager import ResourceManager
 
 # Inicializar Pygame
 pygame.init()
@@ -27,10 +28,13 @@ HEIGHT = 800
 # Definir sizeaño y cantidad de blocks
 WIDTH_BLOQUE = 120
 HEIGHT_BLOQUE = 120
-NBLOCKS = 3
+#Cantidad de palabras
+NBLOCKS = 5
 SIZES = 5
 
 SIZE_FLOOR = WIDTH_BLOQUE*3
+
+RM = ResourceManager()
 
 # Definir tiempo límite en segundos
 LIMIT_TIME = 60
@@ -69,12 +73,8 @@ Poswords = [
 
 def load_img():
     images = []
-    for folder in os.listdir("GarbageTowers/images/blocks"):
-        path = os.path.join("GarbageTowers/images/blocks", folder)
-        if os.path.isfile(path):
-            img = pygame.image.load(path).convert_alpha()
-            img = pygame.transform.scale(img, (WIDTH_BLOQUE, HEIGHT_BLOQUE))
-            images.append(img)
+    for img in RM.pile_blocks:
+        images += img.get()
     return images
 
 def music(stop = False):
@@ -130,13 +130,14 @@ def createMountain():
     i = 0
     aux = 9
     mountain = []
+    n=3 #dificultad incremental
     
     while i<NBLOCKS: 
         
         if aux == 9:
-            size = random.randint(0,SIZES-1)
+            size = random.randint(0,SIZES-n)
         else: 
-            size = random.randint(aux, SIZES-1)
+            size = random.randint(aux, SIZES-n)
         
         repeated = True
         while repeated:
@@ -147,6 +148,8 @@ def createMountain():
         mountain.append(word)
         aux = size
         i = i+1
+        if n>0:
+            n-=1
     return mountain
     
 def transBlit(screen, color, size, coord):
@@ -161,18 +164,14 @@ def main():
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
     pygame.display.set_caption('Juego de Bloques')
 
-    bg = pygame.image.load("GarbageTowers/images/bg.jpg").convert()
-    bg = pygame.transform.scale(bg, (800,800))
+    bg = pygame.transform.scale(RM.pile_bg.get(), (800,800))
     fuenteGP = "ArcadeMachinePopup/fuentes/game_power.ttf"
     fuente8Bit = "ArcadeMachinePopup/fuentes/8Bit.ttf"
-    lightBulbON = pygame.image.load("GarbageTowers/images/lightBulbOn.png")
-    lightBulbON = pygame.transform.scale(lightBulbON, (50,50))
-    lightBulbOff = pygame.image.load("GarbageTowers/images/lightBulbOff.png")
-    lightBulbOff = pygame.transform.scale(lightBulbOff, (50,50))
-    floor = pygame.image.load("GarbageTowers/images/floor.jpg")
-    floor = pygame.transform.scale(floor, (SIZE_FLOOR, SIZE_FLOOR))
+    lightBulbON = pygame.transform.scale(RM.pile_lightOn.get(), (50,50))
+    lightBulbOff = pygame.transform.scale(RM.pile_lightOff.get(), (50,50))
+    floor = pygame.transform.scale(RM.pile_floor.get(), (SIZE_FLOOR, SIZE_FLOOR))
 
-    images_blocks = load_img()
+    images_blocks = RM.pile_blocks
     
     screen.blit(bg, (0, 0))
 
@@ -184,7 +183,7 @@ def main():
     for word in MountainArray: 
         
         blocks.append(pygame.sprite.Group())
-        img = random.choice(images_blocks)
+        img = pygame.transform.scale(random.choice(images_blocks).get(), (WIDTH_BLOQUE, HEIGHT_BLOQUE))
         blocks[i] = blockList(img, blocks[i], word, len(word))
         i = i+1
 
@@ -211,6 +210,13 @@ def main():
     running = True
 
     invertedBlocks = blocks[::-1]
+
+    letter_sound = pygame.mixer.Sound("GarbageTowers/music/right_letter.wav")
+    word_sound = pygame.mixer.Sound("GarbageTowers/music/right_word.wav")
+    letter_sound.set_volume(0)
+    sound_channel = letter_sound.play()
+    letter_sound.set_volume(0.2)
+    word_sound.set_volume(0.7)
     
     
     # Ciclo principal del juego
@@ -235,13 +241,18 @@ def main():
 
                         if not next_letter: 
                             guess = "" 
-                            limitTime -= 5
+                            if limitTime-5 <= 0:
+                                end = True
+                                limitTime = 0
+                            else:
+                                limitTime -= 5
 
                         word = blocks[n].sprites()[0].word
 
                         guess += chr(event.key)
 
                         if guess == word:
+                            word_sound.play()
                             successes += 1
                             for sprites in blocks[n]:
                                 sprites.kill()     
@@ -251,6 +262,11 @@ def main():
                             
                             while m < len(guess):
                                 if guess[m] == word[m]:
+                                    if sound_channel.get_busy():
+                                        letter_sound.stop()
+                                    
+                                    sound_channel = letter_sound.play()
+                                    
                                     next_letter = True
                                 else: 
                                     next_letter = False
@@ -341,7 +357,7 @@ def main():
             
         # Mostrar tiempo restante en screen
         showText("Tiempo restante: " + str(remaining_time), pygame.font.Font(fuente8Bit, 30), screen, 10, 10)
-        score = remaining_time
+        score = successes * 100
 
         if end:
             if not objectCreated:

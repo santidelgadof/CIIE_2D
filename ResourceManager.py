@@ -46,6 +46,26 @@ class ResourceManager:
         # Tetris media
         self.tetris_background = Resource("Tetris/assets/background.jpeg")
 
+        # GarbagePiles media
+        self.arcade_background = Resource('Arcade/assets/arcade_background.jpg')
+
+
+        # Tetris media
+        self.tetris_background = Resource("Tetris/assets/background.jpeg")
+
+        #GARBAGEPILE media
+        self.pile_bg = Resource("GarbageTowers/images/bg.jpg")
+        self.pile_floor = Resource("GarbageTowers/images/floor.jpg")
+        self.pile_lightOn = Resource("GarbageTowers/images/lightBulbOn.png")
+        self.pile_lightOff = Resource("GarbageTowers/images/lightBulbOff.png")
+
+        self.pile_blocks = [
+            Resource("GarbageTowers/images/blocks/bolsa_basura_Amarilla.png"),
+            Resource("GarbageTowers/images/blocks/bolsa_basura_Azul.png"),
+            Resource("GarbageTowers/images/blocks/bolsa_basura_Negra.png"),
+            Resource("GarbageTowers/images/blocks/bolsa_basura_Verde.png")
+        ]
+
         
         
 
