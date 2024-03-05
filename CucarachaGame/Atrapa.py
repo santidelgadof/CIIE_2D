@@ -5,6 +5,9 @@ from CucarachaGame.ClassCucaracha import Cucaracha
 from CucarachaGame.ClassAgujero import Agujero
 from CucarachaGame.ClassSlowItem import SlowItem
 from CucarachaGame.ClassSpeedItem import SpeedItem
+from CucarachaGame.CucaPop.popUpClass import PopUp
+from CucarachaGame.CucaPop.textClass import Text
+from CucarachaGame.CucaPop.buttonClass import Boton
 from ResourceManager import ResourceManager
 
 pygame.init()
@@ -16,13 +19,19 @@ ROWS, COLS = HEIGHT // CELL_SIZE, WIDTH // CELL_SIZE  # Number of rows and colum
 window = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Atrapa Cucarachas")
 
+#colores
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
+YELLOW = (249, 247, 98)
+TRANSPARENT = (0, 0, 0, 50)
+BLUE = (12, 18, 58)
+
 global a, b    
 a=0
 b=0
 CELL_SIZE = 200
 ROWS, COLS = HEIGHT // CELL_SIZE, WIDTH // CELL_SIZE
+fuenteGP = "ArcadeMAchinePopup/fuentes/game_power.ttf"
 
 
 items_shown = 0
@@ -242,14 +251,6 @@ def draw_final_score_screen():
     exit_text_rect = exit_text.get_rect(center=exit_button_rect.center)
     window.blit(exit_text, exit_text_rect.topleft)
 
-    # draw restart button
-    res_button_rect = pygame.Rect((WIDTH - button_width) // 2, (HEIGHT - button_height) // 2 + 200, button_width, button_height)
-    pygame.draw.rect(window, marco, res_button_rect)
-    pygame.draw.rect(window, button_color, res_button_rect.inflate(-4, -4))
-    res_text = font.render("Restart", True, BLACK)
-    res_text_rect = res_text.get_rect(center=res_button_rect.center)
-    window.blit(res_text, res_text_rect.topleft)
-
     
     # Draw the brown rectangle
     brown_rect = pygame.Rect((WIDTH - button_width) // 2, (HEIGHT - button_height) // 2 , button_width, button_height)
@@ -259,8 +260,8 @@ def draw_final_score_screen():
     # Draw final points
     text_rect = final_score_text.get_rect(center=(WIDTH // 2, HEIGHT // 2))
     window.blit(final_score_text, text_rect.topleft)
-    
     pygame.display.flip()
+    
 
 def handle_final_score_events():
     for event in pygame.event.get():
@@ -292,16 +293,6 @@ def main():
     in_speed_mode = False
     time_in_slow_motion = 0 
     time_in_speed_mode = 0
-    
-    #Restart
-    items_shown = 0
-    score = 0
-    items_mostrados = 0 
-    cucarachas_mostradas = 0 
-    spawn_timer = 0
-    gif_frame_index = 0
-    a=0
-    b=0
     
     play_music()
 
@@ -339,6 +330,7 @@ def main():
     
         clock.tick(60)
     show_final_score_screen()
+    return score
 
 if __name__ == "__main__":   
     sys.exit()
