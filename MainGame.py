@@ -35,7 +35,7 @@ def main():
             game_state.setState(aux)
         elif state == State.TrashGameLVL1:
             fade_transition()
-            (aux, played_minigame) =TrashGame.main(1, game_state)
+            (aux, played_minigame) =TrashGame.main(1, game_state, WINDOW)
             game_state.addPlayedMinigame(played_minigame)
             game_state.setState(aux)
 
@@ -43,14 +43,14 @@ def main():
         elif state == State.TrashGameLVL2:
             # TODO: Add Galicia animation. This animation should last a predefined time and then die.
             fade_transition()
-            (aux, played_minigame) =TrashGame.main(2, game_state)
+            (aux, played_minigame) =TrashGame.main(2, game_state, WINDOW)
             game_state.addPlayedMinigame(played_minigame)
             game_state.setState(aux)
             # TODO: Add the returning minigame from TrashGame to GameState
         elif state == State.TrashGameLVL3:
             # TODO: Add Galicia animation. This animation should last a predefined time and then die.
             fade_transition()
-            (aux, played_minigame) =TrashGame.main(3, game_state)
+            (aux, played_minigame) =TrashGame.main(3, game_state, WINDOW)
             game_state.addPlayedMinigame(played_minigame)
             game_state.setState(aux)
             # TODO: Add the returning minigame from TrashGame to GameState

@@ -8,13 +8,21 @@ class GameState:
         self.state = State.InitialScreen
     
     def addPlayedMinigame(self, minigame):
-        self.alreadyPlayedMinigames.append(minigame)
+        self.alreadyPlayedMinigames = minigame
     
     def getState(self):
         return self.state
     
     def setState(self, state):
         self.state = state
+    def getPlayedMinigames(self):
+        return self.alreadyPlayedMinigames
+    
+    def getNextLvl(self):
+        if self.state == State.TrashGameLVL1:
+            return State.TrashGameLVL2
+        elif self.state == State.TrashGameLVL2:
+            return State.TrashGameLVL3
 # The states the game considers
 class State(Enum):
     InitialScreen = 1

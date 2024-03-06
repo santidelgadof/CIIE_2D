@@ -19,7 +19,6 @@ from GarbageTowers import GarbagePile
 import time
 
 import os
-pygame.init()
 
 
 ### PYGAME CONFIGURATION ###
@@ -27,20 +26,13 @@ FPS = 60
 fpsClock = pygame.time.Clock()
 WINDOW_WIDTH = 800
 WINDOW_HEIGHT = 800
-WINDOW = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
-pygame.display.set_caption('Trash Game!')
 win_sound = pygame.mixer.Sound("TrashGame/assets/music/win_sound.mp3")
 
 ### GLOBALS ###
 theme = Theme()
-
-container_images = ["assets/containers/OrganicContainer.png", 
-              "assets/containers/PlasticContainer.png", 
-              "assets/containers/PaperContainer.png", 
-              "assets/containers/GlassContainer.png" ]
 resource_manager = ResourceManager()
 ### MAIN ###
-def main(level, game_state): # Level is an int that stablishes the dificulty of the lvl
+def main(level, game_state, WINDOW): # Level is an int that stablishes the dificulty of the lvl
     try_again = True
     
     while(try_again):
@@ -62,7 +54,7 @@ def main(level, game_state): # Level is an int that stablishes the dificulty of 
             trash_default_items = resource_manager.trash_items
             health_bar = HealthBar(5)
             current_lives = 5
-            duration = 0.5 * 5 * 1000 
+            duration = 0.5 * 60 * 1000 
             tp = TechPart(resource_manager.tech_piece,  (360, -200), velocity)
 
         if level == 2:
@@ -79,8 +71,8 @@ def main(level, game_state): # Level is an int that stablishes the dificulty of 
             finalWindow = None
             health_bar = HealthBar(5)
             current_lives = 5
-            duration = 0.5 * 5 * 1000 
-            tp = TechPart(resource_manager.tech_piece,  (340, -200), velocity)
+            duration = 0.5 * 60 * 1000 
+            tp = TechPart(resource_manager.tech_piece,  (360, -200), velocity)
         if level == 3:
             spawn_interval = 1000  # Spawn a new TrashItem every 2 seconds (2000 milliseconds)
             distance_between_items = 120  # Desired distance between each trash item
@@ -95,8 +87,8 @@ def main(level, game_state): # Level is an int that stablishes the dificulty of 
             finalWindow = None
             health_bar = HealthBar(5)
             current_lives = 5
-            duration = 0.5 * 5 * 1000 
-            tp = TechPart(resource_manager.tech_piece,  (300, -200), velocity)
+            duration = 0.5 * 60 * 1000 
+            tp = TechPart(resource_manager.tech_piece,  (360, -200), velocity)
             
         ### Lvl independent values ###
         looping = True
@@ -137,11 +129,13 @@ def main(level, game_state): # Level is an int that stablishes the dificulty of 
                     if finalWindow != None:
                         pos = pygame.mouse.get_pos()
                         for button in finalWindow.buttons:
-                            res = button.is_clicked(pos)
-                            if res == "restart":
-                                looping = False
-                            else:
-                                return (res, minigame_played)
+                            if button.rect.collidepoint(pos):
+                                if button.accion == "REINTENTAR":
+                                    mixer.music.unload()
+                                    return (game_state.getState(), game_state.getPlayedMinigames())
+                                else:
+                                    mixer.music.unload()
+                                    return (game_state.getNextLvl(), minigame_played)
 
                                     
 
@@ -163,8 +157,7 @@ def main(level, game_state): # Level is an int that stablishes the dificulty of 
                         garbage_points = GarbagePile.main()
                     elif minigame_num == 2:
                         tetris_points = Tetris.main()
-
-                    print(minigame_played)
+                        
                     mixer.music.load("TrashGame/assets/music/MainMusic.ogg")
                     mixer.music.set_volume(0.3)
                     mixer.music.play(-1) 
