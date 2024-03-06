@@ -1,6 +1,5 @@
 import pygame
 import random
-import sys
 from CucarachaGame.ClassCucaracha import Cucaracha
 from CucarachaGame.ClassAgujero import Agujero
 from CucarachaGame.ClassSlowItem import SlowItem
@@ -43,8 +42,8 @@ cucarachas = pygame.sprite.Group()
 slow_items = pygame.sprite.Group()
 speed_items = pygame.sprite.Group()
 
-next_spawn_time = random.randint(500, 5000)
-item_spawn_time = random.randint(1500, 5000)
+next_spawn_time = random.randint(600, 5000)
+item_spawn_time = random.randint(1500, 6000)
 speed_spawn_time = random.randint(1000, 5000)
    
 show_final_score = False
@@ -54,6 +53,20 @@ button_height = 50
 button_color = (140, 83, 11)
 marco = (0, 0, 0)
 
+def reset_game_variables():
+    global in_slow_motion_mode, in_speed_mode
+    global items_shown, items_mostrados, cucarachas_mostradas, spawn_timer
+    global a, b
+
+    # Reiniciar todas las variables del juego
+    in_slow_motion_mode = False
+    in_speed_mode = False
+    items_shown = 0
+    items_mostrados = 0 
+    cucarachas_mostradas = 0 
+    spawn_timer = 0
+    a = 0
+    b = 0
 
 def initialize_pygame():
     pygame.init()
@@ -225,12 +238,7 @@ def spawn_cucaracha():
 #FINAL SCORE
 def exit_game(score):
     return score
-
-def show_final_score_screen(score):
-    draw_final_score_screen(score)
-    while True:
-        handle_final_score_events(score)
-        
+   
 def draw_final_score_screen(score):
     if not(score>0):
         score=0
@@ -255,20 +263,7 @@ def draw_final_score_screen(score):
     window = PopUp(popup_x, popup_y, popup_width, popup_height, 60, YELLOW, 8, BLACK, buttons, game_over_text, rotations)
             
     window.draw(window)
-    
-def handle_final_score_events(score):
-    mouse_x, mouse_y = pygame.mouse.get_pos()
-    if window.get_rect().collidepoint(mouse_x, mouse_y):
-        for boton in window.botones:
-            if boton.rect.collidepoint(mouse_x, mouse_y):
-                if boton.accion == "REINICIAR":
-                    # music(True)
-                    return main()
-                elif boton.accion == "SALIR":
-                    # music(True)
-                    return exit_game(score)
 
-    return True
 
 # Main game loop
 def main():
@@ -277,6 +272,7 @@ def main():
     in_slow_motion_mode = False
     in_speed_mode = False
     game_over = False
+
     time_in_slow_motion = 0 
     time_in_speed_mode = 0
     score = 0
@@ -349,6 +345,7 @@ def main():
                             for boton in final_score_popup.botones:
                                 if boton.rect.collidepoint(mouse_x, mouse_y):
                                     if boton.accion == "REINICIAR":
+                                        reset_game_variables()
                                         return main()
                                     elif boton.accion == "SALIR":
                                         return exit_game(score)
@@ -356,6 +353,6 @@ def main():
 
         pygame.display.flip()
         clock.tick(60)
-   
+
     pygame.quit()
     return score
