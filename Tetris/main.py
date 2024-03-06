@@ -1,5 +1,5 @@
 import pygame
-from tetris import main
+from Tetris import main
 
 def run_game():
     pygame.init()
