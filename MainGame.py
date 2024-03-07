@@ -4,6 +4,7 @@ import sys
 import Pantalla.popup as PopUp
 import TrashGame.main as TrashGame
 from GameState import GameState, State
+from FinalScreen import FinalScreen
 
 FPS = 60
 fpsClock = pygame.time.Clock()
@@ -24,6 +25,7 @@ def fade_transition():
 
 def main():
     game_state = GameState()
+    final_screen = None
     while(True):
         for event in pygame.event.get():
             if event.type == QUIT:
@@ -35,27 +37,27 @@ def main():
             game_state.setState(aux)
         elif state == State.TrashGameLVL1:
             fade_transition()
-            (aux, played_minigame) =TrashGame.main(1, game_state, WINDOW)
+            (aux, played_minigame, puntuation) = TrashGame.main(1, game_state, WINDOW)
             game_state.addPlayedMinigame(played_minigame)
+            game_state.addPoints(puntuation)
             game_state.setState(aux)
-
-            # TODO: Add the returning minigame from TrashGame to GameState
         elif state == State.TrashGameLVL2:
-            # TODO: Add Galicia animation. This animation should last a predefined time and then die.
             fade_transition()
-            (aux, played_minigame) =TrashGame.main(2, game_state, WINDOW)
+            (aux, played_minigame, puntuation) = TrashGame.main(2, game_state, WINDOW)
             game_state.addPlayedMinigame(played_minigame)
+            game_state.addPoints(puntuation)
             game_state.setState(aux)
-            # TODO: Add the returning minigame from TrashGame to GameState
         elif state == State.TrashGameLVL3:
-            # TODO: Add Galicia animation. This animation should last a predefined time and then die.
             fade_transition()
-            (aux, played_minigame) =TrashGame.main(3, game_state, WINDOW)
+            (aux, played_minigame, puntuation) = TrashGame.main(3, game_state, WINDOW)
             game_state.addPlayedMinigame(played_minigame)
+            game_state.addPoints(puntuation)
+            fade_transition()
             game_state.setState(aux)
-            # TODO: Add the returning minigame from TrashGame to GameState
-        # The logic of the minigames must go inside TrashGame and TrashGame.main() should return the minigame the user chose.
-        # TODO: Make a transition animation between the states. ( Black Circle Closing-Opening?)
+        elif state == State.FinalScreen:
+            if final_screen == None:
+                final_screen = FinalScreen(game_state.getTotalPoints())
+            final_screen.draw(WINDOW)
                            
         pygame.display.update()
         fpsClock.tick(FPS)

@@ -74,7 +74,7 @@ def main(level, game_state, WINDOW): # Level is an int that stablishes the dific
             duration = 0.5 * 60 * 1000 
             tp = TechPart(resource_manager.tech_piece,  (360, -200), velocity)
         if level == 3:
-            spawn_interval = 1000  # Spawn a new TrashItem every 2 seconds (2000 milliseconds)
+            spawn_interval = 1250  # Spawn a new TrashItem every 2 seconds (2000 milliseconds)
             distance_between_items = 120  # Desired distance between each trash item
             velocity = distance_between_items / (spawn_interval / 60) / 2
             firstClasificator = ClassificationArea(100, 100, theme.clasiAreaColor)
@@ -101,6 +101,7 @@ def main(level, game_state, WINDOW): # Level is an int that stablishes the dific
         minigame_played = None
         win_sound_already_played = False
         elapsed_time = 0
+        minigame_points = 0
 
         
 
@@ -115,7 +116,7 @@ def main(level, game_state, WINDOW): # Level is an int that stablishes the dific
                 elif event.type == KEYDOWN:
                     if event.key == K_o: # Pressed 'o' (organico)
                         current_lives = firstClasificator.classify(trash_items, organicContainer.get_x_position(), organicContainer.get_y_position(), [TrashType.ORGANIC], current_lives)
-                    if event.key == K_p: # Pressed 'p' ( plastico)
+                    if event.key == K_p: # Pressed 'p' (plastico)
                         if level == 1:
                             current_lives = firstClasificator.classify(trash_items, plasticContainer.get_x_position(), plasticContainer.get_y_position(), [TrashType.PLASTIC, TrashType.PAPER, TrashType.GLASS], current_lives)
                         else:
@@ -132,15 +133,11 @@ def main(level, game_state, WINDOW): # Level is an int that stablishes the dific
                             if button.rect.collidepoint(pos):
                                 if button.accion == "REINTENTAR":
                                     mixer.music.unload()
-                                    return (game_state.getState(), game_state.getPlayedMinigames())
+                                    return (game_state.getState(), game_state.getPlayedMinigames(), 0)
                                 else:
                                     mixer.music.unload()
-                                    return (game_state.getNextLvl(), minigame_played)
-
-                                    
-
-
-            
+                                    return (game_state.getNextLvl(), minigame_played, minigame_points + (current_lives * 50))
+     
             ### Spawning and progress bar update ###
             
             if not finish:
@@ -148,31 +145,31 @@ def main(level, game_state, WINDOW): # Level is an int that stablishes the dific
                 trash_items = spawner.update(trash_items, current_time)
             elapsed_time += 10
             if not finish:
+                ### Minigame logic. Open arcade room when the progress bar reaches the middle ###
                 if minigame_played == None and progress_bar_width <= 500 and progress_bar_width >= 400:
                     minigame_played, minigame_num = arcades_room.main(game_state.alreadyPlayedMinigames)
 
                     if minigame_num == 0:
-                        cucaracha_points = Atrapa.main()
+                        minigame_points = Atrapa.main()
                     elif minigame_num == 1:
-                        garbage_points = GarbagePile.main()
+                        minigame_points = GarbagePile.main()
                     elif minigame_num == 2:
-                        tetris_points = Tetris.main()
+                        minigame_points = Tetris.main()
                         
                     mixer.music.load("TrashGame/assets/music/MainMusic.ogg")
                     mixer.music.set_volume(0.3)
                     mixer.music.play(-1) 
-                    #minigame_played = True
                     
                 if progress_bar_width >= 800:
                     finish = True
                     won = True
                 progress_bar_width = min((elapsed_time / duration) * WINDOW_WIDTH, WINDOW_WIDTH)
             if not finish:
-            ### Move the TrashItems ###
+                ### Move the TrashItems ###
                 for trash_item in trash_items:
                     trash_item.move()  
 
-            ### Remove the already vanished TrashItems ###
+                ### Remove the already vanished TrashItems ###
                 for trash_item in trash_items:
                     if trash_item.dead:
                         if trash_item.for_a_good_reason:
