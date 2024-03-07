@@ -25,18 +25,9 @@ YELLOW = (249, 247, 98)
 TRANSPARENT = (0, 0, 0, 50)
 BLUE = (12, 18, 58)
 
-global a, b    
-a=0
-b=0
 CELL_SIZE = 200
 ROWS, COLS = HEIGHT // CELL_SIZE, WIDTH // CELL_SIZE
 fuenteGP = "ArcadeMAchinePopup/fuentes/game_power.ttf"
-
-
-items_shown = 0
-items_mostrados = 0 
-cucarachas_mostradas = 0 
-spawn_timer = 0
 
 cucarachas = pygame.sprite.Group()
 slow_items = pygame.sprite.Group()
@@ -53,6 +44,7 @@ button_height = 50
 button_color = (140, 83, 11)
 marco = (0, 0, 0)
 
+# START GAME
 def reset_game_variables():
     global in_slow_motion_mode, in_speed_mode
     global items_shown, items_mostrados, cucarachas_mostradas, spawn_timer
@@ -67,6 +59,7 @@ def reset_game_variables():
     spawn_timer = 0
     a = 0
     b = 0
+reset_game_variables()
 
 def initialize_pygame():
     pygame.init()
@@ -96,10 +89,10 @@ def spawn_slow_item():
 
 def enter_slow_motion_mode():
     global in_slow_motion_mode, a
-    
+
     in_slow_motion_mode = True
     if a<1:
-        pygame.mixer.music.load("CucarachaGame/Music/baile_slow.ogg")  
+        pygame.mixer.music.load("CucarachaGame/Music/baile_slow.mp3")  
         pygame.mixer.music.play(-1) 
     a+=1    
 
@@ -125,7 +118,7 @@ def enter_speed_mode():
     global in_speed_mode, b
     in_speed_mode = True
     if b<1:
-        pygame.mixer.music.load("CucarachaGame/Music/baile_speed.ogg")  
+        pygame.mixer.music.load("CucarachaGame/Music/baile_speed.mp3")  
         pygame.mixer.music.play(-1) 
     b+=1   
 
@@ -149,7 +142,7 @@ def create_holes():
     return agujeros
 
 def play_music():
-    pygame.mixer.music.load("CucarachaGame/Music/baile.ogg")
+    pygame.mixer.music.load("CucarachaGame/Music/baile.mp3")
     pygame.mixer.music.play(-1)
     pygame.mixer.music.set_volume(0.5)
 
@@ -299,14 +292,14 @@ def main():
                 # If more than 10 seconds have passed, exit slow mode
                 if time_in_slow_motion > 12:
                     in_slow_motion_mode = False
-                    pygame.mixer.music.load("CucarachaGame/Music/baile.ogg")  
+                    pygame.mixer.music.load("CucarachaGame/Music/baile.mp3")  
                     pygame.mixer.music.play(-1)          
             elif in_speed_mode:
                 enter_speed_mode()
                 time_in_speed_mode += clock.get_time() / 1000
                 if time_in_speed_mode > 11:  
                     in_speed_mode = False
-                    pygame.mixer.music.load("CucarachaGame/Music/baile.ogg") 
+                    pygame.mixer.music.load("CucarachaGame/Music/baile.mp3") 
                     pygame.mixer.music.play(-1)    
 
             if cucarachas_mostradas > 1:  # Exit the game when you reach 10 cockroaches
