@@ -30,6 +30,8 @@ fuenteGP = "ArcadeMAchinePopup/fuentes/game_power.ttf"
 cucarachas = pygame.sprite.Group()
 slow_items = pygame.sprite.Group()
 speed_items = pygame.sprite.Group()
+
+#Spawn
 next_spawn_time = random.randint(600, 5000)
 item_spawn_time = random.randint(1500, 6000)
 speed_spawn_time = random.randint(1000, 5000)
