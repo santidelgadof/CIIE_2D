@@ -29,6 +29,19 @@ class ResourceManager:
 
         self.popup_animation = Resource("Pantalla/Animacion.jpg")
 
+        # Arcade media
+        self.arcade_player_up_image1 = Resource('Arcade/assets/player/up1.png', True)
+        self.arcade_player_down_image1 = Resource('Arcade/assets/player/down1.png', True)
+        self.arcade_player_left_image1 = Resource('Arcade/assets/player/left1.png', True)
+        self.arcade_player_right_image1 = Resource('Arcade/assets/player/right1.png', True)
+
+        self.arcade_player_up_image2 = Resource('Arcade/assets/player/up2.png', True)
+        self.arcade_player_down_image2 = Resource('Arcade/assets/player/down2.png', True)
+        self.arcade_player_left_image2 = Resource('Arcade/assets/player/left2.png', True)
+        self.arcade_player_right_image2 = Resource('Arcade/assets/player/right2.png', True)
+
+        self.arcade_background = Resource('Arcade/assets/arcade_background.jpg')
+
         #Atrapa_Game
         self.hole = Resource("CucarachaGame/Assets/Agujero.png", True)
         self.hole_slow = Resource("CucarachaGame/Assets/Agujero_slow.png", True)
@@ -40,6 +53,9 @@ class ResourceManager:
         self.cucaracha = Resource("CucarachaGame/Assets/cucaracha.png", True)
         self.speed = Resource("CucarachaGame/Assets/speed_item.png", True)
         self.slow = Resource("CucarachaGame/Assets/slow_item.png", True)
+
+        # Tetris media
+        self.tetris_background = Resource("Tetris/assets/background.jpeg")
 
         
         

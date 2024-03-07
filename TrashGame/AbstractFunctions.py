@@ -1,34 +1,5 @@
 import pygame
 
-# Draws the final window
-def displayFinalWindow(surface, won):
-    window = pygame.Rect(200, 200, 400, 500)
-    pygame.draw.rect(surface, (240, 240, 240), window)
-    pygame.draw.rect(surface, (255, 255, 255), window, width= 3)
-    if won:
-        font_Congrats = pygame.font.SysFont('arial', 48)
-        congrats = font_Congrats.render("¡FELICIDADES!", True, (0,0,0),)
-        rect = congrats.get_rect()
-        rect.center = (400, 250)
-        surface.blit(congrats, rect)
-        font_Subtitle = pygame.font.SysFont('arial', 22)
-        subtitle_text = "Has ganado una pieza de los planos\npara la máquina de limpieza."
-        subtitle_lines = subtitle_text.split("\n")
-        y_offset = 0
-        for line in subtitle_lines:
-            congrats = font_Subtitle.render(line, True, (0,0,0))
-            rect = congrats.get_rect()
-            rect.center = (400, 350 + y_offset)
-            y_offset += rect.height + 5  # Adjust the vertical spacing between lines
-            surface.blit(congrats, rect)
-    else:
-        font_Congrats = pygame.font.SysFont('arial', 48)
-        congrats = font_Congrats.render("Has Perdido", True, (255,255,255))
-        rect = congrats.get_rect()
-        rect.center = (400, 500)
-        surface.blit(congrats, rect)
-        
-
 # Draws the belt of each level
 def drawBelt(WINDOW, theme, level, organicContainer, plasticContainer, paperContainer, glassContainer, firstClasificator, secondClasificator):
         pygame.draw.rect(WINDOW, theme.beltColor, pygame.Rect(350, -3, 100, 703), width=1)

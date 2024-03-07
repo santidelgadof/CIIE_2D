@@ -3,7 +3,7 @@ import sys
 
 from Pantalla import gui as gui
 from ResourceManager import ResourceManager
-from GameState import State, Minigame
+from GameState import State
 
 resource_manager = ResourceManager()
 
@@ -55,7 +55,7 @@ def main():
                     return State.TrashGameLVL1
                     # Agrega aquí la lógica para redirigir al jugador a la Ruta 1
                 elif boton2.top_rect.collidepoint(event.pos):
-                    return Minigame.CucarachaGame
+                    print("Ruta 2")
                     # Agrega aquí la lógica para redirigir al jugador a la Ruta 2
 
         x_relativa = x % fondo.get_rect().height
