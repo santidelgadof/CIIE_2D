@@ -148,7 +148,7 @@ def createMountain():
         mountain.append(word)
         aux = size
         i = i+1
-        if n>0:
+        if n>1:
             n-=1
     return mountain
     
@@ -205,7 +205,8 @@ def main():
     next_letter = False
     end = False
     objectCreated = False
-    lightBulbUsada = False
+
+    hint_num = 3
     hint_bool = False
     running = True
 
@@ -278,16 +279,16 @@ def main():
                 if not end:
                     if blocks[n]:
                         if lightBulb.rect.collidepoint(event.pos): #lógica de la ayuda
-                            if not lightBulbUsada:
+                            if hint_num > 0:
                                 #ejecutar ayuda
                                 letter_to_show = word[len(guess)]
                                 for groups in blocks[n]:
                                     if groups.key == letter_to_show:
                                         hint = (blocks[n], GREEN, (120,120), (groups.rect.x, groups.rect.y))
                                         hint_bool = True
-                                        transBlit(screen, GREEN, (120,120), (groups.rect.x,groups.rect.y))
+                                        #transBlit(screen, GREEN, (120,120), (groups.rect.x,groups.rect.y))
                                         break
-                            lightBulbUsada = True
+                                hint_num -= 1
 
                 if end:
                         mouse_x, mouse_y = pygame.mouse.get_pos()
@@ -309,7 +310,7 @@ def main():
 
         
         # Actualizar y dibujar blocks
-        if lightBulbUsada:
+        if hint_num <= 0:
             lightBulb.image = lightBulbOff
         else:
             lightBulb.image = lightBulbON
@@ -325,7 +326,7 @@ def main():
                         sprite.update()
                         screen.blit(sprite.image, sprite.rect)
                         sprite.draw_letter(screen)
-                    if hint_bool == True and group == hint[0]:
+                    if hint_bool and group == hint[0]:
                             transBlit(screen, hint[1], hint[2], hint[3])
             if next_letter:
                 transBlit(screen, GREEN, (800, 30), (0, HEIGHT//2 + 350))
