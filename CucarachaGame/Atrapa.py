@@ -4,9 +4,9 @@ from CucarachaGame.ClassCucaracha import Cucaracha
 from CucarachaGame.ClassAgujero import Agujero
 from CucarachaGame.ClassSlowItem import SlowItem
 from CucarachaGame.ClassSpeedItem import SpeedItem
-from CucarachaGame.CucaPop.popUpClass import PopUp
-from CucarachaGame.CucaPop.textClass import Text
-from CucarachaGame.CucaPop.buttonClass import Boton
+from ArcadeMachinePopup.popUpClass import PopUp
+from ArcadeMachinePopup.textClass import Text
+from ArcadeMachinePopup.buttonClass import Boton
 from ResourceManager import ResourceManager
 
 pygame.init()
