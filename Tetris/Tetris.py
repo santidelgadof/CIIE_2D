@@ -9,11 +9,9 @@ from ResourceManager import ResourceManager
 
 pygame.init()
 
-# Dimensiones de la ventana 
 WINDOW_WIDTH = 800  
 WINDOW_HEIGHT = 800  
 
-# Dimensiones del tablero
 BOARD_WIDTH = 200 
 BOARD_HEIGHT = 500 
 
@@ -221,7 +219,6 @@ def main():
             rotations = [0, 0]
 
             game_over_text = [
-                Text("Game Over", 60, YELLOW, popup_x + popup_width // 2, popup_y + popup_height // 3 - 20, True, fuenteGP),
                 Text(f"Score: {score}", 50, YELLOW, popup_x + popup_width // 2, popup_y + popup_height // 3 + 30, True, fuenteGP)
             ]
 

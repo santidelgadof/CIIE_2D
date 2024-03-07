@@ -6,11 +6,8 @@ from ArcadeMachinePopup.textClass import Text
 from ArcadeMachinePopup.buttonClass import Boton
 from ResourceManager import ResourceManager
 
-
-# Inicializar Pygame
 pygame.init()
 
-# VARIABLES GLOBALES
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 BLUE = (12, 18, 58)
@@ -19,21 +16,19 @@ TRANSPARENT = (0, 0, 0, 50)
 
 WINDOW_WIDTH = 800
 WINDOW_HEIGHT = 800
-LIMIT_DOWN_Y = 150 # Límite superior de movimiento para que no se mueva por la pared
+LIMIT_DOWN_Y = 150 
 
 window = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
 pygame.display.set_caption("Arcade's Room")
 
 resource_manager = ResourceManager()
-# Cargar fuentes
+
 fuenteGP = "ArcadeMachinePopup/fuentes/game_power.ttf"
 fuente8Bit = "ArcadeMachinePopup/fuentes/8Bit.ttf"
 
-# Cargar sonidos para ventana emergente
 popup_sound_open = pygame.mixer.Sound('Arcade/assets/music/open.mp3')
 popup_sound_close = pygame.mixer.Sound('Arcade/assets/music/close.mp3')
 
-# Cargar imágenes del muñeco y fondo
 player_up_image1 = pygame.transform.scale(resource_manager.arcade_player_up_image1.get(), (75, 75))
 player_down_image1 = pygame.transform.scale(resource_manager.arcade_player_down_image1.get(), (75, 75))
 player_left_image1 = pygame.transform.scale(resource_manager.arcade_player_left_image1.get(), (75, 75))
@@ -53,16 +48,17 @@ arcades_positions = [
     (590, 150)   
 ]
 
-arcades = []  # Usaremos una lista en lugar de un grupo
+arcades = []  
 for i, (center_x, center_y) in enumerate(arcades_positions):
     arcade = Arcade(center_x, center_y, i)
     arcades.append(arcade)
 
-# VARIABLES DEL MUÑECO
-player_rect = player_up_image1.get_rect() # Rectángulo que lo delimita
+
+player_rect = player_up_image1.get_rect()
 player_speed = 5
 initial_player_position = (WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2)
-# Variables para almacenar las imágenes actuales del muleco y el estado de dirección
+
+
 current_player_image = player_up_image1
 up_direction_state = False
 down_direction_state = False
@@ -70,17 +66,14 @@ left_direction_state = False
 right_direction_state = False
 
 
-# VARIABLES DE LA ANIMACIÓN
 frame_counter = 0
 animation_speed = 10
 
-
-# VARIABLES DE LOS POPUPS
 popup_shown = {}
 popup_showing = False
 
 
-### FUNCIONES ###
+### FUNCTIONS ###
 
 def fade_transition():
     fade_surface = pygame.Surface((WINDOW_WIDTH, WINDOW_HEIGHT))
@@ -147,12 +140,12 @@ def update_player_position():
     if player_rect.top < top_limit:
         player_rect.top = top_limit
 
-    # Verificar si hay colisión con algún cuadrado
+    # Check collision
     for arcade in arcades:
         if player_rect.colliderect(arcade.rect):
             return
 
-    # Limitar al jugador dentro de los límites de la ventana
+    # Constrain the player within the window boundaries
     player_rect.x = max(0, min(WINDOW_WIDTH - player_rect.width, player_rect.x))
     player_rect.y = max(0, min(WINDOW_HEIGHT - player_rect.height, player_rect.y))
 
@@ -171,7 +164,7 @@ def check_collisions():
 
 
 def draw_out_of_service(arcade):
-    inactive_image = pygame.transform.scale(pygame.image.load('Arcade/out.png'), (110, 70)) 
+    inactive_image = pygame.transform.scale(pygame.image.load('Arcade/assets/out.png'), (110, 70)) 
     image_x = arcade.rect.centerx - inactive_image.get_width() // 2
     image_y = arcade.rect.centery - inactive_image.get_height() * 1.7
     window.blit(inactive_image, (image_x, image_y))
@@ -182,17 +175,13 @@ def draw():
     window.fill(BLACK)  
     window.blit(background_image, (0, 0)) 
     
-    # Cartel de fuera de servicio
     for arcade in arcades:
         window.blit(arcade.image, arcade.rect)
         if not arcade.active:
             draw_out_of_service(arcade)  
     
-    # Muñeco
     window.blit(current_player_image, player_rect)
     
-     # Actualizar la pantalla
-
 
 
 def show_popup(arcade_number):
@@ -200,7 +189,6 @@ def show_popup(arcade_number):
 
     popup_showing = True
 
-    # Con esta variables evitamos que el jugador ande automaticamente tras cerrar un popup
     up_direction_state = False
     down_direction_state = False
     left_direction_state = False
@@ -213,7 +201,6 @@ def show_popup(arcade_number):
         Text("Minigame", 20, YELLOW, WINDOW_WIDTH//2 + 120, WINDOW_HEIGHT//3 + 50, True, fuente8Bit)
     ]
 
-    # Nombre de cada minijuego
     if arcade_number == 0:
         arcade_text = [
             Text("Cucarachas", 60, YELLOW, WINDOW_WIDTH//2 , WINDOW_HEIGHT//3 - 140, True, fuenteGP)
@@ -287,7 +274,6 @@ def main(arcade_popup_flags):
         
         if num is not None:
             arcade_popup_flags_copy[num] = False
-            # AQUI SIGUEN SENDO TRES ELEMENTOS
             return arcade_popup_flags_copy, num
                 
                     
