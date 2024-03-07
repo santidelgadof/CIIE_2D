@@ -11,6 +11,10 @@ def inicializar_juego():
     pygame.init()
     return pygame.display.set_mode((800, 800)), pygame.time.Clock()
 
+def play_music():
+    pygame.mixer.music.load("Pantalla/Music/pantalla_music.mp3")
+    pygame.mixer.music.play(-1)
+    pygame.mixer.music.set_volume(0.5)
 
 def dibujar_rectangulo_redondeado(pantalla):
     x = 200  # Posición x del rectángulo (ajusta según sea necesario)
@@ -35,6 +39,7 @@ def generateWelcomeScreen(tiempo_transcurrido):
 
 def main():
     
+    play_music()
     pantalla, reloj = inicializar_juego()
     fondo = resource_manager.popup_animation.get()
     x, y = 0, 0
