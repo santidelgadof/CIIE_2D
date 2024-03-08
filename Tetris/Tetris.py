@@ -40,10 +40,10 @@ fuente8Bit = "ArcadeMachinePopup/fuentes/8Bit.ttf"
 
 background_image = pygame.transform.scale(resource_manager.tetris_background.get(), (WINDOW_WIDTH, WINDOW_HEIGHT))
 
-clear_row_sound = pygame.mixer.Sound('Tetris/assets/music/line.wav')
-piece_drop_sound = pygame.mixer.Sound('Tetris/assets/music/drop.mp3')
-win_sound = pygame.mixer.Sound('Tetris/assets/music/win.mp3')
-lose_sound = pygame.mixer.Sound('Tetris/assets/music/lose.mp3')
+clear_row_sound = pygame.mixer.Sound('Tetris/assets/music/line.ogg')
+piece_drop_sound = pygame.mixer.Sound('Tetris/assets/music/drop.ogg')
+win_sound = pygame.mixer.Sound('Tetris/assets/music/win.ogg')
+lose_sound = pygame.mixer.Sound('Tetris/assets/music/lose.ogg')
 
 window = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
 
