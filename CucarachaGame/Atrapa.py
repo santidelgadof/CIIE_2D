@@ -84,7 +84,7 @@ def enter_slow_motion_mode():
 
     in_slow_motion_mode = True
     if a<1:
-        pygame.mixer.music.load("CucarachaGame/Music/baile_slow.mp3")  
+        pygame.mixer.music.load("CucarachaGame/Music/baile_slow.ogg")  
         pygame.mixer.music.play(-1) 
     a+=1    
 
@@ -110,7 +110,7 @@ def enter_speed_mode():
     global in_speed_mode, b
     in_speed_mode = True
     if b<1:
-        pygame.mixer.music.load("CucarachaGame/Music/baile_speed.mp3")  
+        pygame.mixer.music.load("CucarachaGame/Music/baile_speed.ogg")  
         pygame.mixer.music.play(-1) 
     b+=1   
 
@@ -134,7 +134,7 @@ def create_holes():
     return agujeros
 
 def play_music():
-    pygame.mixer.music.load("CucarachaGame/Music/baile.mp3")
+    pygame.mixer.music.load("CucarachaGame/Music/baile.ogg")
     pygame.mixer.music.play(-1)
     pygame.mixer.music.set_volume(0.5)
 
@@ -288,7 +288,7 @@ def main():
                 if time_in_slow_motion > 12:
                     in_slow_motion_mode = False
                     # Switch back to the regular background music
-                    pygame.mixer.music.load("CucarachaGame/Music/baile.mp3")  
+                    pygame.mixer.music.load("CucarachaGame/Music/baile.ogg")  
                     pygame.mixer.music.play(-1)  
 
             # Enter speed mode if TRUE
@@ -301,7 +301,7 @@ def main():
                 if time_in_speed_mode > 11:  
                     in_speed_mode = False
                     # Switch back to the regular background music
-                    pygame.mixer.music.load("CucarachaGame/Music/baile.mp3") 
+                    pygame.mixer.music.load("CucarachaGame/Music/baile.ogg") 
                     pygame.mixer.music.play(-1)    
 
             # End the game when reaching a certain number of shown cucarachas
@@ -310,8 +310,7 @@ def main():
 
         # Display the final score screen when the game is over
         if game_over:
-            pygame.mixer.music.stop()  
-
+            pygame.mixer.music.stop() 
             # Display the game over popup window
             popup_width = 400  
             popup_height = 300  

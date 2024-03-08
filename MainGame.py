@@ -4,6 +4,7 @@ import sys
 import Pantalla.popup as PopUp
 import TrashGame.main as TrashGame
 from GameState import GameState, State
+from Animations import Animacion 
 
 FPS = 60
 fpsClock = pygame.time.Clock()
