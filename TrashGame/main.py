@@ -31,6 +31,15 @@ win_sound = pygame.mixer.Sound("TrashGame/assets/music/win_sound.mp3")
 ### GLOBALS ###
 theme = Theme()
 resource_manager = ResourceManager()
+
+def fade_transition(WINDOW):
+    fade_surface = pygame.Surface((WINDOW_WIDTH, WINDOW_HEIGHT))
+    fade_surface.fill((0, 0, 0))
+    for alpha in range(0, 255, 10):
+        fade_surface.set_alpha(alpha)
+        WINDOW.blit(fade_surface, (0, 0))
+        pygame.display.update()
+        pygame.time.delay(60)
 ### MAIN ###
 def main(level, game_state, WINDOW): # Level is an int that stablishes the dificulty of the lvl
     try_again = True
@@ -147,8 +156,8 @@ def main(level, game_state, WINDOW): # Level is an int that stablishes the dific
             if not finish:
                 ### Minigame logic. Open arcade room when the progress bar reaches the middle ###
                 if minigame_played == None and progress_bar_width <= 500 and progress_bar_width >= 400:
+                    fade_transition(WINDOW)
                     minigame_played, minigame_num = arcades_room.main(game_state.alreadyPlayedMinigames)
-
                     if minigame_num == 0:
                         minigame_points = Atrapa.main()
                     elif minigame_num == 1:
