@@ -15,9 +15,15 @@ def draw_rounded_rectangle(surface):
 def drawTrashGameRules(surface):
     background_image = resource_manager.trash_game_instructions.get()
     surface.blit(background_image, (175, 100))
+
+### Loads and plays the music ###
+def play_music():
+    pygame.mixer.music.load("WelcomeScreen/WelcomeScreenMusic.mp3")
+    pygame.mixer.music.play(-1)
+    pygame.mixer.music.set_volume(0.5)
     
 def main(WINDOW):
-    
+    play_music()
     clock = pygame.time.Clock()
     animation_background_asset = resource_manager.popup_animation.get()
     x, y = 0, 0
