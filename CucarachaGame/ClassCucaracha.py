@@ -11,7 +11,7 @@ class Cucaracha(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.active = False
         self.spawn_time = 0
-
+    
     def update(self, in_slow_motion_mode, in_speed_mode):
         if self.active:
             time_threshold = 1300 if in_slow_motion_mode else 500 if in_speed_mode else 800

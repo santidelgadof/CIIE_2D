@@ -170,7 +170,7 @@ def handle_speed_item_click(item):
 def handle_cucaracha_click(cucaracha):
     insect = pygame.transform.scale(resource_manager.insect.get(), (80, 80))
     cucaracha.active = False
-    cucaracha.Kill()
+    cucaracha.kill()
     cell_center = (cucaracha.rect.centerx // CELL_SIZE * CELL_SIZE + CELL_SIZE // 2,
                    cucaracha.rect.centery // CELL_SIZE * CELL_SIZE + CELL_SIZE // 2)
     window.blit(insect, (cell_center[0] - insect.get_width(), cell_center[1] - insect.get_height() // 2))
@@ -234,9 +234,7 @@ def main():
     running = True
     game_over = False
     
-    gameVars.in_slow_motion_mode = False
-    gameVars.in_speed_mode = False
-    gameVars.score = 0
+    gameVars.reset()
 
     time_in_speed_mode = 0
     time_in_slow_motion = 0
