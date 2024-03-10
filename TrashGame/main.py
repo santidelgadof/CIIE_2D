@@ -27,6 +27,7 @@ fpsClock = pygame.time.Clock()
 WINDOW_WIDTH = 800
 WINDOW_HEIGHT = 800
 win_sound = pygame.mixer.Sound("TrashGame/assets/music/win_sound.mp3")
+lose_sound = pygame.mixer.Sound("Tetris/assets/music/lose.mp3")
 
 ### GLOBALS ###
 theme = Theme()
@@ -50,7 +51,7 @@ def main(level, game_state, WINDOW): # Level is an int that stablishes the dific
         mixer.music.set_volume(0.3)
         mixer.music.play(-1) 
         if level == 1:
-            spawn_interval = 2000  # Spawn a new TrashItem every 2 seconds (2000 milliseconds)
+            spawn_interval = 1650  # Spawn a new TrashItem every 2 seconds (2000 milliseconds)
             distance_between_items = 120  # Desired distance between each trash item
             velocity = distance_between_items / (spawn_interval / 60) / 2
             firstClasificator = ClassificationArea(100, 350, theme.clasiAreaColor)
@@ -63,7 +64,7 @@ def main(level, game_state, WINDOW): # Level is an int that stablishes the dific
             trash_default_items = resource_manager.trash_items
             health_bar = HealthBar(5)
             current_lives = 5
-            duration = 0.5 * 60 * 1000
+            duration = 30000
             tp = TechPart(resource_manager.tech_piece,  (360, -200), velocity)
 
         if level == 2:
@@ -80,7 +81,7 @@ def main(level, game_state, WINDOW): # Level is an int that stablishes the dific
             finalWindow = None
             health_bar = HealthBar(5)
             current_lives = 5
-            duration = 0.5 * 60 * 1000 
+            duration = 30000
             tp = TechPart(resource_manager.tech_piece,  (360, -200), velocity)
         if level == 3:
             spawn_interval = 1250  # Spawn a new TrashItem every 2 seconds (2000 milliseconds)
@@ -96,7 +97,7 @@ def main(level, game_state, WINDOW): # Level is an int that stablishes the dific
             finalWindow = None
             health_bar = HealthBar(5)
             current_lives = 5
-            duration = 0.5 * 60 * 1000 
+            duration = 30000
             tp = TechPart(resource_manager.tech_piece,  (360, -200), velocity)
             
         ### Lvl independent values ###
@@ -108,7 +109,7 @@ def main(level, game_state, WINDOW): # Level is an int that stablishes the dific
         won = False
         progress_bar_width = 0
         minigame_played = None
-        win_sound_already_played = False
+        sound_already_played = False
         elapsed_time = 0
         minigame_points = 0
 
@@ -224,12 +225,15 @@ def main(level, game_state, WINDOW): # Level is an int that stablishes the dific
                     tp.draw(WINDOW)
                     if tp.dead:
                         mixer.music.stop()
-                        if not win_sound_already_played:
+                        if not sound_already_played:
                             win_sound.play()
-                            win_sound_already_played = True
+                            sound_already_played = True
                         finalWindow.draw(WINDOW)
                 else:
                     mixer.music.stop()
+                    if not sound_already_played:
+                            lose_sound.play()
+                            sound_already_played = True
                     finalWindow.draw(WINDOW)
 
             ### UPDATE the WINDOW ###

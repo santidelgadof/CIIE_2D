@@ -2,12 +2,7 @@ import pygame
 
 
 def rectanguloRedondo(pantalla, x, y, ancho, alto, radio, color):
-    pygame.draw.rect(pantalla, color, (x + radio, y, ancho - 2 * radio, alto))
-    pygame.draw.rect(pantalla, color, (x, y + radio, ancho, alto - 2 * radio))
-    pygame.draw.ellipse(pantalla, color, (x, y, 2 * radio, 2 * radio))
-    pygame.draw.ellipse(pantalla, color, (x + ancho - 2 * radio, y, 2 * radio, 2 * radio))
-    pygame.draw.ellipse(pantalla, color, (x, y + alto - 2 * radio, 2 * radio, 2 * radio))
-    pygame.draw.ellipse(pantalla, color, (x + ancho - 2 * radio, y + alto - 2 * radio, 2 * radio, 2 * radio))
+    pygame.draw.rect(pantalla, color, (x, y, ancho, alto), 0, radio)
 
 
 
