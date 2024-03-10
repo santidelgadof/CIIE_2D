@@ -7,11 +7,12 @@ from GarbageTowers.bloqueClicable import ClicableObject
 from ArcadeMachinePopup.textClass import Text
 from ArcadeMachinePopup.buttonClass import Boton
 from ArcadeMachinePopup.popUpClass import PopUp
+from ResourceManager import ResourceManager
 
-# Inicializar Pygame
+# Init pygame
 pygame.init()
 
-# Definir colores
+# COLORS
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 DARK_BLUE = (47, 55, 65)
@@ -20,28 +21,49 @@ RED = (255,0,0,100)
 YELLOW = (222, 196, 65)
 TRANSPARENT = (0, 0, 0, 50)
 
-# Definir dimensiones de la screen
+# SCREEN 
 WIDTH = 800
 HEIGHT = 800
 
-# Definir sizeaño y cantidad de blocks
+# TRASH BAGS
 WIDTH_BLOQUE = 120
 HEIGHT_BLOQUE = 120
-NBLOCKS = 3
+
+# WORDS
+NBLOCKS = 5
 SIZES = 5
 
+# DIVIDER
 SIZE_FLOOR = WIDTH_BLOQUE*3
 
-# Definir tiempo límite en segundos
+# RESOURCE MANAGER
+RM = ResourceManager()
+
+# TIME LIMIT
 LIMIT_TIME = 60
+TIME_PENAL = 5
 
-words = [["caja", "lixo", "lata", "ropa", "tapa", "rata", "alga", "azul", "olor"], 
+# DIFFERENT WORDS RELATED WITH GARBAGE
+words = [["caja", "lixo", "lata", "ropa", "tapa", "rata", "azul", "olor"], 
             ["resto", "sucio", "bolsa", "verde", "latas", "raton", "hedor", "tirar", "mugre"], 
-            ["basura", "carton", "vidrio", "reusar", "limpio", "restos", "bodrio", "birria", "sarama", "sobras"], 
+            ["basura", "carton", "vidrio", "reusar", "limpio", "restos", "bodrio", "sarama", "sobras"], 
             ["bazofia", "podrido", "residuo", "desecho", "vertido"], 
-            ["amarillo", "papelera", "reciclar", "escombro", "desechos", "suciedad"]]
+            ["amarillo", "papelera", "reciclar", "escombro", "morralla", "suciedad"]]
 
+"""definitions = [["Se tira al papel", "Sinónimo de basura en gallego", "Hecha de aluminio", "Apor al revés", "Usado para cerrar botellas",
+                 "Animal de alcantarilla", "Contenedor del cartón", "Lo genera la basura"], 
+                 ["Residuo de la basura", "Sinónimo de manchado", 
+                 "Donde se mete la basura", "Contenedor del vidrio", "Hechas de aluminio", "Animal", "Mal olor", "echar algo a la basura", 
+                 "suciedad grasienta"], 
+                 ["Conjunto de residuos", "Contenedor azul", "Contenedor verde", "Sinónimo de reutilizar",
+                 "Antónimo de sucio", "Sinónimo de sobras", "Sinónimo de bazofia", "Sinónimo de suciedad", "Exceso"], 
+                 ["Desechos de comida",
+                 "Descompuesto", "Resultante de la destrucción de algo", "Aquello que queda", "Derramamiento de tóxicos"],
+                 ["Contenedor de inorgánicos", "Recipiente para desperdicios", "Clasificar basura", "desecho de la construcción",
+                 "Mezcla de cosas inútiles", "Porquería, grasa, mancha"]]"""
+                 
 
+# Array with positions for all the letters on the screen
 Poswords = [
                [(WIDTH//2-WIDTH_BLOQUE, HEIGHT//2-HEIGHT_BLOQUE), (WIDTH//2, HEIGHT//2-HEIGHT_BLOQUE), 
                 (WIDTH//2-WIDTH_BLOQUE, HEIGHT//2), (WIDTH//2, HEIGHT//2)], 
@@ -66,17 +88,14 @@ Poswords = [
                 ]
 
 
-
+# Function for loading array of img from the resource manager
 def load_img():
     images = []
-    for folder in os.listdir("GarbageTowers/images/blocks"):
-        path = os.path.join("GarbageTowers/images/blocks", folder)
-        if os.path.isfile(path):
-            img = pygame.image.load(path).convert_alpha()
-            img = pygame.transform.scale(img, (WIDTH_BLOQUE, HEIGHT_BLOQUE))
-            images.append(img)
+    for img in RM.pile_blocks:
+        images += img.get()
     return images
 
+# Function for starting or stopping the music
 def music(stop = False):
     if not stop:
         pygame.mixer.music.load("GarbageTowers/music/music2.ogg")
@@ -85,7 +104,7 @@ def music(stop = False):
     else: pygame.mixer.music.stop()
 
 
-# Función para mostrar text en screen
+# Function for showing text on the screen
 def showText(text, font, screen, x, y, bg_color = BLACK, letter_color = WHITE, borderr_color = DARK_BLUE, centered = False, bg = True, border = True,  size_border = 4):
 
     text_object = font.render(text, True, letter_color)
@@ -104,6 +123,7 @@ def showText(text, font, screen, x, y, bg_color = BLACK, letter_color = WHITE, b
     
     screen.blit(text_object, rectangle_text)
 
+# Function for creating the list of sprites (words)
 def blockList(img, blocks, word, nBlocks):
     letras = random.sample(word, nBlocks)
     i = 0
@@ -122,81 +142,90 @@ def blockList(img, blocks, word, nBlocks):
         i=i+1
     return blocks
 
-def exit_game(score):
-    return score
-
+# Function for creating the garbage pile
 def createMountain():
-    #elegir orden y words de los niveles de la montaña
+    # chose the level and words for each level of the pile
     i = 0
-    aux = 9
+    aux = -1
     mountain = []
+    n=3 # incremental difficulty
     
     while i<NBLOCKS: 
         
-        if aux == 9:
-            size = random.randint(0,SIZES-1)
+        if aux == -1:
+            size = random.randint(0,SIZES-n)
         else: 
-            size = random.randint(aux, SIZES-1)
+            size = random.randint(aux, SIZES-n)
         
         repeated = True
         while repeated:
+            #wordN = random.randint(0, len(words[size])-1)
             word = random.choice(words[size])
+            #word = words[size][wordN]
             if word not in mountain:
                 repeated = False
         
         mountain.append(word)
         aux = size
         i = i+1
+        if n>1:
+            n-=1
     return mountain
     
+# Function for using blit with Translucid surfaces
 def transBlit(screen, color, size, coord):
-    screen_transparente = pygame.Surface(size, pygame.SRCALPHA)
-    screen_transparente.fill(color)
-    screen.blit(screen_transparente, coord)
+    translucid_screen = pygame.Surface(size, pygame.SRCALPHA)
+    translucid_screen.fill(color)
+    screen.blit(translucid_screen, coord)
 
+# Function called when the game is finished
+def exit_game(score):
+    return score
 
-# Función principal del juego
+# Main function for the game
 def main():
     music()
+
+    # create screen
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
     pygame.display.set_caption('Juego de Bloques')
 
-    bg = pygame.image.load("GarbageTowers/images/bg.jpg").convert()
-    bg = pygame.transform.scale(bg, (800,800))
+    # load resources
+    bg = pygame.transform.scale(RM.pile_bg.get(), (800,800))
     fuenteGP = "ArcadeMachinePopup/fuentes/game_power.ttf"
     fuente8Bit = "ArcadeMachinePopup/fuentes/8Bit.ttf"
-    lightBulbON = pygame.image.load("GarbageTowers/images/lightBulbOn.png")
-    lightBulbON = pygame.transform.scale(lightBulbON, (50,50))
-    lightBulbOff = pygame.image.load("GarbageTowers/images/lightBulbOff.png")
-    lightBulbOff = pygame.transform.scale(lightBulbOff, (50,50))
-    floor = pygame.image.load("GarbageTowers/images/floor.jpg")
-    floor = pygame.transform.scale(floor, (SIZE_FLOOR, SIZE_FLOOR))
+    lightBulbON = pygame.transform.scale(RM.pile_lightOn.get(), (50,50))
+    lightBulbOff = pygame.transform.scale(RM.pile_lightOff.get(), (50,50))
+    floor = pygame.transform.scale(RM.pile_floor.get(), (SIZE_FLOOR, SIZE_FLOOR))
 
-    images_blocks = load_img()
+    images_blocks = RM.pile_blocks
     
     screen.blit(bg, (0, 0))
 
-    MountainArray = createMountain() #crea la lista de words
+    # Create list of blocks
+    MountainArray= createMountain() 
 
-     # Crear lista de lista de blocks con las letras para cada word
+    # Create list of list of blocks
     blocks = []
     i = 0
     for word in MountainArray: 
         
         blocks.append(pygame.sprite.Group())
-        img = random.choice(images_blocks)
+        img = pygame.transform.scale(random.choice(images_blocks).get(), (WIDTH_BLOQUE, HEIGHT_BLOQUE))
         blocks[i] = blockList(img, blocks[i], word, len(word))
         i = i+1
 
+    # Create clickable obj
     lightBulb = ClicableObject(WIDTH-50, HEIGHT-100, lightBulbON)
 
-    # Crear reloj
-    reloj = pygame.time.Clock()
+    # Create timer
+    timer = pygame.time.Clock()
 
-    # Tiempo inicial
+    # Initial Time
     limitTime = LIMIT_TIME
     startTime = pygame.time.get_ticks()
 
+    # Vars for the main loop
     successes = 0
     guess = ""
     n = 0
@@ -206,51 +235,72 @@ def main():
     next_letter = False
     end = False
     objectCreated = False
-    lightBulbUsada = False
+
+    hint_num = 3
     hint_bool = False
+
     running = True
 
     invertedBlocks = blocks[::-1]
+
+    # Preparing different sounds for the game
+    letter_sound = pygame.mixer.Sound("GarbageTowers/music/right_letter.wav")
+    word_sound = pygame.mixer.Sound("GarbageTowers/music/right_word.wav")
+    letter_sound.set_volume(0)
+    sound_channel = letter_sound.play()
+    letter_sound.set_volume(0.2)
+    word_sound.set_volume(0.7)
     
     
-    # Ciclo principal del juego
+    # Main loop
     while running:
         isKey = True
         if not end:
             word = blocks[n].sprites()[0].word
-        # Manejo de eventos
+
+        # Event handler
         for event in pygame.event.get():
+
+            # Exiting the game
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
 
+            # key pressed
             if event.type == pygame.KEYDOWN:
+
                 if not end:
+
+                    #Check if its an ASCII letter
                     try:
                         chr(event.key)
                     except:
                         isKey = False
 
                     if blocks and isKey:
-
-                        if not next_letter: 
-                            guess = "" 
-                            limitTime -= 5
-
+                        
                         word = blocks[n].sprites()[0].word
-
                         guess += chr(event.key)
 
+                        # WORD GUESSED
                         if guess == word:
+                            word_sound.play()
                             successes += 1
                             for sprites in blocks[n]:
                                 sprites.kill()     
                             n+=1
                             guess = ""
+                        
+                        # LETTER GUESSED
                         elif guess in word:
                             
                             while m < len(guess):
                                 if guess[m] == word[m]:
+                                    if sound_channel.get_busy():
+                                        letter_sound.stop()
+                                    
+                                    sound_channel = letter_sound.play()
+                                    
                                     next_letter = True
                                 else: 
                                     next_letter = False
@@ -258,21 +308,34 @@ def main():
                             m = 0
                                     
                         else: guess = ""
+
+                        # MISS
+                        if not next_letter: 
+                            guess = "" 
+                            if limitTime-TIME_PENAL <= 0:
+                                end = True
+                                limitTime = 0
+                            else:
+                                limitTime -= TIME_PENAL
+
+            # Mouse button pressed
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if not end:
                     if blocks[n]:
+
+                        # HINT
                         if lightBulb.rect.collidepoint(event.pos): #lógica de la ayuda
-                            if not lightBulbUsada:
-                                #ejecutar ayuda
+                            if hint_num > 0:
+                                # Use hint
                                 letter_to_show = word[len(guess)]
                                 for groups in blocks[n]:
                                     if groups.key == letter_to_show:
                                         hint = (blocks[n], GREEN, (120,120), (groups.rect.x, groups.rect.y))
                                         hint_bool = True
-                                        transBlit(screen, GREEN, (120,120), (groups.rect.x,groups.rect.y))
                                         break
-                            lightBulbUsada = True
+                                hint_num -= 1
 
+                # PopUp end game
                 if end:
                         mouse_x, mouse_y = pygame.mouse.get_pos()
                         if window.get_rect().collidepoint(mouse_x, mouse_y):
@@ -288,20 +351,21 @@ def main():
 
         if successes == NBLOCKS: end = True
 
-        # Limpiar screen
+        # Clean screan
         screen.blit(bg, (0, 0))
 
-        
-        # Actualizar y dibujar blocks
-        if lightBulbUsada:
+        # Update lightBulb
+        if hint_num <= 0:
             lightBulb.image = lightBulbOff
         else:
             lightBulb.image = lightBulbON
 
         screen.blit(lightBulb.image, (lightBulb.rect.x, lightBulb.rect.y))
-        #cambiar para pintar al reves
+        
         
         if not end:
+
+            # Draw blocks
             for group in invertedBlocks:
                 if len(group) != 0:
                     screen.blit(floor, (WIDTH//2 - SIZE_FLOOR//2, HEIGHT//2-SIZE_FLOOR//2))
@@ -309,16 +373,17 @@ def main():
                         sprite.update()
                         screen.blit(sprite.image, sprite.rect)
                         sprite.draw_letter(screen)
-                    if hint_bool == True and group == hint[0]:
+                        
+                    if hint_bool and group == hint[0]:
                             transBlit(screen, hint[1], hint[2], hint[3])
+                    
             if next_letter:
                 transBlit(screen, GREEN, (800, 30), (0, HEIGHT//2 + 350))
             else:
                 transBlit(screen, RED, (800, 30), (0, HEIGHT//2 + 350))
                 guess = ""
 
-            #Resalta la letter que usas
-            
+            # Highlight letters pressed
             for letter in guess:
                 for groups in blocks[n]:
                     if groups.key == letter:
@@ -335,14 +400,15 @@ def main():
             time_passed = pygame.time.get_ticks() - startTime
             remaining_time = max(0, limitTime - time_passed // 1000)
                         
-            
+        # Print guess on Screen
         showText(guess, pygame.font.Font(fuente8Bit, 30), screen, 0, HEIGHT//2+350, bg= False, letter_color=BLACK)
         
             
-        # Mostrar tiempo restante en screen
+        # Print remaining time
         showText("Tiempo restante: " + str(remaining_time), pygame.font.Font(fuente8Bit, 30), screen, 10, 10)
-        score = remaining_time
+        score = successes * 100
 
+        # Game over
         if end:
             if not objectCreated:
                 objectCreated = True
@@ -371,17 +437,15 @@ def main():
         if end and successes==NBLOCKS:
             showText("Has conseguido limpiar la pila de basura en: " + str(LIMIT_TIME-remaining_time) + "s", pygame.font.Font(fuente8Bit, 26), screen,  WIDTH/2, HEIGHT/2 + 200, centered=True)
             
-        # Verificar si se acabó el tiempo
+        # Check if time is up
         if remaining_time==0:
             showText("¡Se acabó el tiempo!", pygame.font.Font(fuente8Bit, 36), screen, WIDTH//2, HEIGHT//2 + 200, centered= True)
             end = True
             
-
-        # Actualizar screen
+        # Update screen
         pygame.display.flip()
 
-        # Controlar la velocidad de actualización
-        reloj.tick()
+        timer.tick()
 
     pygame.quit()
     return score
@@ -392,8 +456,9 @@ if __name__ == '__main__':
 
 """#idea para cambiar juego -> añadir boton de pista, de saltarte una word...
 
-Cuatroletras = ["caja", "lixo", "lata", "ropa", "tapa", "rata", "alga", "azul", "olor"]
+Cuatroletras = ["caja", "lixo", "lata", "ropa", "tapa", "rata", "azul", "olor"]
 CincoLetras  = ["resto", "sucio", "bolsa", "verde", "latas", "raton", "hedor", "tirar", "mugre"]
-SeisLetras   = ["basura", "carton", "vidrio", "reusar", "limpio", "restos", "bodrio", "birria", "sarama", "sobras"]
+SeisLetras   = ["basura", "carton", "vidrio", "reusar", "limpio", "restos", "bodrio", "sarama", "sobras"]
 SieteLetras  = ["bazofia", "podrido", "residuo", "desecho", "vertido"]
 OchoLetras   = ["amarillo", "papelera", "reciclar", "escombro", "desechos", "suciedad"]"""
+
