@@ -1,9 +1,12 @@
 import pygame
+from ResourceManager import ResourceManager
+
+resource_manager = ResourceManager()
 
 class SpeedItem(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
-        self.image = pygame.transform.scale(pygame.image.load("CucarachaGame/Assets/speed_item.png").convert_alpha(), (80, 80))
+        self.image = pygame.transform.scale(resource_manager.speed.get(), (80, 80))
         self.rect = self.image.get_rect()
         self.active = False
         self.spawn_time = 0

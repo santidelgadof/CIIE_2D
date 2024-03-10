@@ -6,10 +6,13 @@ from TrashGame.Container import TrashType
 # All the resources must be loaded into memory by the resource manager
 class ResourceManager:
     def __init__(self):
+        # Trash Game Instructions
+        self.trash_game_instructions = Resource("WelcomeScreen/InstruccionesTrashGame.png", True)
         # All the trash items
         self.trash_items = [
             (Resource("TrashGame/assets/trash/CajaCarton.png", True), TrashType.PAPER),
             (Resource("TrashGame/assets/trash/Cocacola.png", True), TrashType.GLASS),
+            (Resource("TrashGame/assets/trash/Glass.png", True), TrashType.GLASS),
             (Resource("TrashGame/assets/trash/LataAtun.png", True), TrashType.PLASTIC),
             (Resource("TrashGame/assets/trash/LataRefresco.png", True), TrashType.PLASTIC),
             (Resource("TrashGame/assets/trash/Periodicos.png", True), TrashType.PAPER),
@@ -27,7 +30,7 @@ class ResourceManager:
         self.sad_face = Resource("TrashGame/assets/sadFace.png", True)
         self.tech_piece = Resource("TrashGame/assets/tech.jpeg", True)
 
-        self.popup_animation = Resource("Pantalla/Animacion.jpg")
+        self.popup_animation = Resource("WelcomeScreen/Animacion.jpg")
 
         # Arcade media
         self.arcade_player_up_image1 = Resource('Arcade/assets/player/up1.png', True)
@@ -42,6 +45,17 @@ class ResourceManager:
 
         self.arcade_background = Resource('Arcade/assets/arcade_background.jpg')
 
+        #Atrapa_Game
+        self.hole = Resource("CucarachaGame/Assets/Agujero.png", True)
+        self.hole_slow = Resource("CucarachaGame/Assets/Agujero_slow.png", True)
+        self.hole_speed = Resource("CucarachaGame/Assets/Agujero_speed.png", True)
+        self.insect = Resource("CucarachaGame/Assets/Insecticida.png", True)
+        self.background_image = Resource("CucarachaGame/Assets/back.jpg", True)
+        self.background_slow = Resource("CucarachaGame/Assets/back_slow.png", True)
+        self.background_speed = Resource("CucarachaGame/Assets/back_speed.png", True)
+        self.cucaracha = Resource("CucarachaGame/Assets/cucaracha.png", True)
+        self.speed = Resource("CucarachaGame/Assets/speed_item.png", True)
+        self.slow = Resource("CucarachaGame/Assets/slow_item.png", True)
 
         # Tetris media
         self.tetris_background = Resource("Tetris/assets/background.jpeg")

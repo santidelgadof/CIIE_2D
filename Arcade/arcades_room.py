@@ -308,7 +308,7 @@ def show_popup(arcade_number):
 
 
 def main(arcade_popup_flags):
-    print(arcade_popup_flags)
+    arcade_popup_flags_copy = arcade_popup_flags.copy()
     global frame_counter
     pygame.mixer.music.load('Arcade/assets/music/happy.mp3')
     pygame.mixer.music.set_volume(0.4)
@@ -317,7 +317,7 @@ def main(arcade_popup_flags):
     player_rect.center = initial_player_position
 
     for i, arcade in enumerate(arcades):
-        arcade.active = arcade_popup_flags[i]
+        arcade.active = arcade_popup_flags_copy[i]
 
     popup_shown = {arcade: False for arcade in arcades}
 
@@ -332,8 +332,8 @@ def main(arcade_popup_flags):
         frame_counter += 1
         
         if num is not None:
-            arcade_popup_flags[num] = False
+            arcade_popup_flags_copy[num] = False
             # AQUI SIGUEN SENDO TRES ELEMENTOS
-            return arcade_popup_flags, num
+            return arcade_popup_flags_copy, num
                 
                     

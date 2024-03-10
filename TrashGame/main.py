@@ -19,7 +19,6 @@ from GarbageTowers import GarbagePile
 import time
 
 import os
-pygame.init()
 
 
 ### PYGAME CONFIGURATION ###
@@ -27,20 +26,22 @@ FPS = 60
 fpsClock = pygame.time.Clock()
 WINDOW_WIDTH = 800
 WINDOW_HEIGHT = 800
-WINDOW = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
-pygame.display.set_caption('Trash Game!')
 win_sound = pygame.mixer.Sound("TrashGame/assets/music/win_sound.mp3")
 
 ### GLOBALS ###
 theme = Theme()
-
-container_images = ["assets/containers/OrganicContainer.png", 
-              "assets/containers/PlasticContainer.png", 
-              "assets/containers/PaperContainer.png", 
-              "assets/containers/GlassContainer.png" ]
 resource_manager = ResourceManager()
+
+def fade_transition(WINDOW):
+    fade_surface = pygame.Surface((WINDOW_WIDTH, WINDOW_HEIGHT))
+    fade_surface.fill((0, 0, 0))
+    for alpha in range(0, 255, 10):
+        fade_surface.set_alpha(alpha)
+        WINDOW.blit(fade_surface, (0, 0))
+        pygame.display.update()
+        pygame.time.delay(60)
 ### MAIN ###
-def main(level, game_state): # Level is an int that stablishes the dificulty of the lvl
+def main(level, game_state, WINDOW): # Level is an int that stablishes the dificulty of the lvl
     try_again = True
     
     while(try_again):
@@ -62,7 +63,7 @@ def main(level, game_state): # Level is an int that stablishes the dificulty of 
             trash_default_items = resource_manager.trash_items
             health_bar = HealthBar(5)
             current_lives = 5
-            duration = 0.5 * 5 * 1000 
+            duration = 0.5 * 60 * 1000
             tp = TechPart(resource_manager.tech_piece,  (360, -200), velocity)
 
         if level == 2:
@@ -79,10 +80,10 @@ def main(level, game_state): # Level is an int that stablishes the dificulty of 
             finalWindow = None
             health_bar = HealthBar(5)
             current_lives = 5
-            duration = 0.5 * 5 * 1000 
-            tp = TechPart(resource_manager.tech_piece,  (340, -200), velocity)
+            duration = 0.5 * 60 * 1000 
+            tp = TechPart(resource_manager.tech_piece,  (360, -200), velocity)
         if level == 3:
-            spawn_interval = 1000  # Spawn a new TrashItem every 2 seconds (2000 milliseconds)
+            spawn_interval = 1250  # Spawn a new TrashItem every 2 seconds (2000 milliseconds)
             distance_between_items = 120  # Desired distance between each trash item
             velocity = distance_between_items / (spawn_interval / 60) / 2
             firstClasificator = ClassificationArea(100, 100, theme.clasiAreaColor)
@@ -95,8 +96,8 @@ def main(level, game_state): # Level is an int that stablishes the dificulty of 
             finalWindow = None
             health_bar = HealthBar(5)
             current_lives = 5
-            duration = 0.5 * 5 * 1000 
-            tp = TechPart(resource_manager.tech_piece,  (300, -200), velocity)
+            duration = 0.5 * 60 * 1000 
+            tp = TechPart(resource_manager.tech_piece,  (360, -200), velocity)
             
         ### Lvl independent values ###
         looping = True
@@ -109,6 +110,7 @@ def main(level, game_state): # Level is an int that stablishes the dificulty of 
         minigame_played = None
         win_sound_already_played = False
         elapsed_time = 0
+        minigame_points = 0
 
         
 
@@ -123,7 +125,7 @@ def main(level, game_state): # Level is an int that stablishes the dificulty of 
                 elif event.type == KEYDOWN:
                     if event.key == K_o: # Pressed 'o' (organico)
                         current_lives = firstClasificator.classify(trash_items, organicContainer.get_x_position(), organicContainer.get_y_position(), [TrashType.ORGANIC], current_lives)
-                    if event.key == K_p: # Pressed 'p' ( plastico)
+                    if event.key == K_p: # Pressed 'p' (plastico)
                         if level == 1:
                             current_lives = firstClasificator.classify(trash_items, plasticContainer.get_x_position(), plasticContainer.get_y_position(), [TrashType.PLASTIC, TrashType.PAPER, TrashType.GLASS], current_lives)
                         else:
@@ -137,16 +139,14 @@ def main(level, game_state): # Level is an int that stablishes the dificulty of 
                     if finalWindow != None:
                         pos = pygame.mouse.get_pos()
                         for button in finalWindow.buttons:
-                            res = button.is_clicked(pos)
-                            if res == "restart":
-                                looping = False
-                            else:
-                                return (res, minigame_played)
-
-                                    
-
-
-            
+                            if button.rect.collidepoint(pos):
+                                if button.accion == "REINTENTAR":
+                                    mixer.music.unload()
+                                    return (game_state.getState(), game_state.getPlayedMinigames(), 0)
+                                else:
+                                    mixer.music.unload()
+                                    return (game_state.getNextLvl(), minigame_played, minigame_points + (current_lives * 50))
+     
             ### Spawning and progress bar update ###
             
             if not finish:
@@ -154,32 +154,31 @@ def main(level, game_state): # Level is an int that stablishes the dificulty of 
                 trash_items = spawner.update(trash_items, current_time)
             elapsed_time += 10
             if not finish:
+                ### Minigame logic. Open arcade room when the progress bar reaches the middle ###
                 if minigame_played == None and progress_bar_width <= 500 and progress_bar_width >= 400:
+                    fade_transition(WINDOW)
                     minigame_played, minigame_num = arcades_room.main(game_state.alreadyPlayedMinigames)
-
                     if minigame_num == 0:
-                        cucaracha_points = Atrapa.main()
+                        minigame_points = Atrapa.main()
                     elif minigame_num == 1:
-                        garbage_points = GarbagePile.main()
+                        minigame_points = GarbagePile.main()
                     elif minigame_num == 2:
-                        tetris_points = Tetris.main()
-
-                    print(minigame_played)
+                        minigame_points = Tetris.main()
+                        
                     mixer.music.load("TrashGame/assets/music/MainMusic.ogg")
                     mixer.music.set_volume(0.3)
                     mixer.music.play(-1) 
-                    #minigame_played = True
                     
                 if progress_bar_width >= 800:
                     finish = True
                     won = True
                 progress_bar_width = min((elapsed_time / duration) * WINDOW_WIDTH, WINDOW_WIDTH)
             if not finish:
-            ### Move the TrashItems ###
+                ### Move the TrashItems ###
                 for trash_item in trash_items:
                     trash_item.move()  
 
-            ### Remove the already vanished TrashItems ###
+                ### Remove the already vanished TrashItems ###
                 for trash_item in trash_items:
                     if trash_item.dead:
                         if trash_item.for_a_good_reason:
