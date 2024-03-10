@@ -37,7 +37,7 @@ gameVars = GameVariables()
 resource_manager = ResourceManager()
 
 #Spawn
-next_spawn_time = random.randint(600, 5000)
+next_spawn_time = random.randint(2000, 5000)
 item_spawn_time = random.randint(1500, 6000)
 speed_spawn_time = random.randint(1000, 5000)
 
@@ -152,7 +152,11 @@ def handle_events():
                     handle_slow_item_click(slow_item)
             for speed_item in speed_items:
                 if speed_item.active and speed_item.rect.collidepoint(event.pos):
-                    handle_speed_item_click(speed_item)        
+                    handle_speed_item_click(speed_item)    
+            for event in pygame.event.get():
+                if event.type == QUIT:
+                    pygame.quit()
+                    sys.exit()            
 
 
 def handle_slow_item_click(item):
@@ -243,11 +247,6 @@ def main():
     play_music()
 
     while running:
-        for event in pygame.event.get():
-            if event.type == QUIT:
-                pygame.quit()
-                sys.exit()
-
         # Main game loop
         if not game_over: 
 
