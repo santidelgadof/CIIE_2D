@@ -2,7 +2,7 @@ import pygame as pg
 
 class Button:
     def __init__(self, x=0, y=0, text="", width=200, height=50, elev=6):
-        self.font = pg.font.Font('Pantalla/fuente.ttf', 24)
+        self.font = pg.font.Font('WelcomeScreen/fuente.ttf', 24)
         self.text = self.font.render(text, True, "#000000")
         self.text_rect = self.text.get_rect()
 
@@ -14,35 +14,36 @@ class Button:
         self.pressed = False
         self.clicked = False
 
+    ### Updates the look of the button according to the cursor's situation ###
     def update(self):
-        # Siempre supondremos que el botón no está clicado
+        # Button is not pressed by default
         self.clicked = False
-        # Luego comprobaremos si estamos encima
+        # Check if user's cursor is over self
         mouse_pos = pg.mouse.get_pos()
         if self.top_rect.collidepoint(mouse_pos):
             self.hover = True
-            # Si presionamos mientras estamoas sobre el botón
+            # Check if mouse is pressed
             if pg.mouse.get_pressed()[0]:
                 self.pressed = True
             else:
-                # Si dejamos de presionar mientras estamos sobre el botón
+                # Check if mouse is unpressed over self
                 if self.pressed is True:
                     self.pressed = False
                     self.clicked = True
-                    # print("Botón clicado")
         else:
             self.pressed = False
             self.hover = False
 
-    def draw(self, display):
+    ### Draws the button on a surface ###
+    def draw(self, surface):
         top_rect_color = "#505D5C" if self.hover else "#C0CFCE"
         if not self.pressed:
-            # Si no pulsamos dibujamos todo en su posición original
-            pg.draw.rect(display, "#C4FFFE", self.bottom_rect)
-            pg.draw.rect(display, top_rect_color, self.top_rect)
+            # If self is not pressed
+            pg.draw.rect(surface, "#C4FFFE", self.bottom_rect)
+            pg.draw.rect(surface, top_rect_color, self.top_rect)
             self.text_rect.center = self.top_rect.center
         else:
-            # Si pulsamos cambiamos la posición de dibujado abajo
-            pg.draw.rect(display, top_rect_color, self.bottom_rect)
+            # If self is pressed
+            pg.draw.rect(surface, top_rect_color, self.bottom_rect)
             self.text_rect.center = self.bottom_rect.center
-        display.blit(self.text, self.text_rect)
+        surface.blit(self.text, self.text_rect)

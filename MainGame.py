@@ -1,7 +1,7 @@
 import pygame
 from pygame.locals import *
 import sys
-import Pantalla.popup as PopUp
+import WelcomeScreen.Menu as WelcomeScreen
 import TrashGame.main as TrashGame
 from GameState import GameState, State
 from FinalScreen import FinalScreen
@@ -33,7 +33,7 @@ def main():
                 sys.exit()
         state = game_state.getState()
         if state == State.InitialScreen:          
-            aux = PopUp.main()
+            aux = WelcomeScreen.main(WINDOW)
             game_state.setState(aux)
         elif state == State.TrashGameLVL1:
             fade_transition()
