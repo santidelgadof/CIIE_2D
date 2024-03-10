@@ -59,12 +59,17 @@ class ResourceManager:
         self.pile_lightOn = Resource("GarbageTowers/images/lightBulbOn.png")
         self.pile_lightOff = Resource("GarbageTowers/images/lightBulbOff.png")
 
+        self.pile_instructions = Resource("GarbageTowers/images/Instructions_GarbagePiles.png")
+
         self.pile_blocks = [
             Resource("GarbageTowers/images/blocks/bolsa_basura_Amarilla.png"),
             Resource("GarbageTowers/images/blocks/bolsa_basura_Azul.png"),
             Resource("GarbageTowers/images/blocks/bolsa_basura_Negra.png"),
             Resource("GarbageTowers/images/blocks/bolsa_basura_Verde.png")
         ]
+
+        #CUCA
+        self.cuca_instructions = Resource("CucarachaGame/Assets/instructions_cuca.png")
 
         
         

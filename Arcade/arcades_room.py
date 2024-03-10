@@ -15,6 +15,8 @@ WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 BLUE = (12, 18, 58)
 YELLOW = (249, 247, 98 )
+YELLOW_PILES = (222, 196, 65)
+BROWN_CUCA = (171, 109, 0)
 TRANSPARENT = (0, 0, 0, 50)
 
 WINDOW_WIDTH = 800
@@ -46,6 +48,8 @@ player_right_image2 = pygame.transform.scale(resource_manager.arcade_player_righ
 
 background_image = pygame.transform.scale(pygame.image.load('Arcade/assets/arcade_background.jpg'), (WINDOW_WIDTH, WINDOW_HEIGHT))
 
+instructions_piles = pygame.transform.scale(resource_manager.pile_instructions.get(), (700, 762))
+instructions_cuca = pygame.transform.scale(resource_manager.cuca_instructions.get(), (700, 775))
 
 arcades_positions = [
     (100, 150), 
@@ -78,6 +82,7 @@ animation_speed = 10
 # VARIABLES DE LOS POPUPS
 popup_shown = {}
 popup_showing = False
+instructions_showing = False
 
 
 ### FUNCIONES ###
@@ -199,6 +204,7 @@ def show_popup(arcade_number):
     global player_rect, up_direction_state, down_direction_state, left_direction_state, right_direction_state
 
     popup_showing = True
+    instructions_showing = False
 
     # Con esta variables evitamos que el jugador ande automaticamente tras cerrar un popup
     up_direction_state = False
@@ -209,35 +215,49 @@ def show_popup(arcade_number):
     popup_sound_open.play()
     player_position_before_popup = player_rect.topleft
 
+    rotations = [0, 30]
+
     minigame_text = [
-        Text("Minigame", 20, YELLOW, WINDOW_WIDTH//2 + 120, WINDOW_HEIGHT//3 + 50, True, fuente8Bit)
+        Text("Minigame", 20, YELLOW, WINDOW_WIDTH//2 + 180, WINDOW_HEIGHT//3 + 90, True, fuente8Bit)
     ]
 
+    buttons = [
+        Boton(WINDOW_WIDTH//2, WINDOW_HEIGHT//3 - 40, 100, 40, "JUGAR", fuenteGP, TRANSPARENT, YELLOW, 40, "JUGAR"),
+        Boton(WINDOW_WIDTH//2, WINDOW_HEIGHT//3 + 10, 100, 40, "VOLVER", fuenteGP, TRANSPARENT, YELLOW, 40, "VOLVER"),
+        Boton(WINDOW_WIDTH//2, WINDOW_HEIGHT//3 + 60, 100, 40, "INSTRUCCIONES", fuenteGP, TRANSPARENT, YELLOW, 40, "INSTRUCCIONES")
+    ]
     # Nombre de cada minijuego
     if arcade_number == 0:
         arcade_text = [
             Text("Cucarachas", 60, YELLOW, WINDOW_WIDTH//2 , WINDOW_HEIGHT//3 - 140, True, fuenteGP)
         ] + minigame_text
+
+        popup = PopUp(WINDOW_WIDTH//2 - 250, WINDOW_HEIGHT//3 - 250, 500, 400, 60, BROWN_CUCA, 8, BLACK, buttons, arcade_text, rotations)
     elif arcade_number == 1:
         arcade_text = [
-            Text("Wordle", 60, YELLOW, WINDOW_WIDTH//2 , WINDOW_HEIGHT//3 - 140, True, fuenteGP)
+            Text("Garbage Piles", 60, BLACK, WINDOW_WIDTH//2 , WINDOW_HEIGHT//3 - 140, True, fuenteGP)
         ] + minigame_text
+
+        buttons = [
+            Boton(WINDOW_WIDTH//2, WINDOW_HEIGHT//3 - 40, 100, 40, "JUGAR", fuenteGP, TRANSPARENT, BLACK, 40, "JUGAR"),
+            Boton(WINDOW_WIDTH//2, WINDOW_HEIGHT//3 + 10, 100, 40, "VOLVER", fuenteGP, TRANSPARENT, BLACK, 40, "VOLVER"),
+            Boton(WINDOW_WIDTH//2, WINDOW_HEIGHT//3 + 60, 100, 40, "INSTRUCCIONES", fuenteGP, TRANSPARENT, BLACK, 40, "INSTRUCCIONES")
+        ]
+
+        popup = PopUp(WINDOW_WIDTH//2 - 250, WINDOW_HEIGHT//3 - 250, 500, 400, 60, YELLOW_PILES, 8, BLACK, buttons, arcade_text, rotations)
+
     elif arcade_number == 2:
         arcade_text = [
             Text("Tetris", 60, YELLOW, WINDOW_WIDTH//2 , WINDOW_HEIGHT//3 - 140, True, fuenteGP)
         ] + minigame_text
 
-    rotations = [0, 30]
-
-    buttons = [
-        Boton(WINDOW_WIDTH//2, WINDOW_HEIGHT//3 - 40, 100, 40, "JUGAR", fuenteGP, TRANSPARENT, YELLOW, 40, "JUGAR"),
-        Boton(WINDOW_WIDTH//2, WINDOW_HEIGHT//3 + 30, 100, 40, "VOLVER", fuenteGP, TRANSPARENT, YELLOW, 40, "VOLVER")
-    ]
-
-    popup = PopUp(WINDOW_WIDTH//2 - 200, WINDOW_HEIGHT//3 - 200, 400, 300, 60, BLUE, 8, BLACK, buttons, arcade_text, rotations)
+        popup = PopUp(WINDOW_WIDTH//2 - 250, WINDOW_HEIGHT//3 - 250, 500, 400, 60, BLUE, 8, BLACK, buttons, arcade_text, rotations)
 
     while popup_showing:
         for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if popup.get_rect().collidepoint(event.pos):
                     for boton in popup.botones:
@@ -253,7 +273,32 @@ def show_popup(arcade_number):
                                 arcade.exit = True
                                 fade_transition()
                                 return arcade.exit
+                            
+                            elif boton.accion == "INSTRUCCIONES":
+                                instructions_showing = True
+        
+        while instructions_showing:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if window.get_rect().collidepoint(event.pos):
+                        instructions_showing = False
 
+            #show instructions
+            if arcade_number == 0:
+                #CUCA
+                window.blit(instructions_cuca, ((WINDOW_WIDTH - instructions_cuca.get_width())//2, (WINDOW_HEIGHT - instructions_cuca.get_height())//2 - 49))
+            elif arcade_number == 1:
+                #PILES
+                window.blit(instructions_piles, ((WINDOW_WIDTH - instructions_piles.get_width())//2, (WINDOW_HEIGHT - instructions_piles.get_height())//2 - 35))
+            elif arcade_number == 2:
+                #TETRIS
+                pass     
+
+            pygame.display.flip() 
+            pygame.time.Clock().tick(60)      
         draw()
         popup.draw(window) 
         pygame.display.flip()
