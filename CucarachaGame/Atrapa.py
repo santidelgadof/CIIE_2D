@@ -142,6 +142,9 @@ def draw_holes():
 # Handle clicks
 def handle_events():
     for event in pygame.event.get():
+        if event.type == QUIT:
+                pygame.quit()
+                sys.exit()  
         if event.type == pygame.MOUSEBUTTONDOWN:
             for cucaracha in cucarachas:
                 if cucaracha.active and cucaracha.rect.collidepoint(event.pos):
@@ -153,10 +156,7 @@ def handle_events():
             for speed_item in speed_items:
                 if speed_item.active and speed_item.rect.collidepoint(event.pos):
                     handle_speed_item_click(speed_item)    
-            for event in pygame.event.get():
-                if event.type == QUIT:
-                    pygame.quit()
-                    sys.exit()            
+                     
 
 
 def handle_slow_item_click(item):
@@ -201,6 +201,7 @@ def spawn_cucaracha():
         cucaracha.spawn_time = pygame.time.get_ticks()
         cucarachas.add(cucaracha)
         gameVars.cucarachas_shown += 1
+
 
 #FINAL SCORE
 def exit_game():
@@ -287,7 +288,7 @@ def main():
                     pygame.mixer.music.play(-1)    
 
             # End the game when reaching a certain number of shown cucarachas
-            if gameVars.cucarachas_shown > 10: 
+            if gameVars.cucarachas_shown==11 and Cucaracha().active == False:
                 game_over = True 
 
         # Display the final score screen when the game is over

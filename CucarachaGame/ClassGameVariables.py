@@ -9,6 +9,7 @@ class GameVariables:
         self.a = 0
         self.b = 0
         self.score = 0
+        
 
     def reset(self):
         self.in_slow_motion_mode = False
@@ -20,3 +21,4 @@ class GameVariables:
         self.a = 0
         self.b = 0
         self.score = 0
+        
