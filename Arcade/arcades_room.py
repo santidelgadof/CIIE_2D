@@ -50,6 +50,7 @@ background_image = pygame.transform.scale(pygame.image.load('Arcade/assets/arcad
 
 instructions_piles = pygame.transform.scale(resource_manager.pile_instructions.get(), (700, 762))
 instructions_cuca = pygame.transform.scale(resource_manager.cuca_instructions.get(), (700, 775))
+instructions_tetris = pygame.transform.scale(resource_manager.cuca_instructions.get(), (700, 774))
 
 arcades_positions = [
     (100, 150), 
@@ -295,7 +296,7 @@ def show_popup(arcade_number):
                 window.blit(instructions_piles, ((WINDOW_WIDTH - instructions_piles.get_width())//2, (WINDOW_HEIGHT - instructions_piles.get_height())//2 - 35))
             elif arcade_number == 2:
                 #TETRIS
-                pass     
+                window.blit(instructions_tetris, ((WINDOW_WIDTH - instructions_tetris.get_width())//2, (WINDOW_HEIGHT - instructions_tetris.get_height())//2 - 48))    
 
             pygame.display.flip() 
             pygame.time.Clock().tick(60)      
