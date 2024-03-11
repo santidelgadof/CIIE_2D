@@ -5,6 +5,8 @@ import WelcomeScreen.Menu as WelcomeScreen
 import TrashGame.main as TrashGame
 from GameState import GameState, State
 from FinalScreen import FinalScreen
+import Animations.Animacion1 as Animation 
+import Animations.Animacion2 as Animation2 
 
 FPS = 60
 fpsClock = pygame.time.Clock()
@@ -43,11 +45,15 @@ def main():
             game_state.setState(aux)
         elif state == State.TrashGameLVL2:
             fade_transition()
+            Animation.main()
+            fade_transition()
             (aux, played_minigame, puntuation) = TrashGame.main(2, game_state, WINDOW)
             game_state.addPlayedMinigame(played_minigame)
             game_state.addPoints(puntuation)
             game_state.setState(aux)
         elif state == State.TrashGameLVL3:
+            fade_transition()
+            Animation2.main()
             fade_transition()
             (aux, played_minigame, puntuation) = TrashGame.main(3, game_state, WINDOW)
             game_state.addPlayedMinigame(played_minigame)
