@@ -9,7 +9,10 @@ resource_manager = ResourceManager()
 
 ### Draws a rounded rectangle ###
 def draw_rounded_rectangle(surface):
-    pygame.draw.rect(surface, (218, 255, 252), (200, 355, 400, 200), 0, 50)
+    s = pygame.Surface((400, 200), pygame.SRCALPHA)
+    s.fill((218, 255, 252, 90))
+    surface.blit(s, (200, 355))
+    #pygame.draw.rect(surface, (218, 255, 252, 60), (200, 355, 400, 200), 0, 50)
 
 ### Draws the Trash Game Rules on a surface ###
 def drawTrashGameRules(surface):
