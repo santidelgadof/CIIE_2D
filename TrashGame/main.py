@@ -53,7 +53,7 @@ def main(level, game_state, WINDOW): # Level is an int that stablishes the dific
         if level == 1:
             spawn_interval = 1650  # Spawn a new TrashItem every 2 seconds (2000 milliseconds)
             distance_between_items = 120  # Desired distance between each trash item
-            velocity = distance_between_items / (spawn_interval / 60) / 2
+            velocity = distance_between_items / (spawn_interval / 60)
             firstClasificator = ClassificationArea(100, 350, theme.clasiAreaColor)
             secondClasificator = None
             organicContainer = Container(TrashType.ORGANIC, resource_manager.organic_container.get(), (10, 700))

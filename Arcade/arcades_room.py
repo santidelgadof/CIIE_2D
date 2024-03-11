@@ -50,12 +50,13 @@ background_image = pygame.transform.scale(pygame.image.load('Arcade/assets/arcad
 
 instructions_piles = pygame.transform.scale(resource_manager.pile_instructions.get(), (700, 762))
 instructions_cuca = pygame.transform.scale(resource_manager.cuca_instructions.get(), (700, 775))
-instructions_tetris = pygame.transform.scale(resource_manager.cuca_instructions.get(), (700, 774))
+instructions_tetris = pygame.transform.scale(resource_manager.tetris_instructions.get(), (700, 774))
 
 arcades_positions = [
     (100, 150), 
-    (350, 150),  
-    (590, 150)   
+    (590, 150),
+    (350, 150) 
+     
 ]
 
 arcades = []  # Usaremos una lista en lugar de un grupo
