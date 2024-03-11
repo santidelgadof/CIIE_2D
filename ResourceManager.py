@@ -31,6 +31,7 @@ class ResourceManager:
         self.tech_piece = Resource("TrashGame/assets/tech.jpeg", True)
 
         self.popup_animation = Resource("WelcomeScreen/Animacion.jpg")
+        self.game_name = Resource("WelcomeScreen/Nombre_juego.png")
 
         # Arcade media
         self.arcade_player_up_image1 = Resource('Arcade/assets/player/up1.png', True)

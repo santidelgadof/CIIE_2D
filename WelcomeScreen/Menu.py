@@ -27,7 +27,8 @@ def main(WINDOW):
     clock = pygame.time.Clock()
     animation_background_asset = resource_manager.popup_animation.get()
     x, y = 0, 0
-
+    ## Declare Game Name ###
+    gameName = resource_manager.game_name.get()
     ### Declare the buttons to be used ###
     playButton = Button(300, 375, "JUGAR")  
     instructionsButton = Button(300, 475, "INSTRUCCIONES")  
@@ -62,6 +63,7 @@ def main(WINDOW):
         past_time += clock.get_time()
 
         ### Draw the content ###
+        WINDOW.blit(gameName, (400-gameName.get_width()//2, 50))
         if not showing_rules:
             if past_time >= menu_show_time:
                 draw_rounded_rectangle(WINDOW) 
