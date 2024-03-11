@@ -67,7 +67,7 @@ class ResourceManager:
 
         # Tetris media
         self.tetris_background = Resource("Tetris/assets/background.jpeg")
-        self.tetris_instructions = Resource("Tetris/TetrisPopUp/images/instructions_tetris.png")
+        self.tetris_instructions = Resource("Tetris/assets/instructions_tetris.png")
 
         #GARBAGEPILE media
         self.pile_bg = Resource("GarbageTowers/images/bg.jpg")
