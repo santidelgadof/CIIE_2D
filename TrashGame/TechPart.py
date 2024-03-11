@@ -4,8 +4,8 @@ class TechPart:
     dead = False
     def __init__(self, resource, initial_position, speed):
         image = resource.get()
-        scaled_width = image.get_width() // 12
-        scaled_height = image.get_height() // 12
+        scaled_width = image.get_width() //4 #// 12
+        scaled_height = image.get_height() //4 #// 12
         self.image = pygame.transform.scale(image, (scaled_width, scaled_height))
         self.position = list(initial_position)
         self.speed = speed
