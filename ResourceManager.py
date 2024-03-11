@@ -56,6 +56,7 @@ class ResourceManager:
         self.cucaracha = Resource("CucarachaGame/Assets/cucaracha.png", True)
         self.speed = Resource("CucarachaGame/Assets/speed_item.png", True)
         self.slow = Resource("CucarachaGame/Assets/slow_item.png", True)
+        self.cuca_instructions = Resource("CucarachaGame/Assets/instructions_cuca.png")
 
         # Tetris media
         self.tetris_background = Resource("Tetris/assets/background.jpeg")
@@ -83,8 +84,17 @@ class ResourceManager:
             Resource("GarbageTowers/images/blocks/bolsa_basura_Verde.png")
         ]
 
-        #CUCA
-        self.cuca_instructions = Resource("CucarachaGame/Assets/instructions_cuca.png")
+        #Animation
+        self.A1 = Resource("Animations/foto_animation/1.png", True)
+        self.A2 = Resource("Animations/foto_animation/2.png", True)
+        self.A3 = Resource("Animations/foto_animation/3.png", True)
+        self.A4 = Resource("Animations/foto_animation/4.png", True)
+  
+        self.A5 = Resource("Animations/foto_animation/5.png", True)
+        self.A6 = Resource("Animations/foto_animation/6.png", True)
+        self.A7 = Resource("Animations/foto_animation/7.png", True)
+        self.A8 = Resource("Animations/foto_animation/8.png", True)
+        
 
         
         
