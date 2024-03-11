@@ -7,7 +7,7 @@ from TrashGame.Container import TrashType
 class ResourceManager:
     def __init__(self):
         # Trash Game Instructions
-        self.trash_game_instructions = Resource("WelcomeScreen/InstruccionesTrashGame.png", True)
+        self.trash_game_instructions = Resource("WelcomeScreen/assets/InstruccionesTrashGame.png", True)
         # All the trash items
         self.trash_items = [
             (Resource("TrashGame/assets/trash/CajaCarton.png", True), TrashType.PAPER),
@@ -30,8 +30,8 @@ class ResourceManager:
         self.sad_face = Resource("TrashGame/assets/sadFace.png", True)
         self.tech_piece = Resource("TrashGame/assets/tech.jpeg", True)
 
-        self.popup_animation = Resource("WelcomeScreen/Animacion.jpg")
-        self.game_name = Resource("WelcomeScreen/Nombre_juego.png")
+        self.popup_animation = Resource("WelcomeScreen/assets/Animacion.jpg")
+        self.game_name = Resource("WelcomeScreen/assets/Nombre_juego.png")
 
         # Arcade media
         self.arcade_player_up_image1 = Resource('Arcade/assets/player/up1.png', True)

@@ -21,7 +21,7 @@ def drawTrashGameRules(surface):
 
 ### Loads and plays the music ###
 def play_music():
-    pygame.mixer.music.load("WelcomeScreen/WelcomeScreenMusic.mp3")
+    pygame.mixer.music.load("WelcomeScreen/sounds/WelcomeScreenMusic.mp3")
     pygame.mixer.music.play(-1)
     pygame.mixer.music.set_volume(0.5)
     

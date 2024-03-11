@@ -2,7 +2,7 @@ import pygame as pg
 
 class Button:
     def __init__(self, x=0, y=0, text="", width=200, height=50, elev=6):
-        self.font = pg.font.Font('WelcomeScreen/fuente.ttf', 24)
+        self.font = pg.font.Font('WelcomeScreen/fonts/fuente.ttf', 24)
         self.text = self.font.render(text, True, "#000000")
         self.text_rect = self.text.get_rect()
 
