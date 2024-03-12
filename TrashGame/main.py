@@ -64,7 +64,7 @@ def main(level, game_state, WINDOW): # Level is an int that stablishes the dific
             trash_default_items = resource_manager.trash_items
             health_bar = HealthBar(5)
             current_lives = 5
-            duration = 5000
+            duration = 30000
             tp = TechPart(resource_manager.tech_piece,  (369, -200), velocity)
 
         if level == 2:
