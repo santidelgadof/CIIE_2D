@@ -262,21 +262,21 @@ def show_popup(arcade_number):
                 sys.exit()
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if popup.get_rect().collidepoint(event.pos):
-                    for boton in popup.botones:
+                    for boton in popup.buttons:
                         if boton.rect.collidepoint(event.pos):
 
-                            if boton.accion == "VOLVER":
+                            if boton.action == "VOLVER":
                                 popup_showing = False
                                 popup_sound_close.play()
                                 player_rect.topleft = player_position_before_popup
 
-                            elif boton.accion == "JUGAR":
+                            elif boton.action == "JUGAR":
                                 popup_showing = False
                                 arcade.exit = True
                                 fade_transition()
                                 return arcade.exit
                             
-                            elif boton.accion == "INSTRUCCIONES":
+                            elif boton.action == "INSTRUCCIONES":
                                 instructions_showing = True
         
         while instructions_showing:

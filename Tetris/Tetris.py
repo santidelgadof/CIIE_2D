@@ -142,11 +142,11 @@ def main():
                 if game_over:
                     mouse_x, mouse_y = pygame.mouse.get_pos()
                     if final_score_popup.get_rect().collidepoint(mouse_x, mouse_y):
-                        for boton in final_score_popup.botones:
+                        for boton in final_score_popup.buttons:
                             if boton.rect.collidepoint(mouse_x, mouse_y):
-                                if boton.accion == "REINICIAR":
+                                if boton.action == "REINICIAR":
                                     return main()
-                                elif boton.accion == "SALIR":
+                                elif boton.action == "SALIR":
                                     return exit_game(score)
 
         if not game_over:

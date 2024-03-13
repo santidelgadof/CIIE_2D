@@ -339,12 +339,12 @@ def main():
                 if end:
                         mouse_x, mouse_y = pygame.mouse.get_pos()
                         if window.get_rect().collidepoint(mouse_x, mouse_y):
-                            for boton in window.botones:
-                                if boton.rect.collidepoint(mouse_x, mouse_y):
-                                    if boton.accion == "REINICIAR":
+                            for btn in window.buttons:
+                                if btn.rect.collidepoint(mouse_x, mouse_y):
+                                    if btn.action == "REINICIAR":
                                         music(True)
                                         return main()
-                                    elif boton.accion == "SALIR":
+                                    elif btn.action == "SALIR":
                                         music(True)
                                         return exit_game(score)
 
@@ -454,11 +454,4 @@ if __name__ == '__main__':
     main()
 
 
-"""#idea para cambiar juego -> añadir boton de pista, de saltarte una word...
-
-Cuatroletras = ["caja", "lixo", "lata", "ropa", "tapa", "rata", "azul", "olor"]
-CincoLetras  = ["resto", "sucio", "bolsa", "verde", "latas", "raton", "hedor", "tirar", "mugre"]
-SeisLetras   = ["basura", "carton", "vidrio", "reusar", "limpio", "restos", "bodrio", "sarama", "sobras"]
-SieteLetras  = ["bazofia", "podrido", "residuo", "desecho", "vertido"]
-OchoLetras   = ["amarillo", "papelera", "reciclar", "escombro", "desechos", "suciedad"]"""
 

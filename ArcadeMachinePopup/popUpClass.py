@@ -1,47 +1,47 @@
 import pygame
 
 
-def rectanguloRedondo(pantalla, x, y, ancho, alto, radio, color):
-    pygame.draw.rect(pantalla, color, (x, y, ancho, alto), 0, radio)
+def roundedRectangle(screen, x, y, w, h, r, color):
+    pygame.draw.rect(screen, color, (x, y, w, h), 0, r)
 
 
 
 class PopUp:
-    def __init__(self, x, y, ancho, alto, radio, colorInterno, tam_borde, colorBorde, botones = [], textos = [], rotaciones = []):
-        if len(textos) != len(rotaciones):
+    def __init__(self, x, y, w, h, r, colorIn, border_size, border_color, buttons = [], texts = [], rotations = []):
+        if len(texts) != len(rotations):
             raise ValueError("textos y rotaciones deben ser del mismo tamaño")
         
         self.x = x
         self.y = y
 
-        self.ancho = ancho
-        self.alto = alto
-        self.radio = radio
+        self.w = w
+        self.h = h
+        self.r = r
 
-        self.colorIn = colorInterno
-        self.colorOut = colorBorde
+        self.colorIn = colorIn
+        self.colorOut = border_color
 
         
-        self.bordeX = x-tam_borde
-        self.bordeY = y-tam_borde
-        self.bordeAncho = ancho+tam_borde*2
-        self.bordeAlto = alto+tam_borde*2
+        self.borderX = x-border_size
+        self.borderY = y-border_size
+        self.borderW = w+border_size*2
+        self.borderH = h+border_size*2
 
-        self.botones = botones
-        self.textos = textos
-        self.rotaciones = rotaciones
+        self.buttons = buttons
+        self.texts = texts
+        self.rotations = rotations
 
-    def draw(self, pantalla):
-        rectanguloRedondo(pantalla, self.bordeX, self.bordeY, self.bordeAncho, self.bordeAlto, self.radio, self.colorOut)
-        rectanguloRedondo(pantalla, self.x, self.y, self.ancho, self.alto, self.radio, self.colorIn)
+    def draw(self, screen):
+        roundedRectangle(screen, self.borderX, self.borderY, self.borderW, self.borderH, self.r, self.colorOut)
+        roundedRectangle(screen, self.x, self.y, self.w, self.h, self.r, self.colorIn)
         i = 0
-        while i<len(self.textos):
-            self.textos[i].dibujar(pantalla, self.rotaciones[i])
+        while i<len(self.texts):
+            self.texts[i].draw(screen, self.rotations[i])
             i+=1
 
-        for boton in self.botones:
-            boton.dibujar(pantalla)
-            boton.update(pantalla)
+        for btn in self.buttons:
+            btn.draw(screen)
+            btn.update(screen)
     
     def get_rect(self):
-        return pygame.Rect(self.bordeX, self.bordeY, self.bordeAncho, self.bordeAlto)
+        return pygame.Rect(self.borderX, self.borderY, self.borderW, self.borderH)

@@ -141,7 +141,7 @@ def main(level, game_state, WINDOW): # Level is an int that stablishes the dific
                         pos = pygame.mouse.get_pos()
                         for button in finalWindow.buttons:
                             if button.rect.collidepoint(pos):
-                                if button.accion == "REINTENTAR":
+                                if button.action == "REINTENTAR":
                                     mixer.music.unload()
                                     return (game_state.getState(), game_state.getPlayedMinigames(), 0)
                                 else:
@@ -157,6 +157,8 @@ def main(level, game_state, WINDOW): # Level is an int that stablishes the dific
             if not finish:
                 ### Minigame logic. Open arcade room when the progress bar reaches the middle ###
                 if minigame_played == None and progress_bar_width <= 500 and progress_bar_width >= 400:
+                    
+                    trash_items.clear()
                     fade_transition(WINDOW)
                     minigame_played, minigame_num = arcades_room.main(game_state.alreadyPlayedMinigames)
                     if minigame_num == 0:
