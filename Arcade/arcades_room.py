@@ -86,7 +86,7 @@ popup_showing = False
 instructions_showing = False
 
 
-### FUNCIONES ###
+### FUNCTIONS ###
 
 def fade_transition():
     fade_surface = pygame.Surface((WINDOW_WIDTH, WINDOW_HEIGHT))
