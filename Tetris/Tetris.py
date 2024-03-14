@@ -9,11 +9,9 @@ from ResourceManager import ResourceManager
 
 pygame.init()
 
-# Dimensiones de la ventana 
 WINDOW_WIDTH = 800  
 WINDOW_HEIGHT = 800  
 
-# Dimensiones del tablero
 BOARD_WIDTH = 200 
 BOARD_HEIGHT = 500 
 

@@ -155,6 +155,11 @@ def main(level, game_state, WINDOW): # Level is an int that stablishes the dific
                 trash_items = spawner.update(trash_items, current_time)
             elapsed_time += 10
             if not finish:
+                
+                if elapsed_time != 0 and level == 1 and elapsed_time%5000 == 0:
+                    spawn_interval-=100
+                    spawner.spawn_interval = spawn_interval
+                    
                 ### Minigame logic. Open arcade room when the progress bar reaches the middle ###
                 if minigame_played == None and progress_bar_width <= 500 and progress_bar_width >= 400:
                     
