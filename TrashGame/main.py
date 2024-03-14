@@ -64,7 +64,7 @@ def main(level, game_state, WINDOW): # Level is an int that stablishes the dific
             trash_default_items = resource_manager.trash_items
             health_bar = HealthBar(5)
             current_lives = 5
-            duration = 30000
+            duration = 40000
             tp = TechPart(resource_manager.tech_piece,  (369, -200), velocity)
 
         if level == 2:
@@ -81,7 +81,7 @@ def main(level, game_state, WINDOW): # Level is an int that stablishes the dific
             finalWindow = None
             health_bar = HealthBar(5)
             current_lives = 5
-            duration = 30000
+            duration = 40000
             tp = TechPart(resource_manager.tech_piece,  (369, -200), velocity)
         if level == 3:
             spawn_interval = 1250  # Spawn a new TrashItem every 2 seconds (2000 milliseconds)
@@ -97,7 +97,7 @@ def main(level, game_state, WINDOW): # Level is an int that stablishes the dific
             finalWindow = None
             health_bar = HealthBar(5)
             current_lives = 5
-            duration = 30000
+            duration = 40000
             tp = TechPart(resource_manager.tech_piece,  (369, -200), velocity)
             
         ### Lvl independent values ###
