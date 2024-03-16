@@ -1,7 +1,6 @@
 import pygame
 import random
 import sys
-import os
 from GarbageTowers.bloquePila import Bloque
 from GarbageTowers.bloqueClicable import ClicableObject
 from ArcadeMachinePopup.textClass import Text

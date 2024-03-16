@@ -1,5 +1,4 @@
 import pygame
-import random
 import time
 from Tetris.block import Block
 from ArcadeMachinePopup.popUpClass import PopUp

@@ -1,4 +1,3 @@
-import random
 import pygame, sys
 from pygame import mixer
 from pygame.locals import *
@@ -16,9 +15,7 @@ from Arcade import arcades_room
 from Tetris import Tetris
 from CucarachaGame import Atrapa
 from GarbageTowers import GarbagePile
-import time
 
-import os
 
 
 ### PYGAME CONFIGURATION ###
@@ -159,7 +156,7 @@ def main(level, game_state, WINDOW): # Level is an int that stablishes the dific
                 if elapsed_time != 0 and level == 1 and elapsed_time%5000 == 0:
                     spawn_interval-=100
                     spawner.spawn_interval = spawn_interval
-                    
+
                 ### Minigame logic. Open arcade room when the progress bar reaches the middle ###
                 if minigame_played == None and progress_bar_width <= 500 and progress_bar_width >= 400:
                     

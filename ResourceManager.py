@@ -1,5 +1,4 @@
 import pygame
-from enum import Enum
 from TrashGame.Container import TrashType
 
 # Manages the resources of the game.
