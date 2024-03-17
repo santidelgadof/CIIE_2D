@@ -306,13 +306,15 @@ def main():
                                 m+=1
                             m = 0
                                     
-                        else: guess = ""
+                        else: 
+                            guess = ""
+                            next_letter = False
 
                         # MISS
                         if not next_letter: 
                             guess = "" 
                             if limitTime-TIME_PENAL <= 0:
-                                end = True
+                                #end = True
                                 limitTime = 0
                             else:
                                 limitTime -= TIME_PENAL
