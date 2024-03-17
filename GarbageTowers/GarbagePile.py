@@ -426,7 +426,7 @@ def main():
 
                 buttons = [
                     Boton(popup_x + popup_width // 2, popup_y + popup_height // 3 + 110, 100, 40, "REINICIAR", fuenteGP, TRANSPARENT, BLACK, 40, "REINICIAR"),
-                    Boton(popup_x + popup_width // 2, popup_y + popup_height // 3 + 160, 100, 40, "SALIR", fuenteGP, TRANSPARENT, BLACK, 40, "SALIR")
+                    Boton(popup_x + popup_width // 2, popup_y + popup_height // 3 + 160, 100, 40, "CONTINUAR", fuenteGP, TRANSPARENT, BLACK, 40, "SALIR")
                 ]
 
                 window = PopUp(popup_x, popup_y, popup_width, popup_height, 60, YELLOW, 8, BLACK, buttons, game_over_text, rotations)

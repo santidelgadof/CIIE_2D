@@ -308,8 +308,8 @@ def main():
             ]
 
             buttons = [
-                Boton(popup_x + popup_width // 2, popup_y + popup_height // 3 + 110, 100, 40, "RESTART", fuenteGP, TRANSPARENT, YELLOW, 40, "RESTART"),
-                Boton(popup_x + popup_width // 2, popup_y + popup_height // 3 + 160, 100, 40, "EXIT", fuenteGP, TRANSPARENT, YELLOW, 40, "EXIT")
+                Boton(popup_x + popup_width // 2, popup_y + popup_height // 3 + 110, 100, 40, "REINICIAR", fuenteGP, TRANSPARENT, YELLOW, 40, "RESTART"),
+                Boton(popup_x + popup_width // 2, popup_y + popup_height // 3 + 160, 100, 40, "CONTINUAR", fuenteGP, TRANSPARENT, YELLOW, 40, "EXIT")
             ]
 
             final_score_popup = PopUp(popup_x, popup_y, popup_width, popup_height, 60, MARRON, 8, BLACK, buttons, game_over_text, rotations)
